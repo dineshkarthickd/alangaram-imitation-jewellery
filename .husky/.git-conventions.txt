@@ -1,0 +1,37 @@
+# STANDARD GIT BRANCH NAMING CONVENTIONS
+
+* feature/ (or feat/)
+  - Use: When developing a brand new feature or adding functionality.
+  - Example: feature/shopping-cart-ui
+
+* bugfix/ (or fix/)
+  - Use: When fixing a bug found during development or testing.
+  - Example: bugfix/broken-checkout-button
+
+* hotfix/
+  - Use: When fixing a critical, urgent bug currently crashing live production.
+  - Example: hotfix/payment-gateway-crash
+
+* release/
+  - Use: When preparing code for a new production release.
+  - Example: release/v1.2.0
+
+* chore/
+  - Use: For routine maintenance tasks (updating packages, CI/CD tweaks).
+  - Example: chore/update-tailwind-version
+
+* docs/
+  - Use: When only changing documentation or README files.
+  - Example: docs/update-readme-setup
+
+* refactor/
+  - Use: When restructuring code without adding features or fixing bugs.
+  - Example: refactor/navbar-components
+
+* test/
+  - Use: When adding or modifying automated tests.
+  - Example: test/add-cart-unit-tests
+
+* experiment/
+  - Use: For R&D or proof-of-concept work.
+  - Example: experiment/3d-glass-rendering

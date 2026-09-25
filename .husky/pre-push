@@ -1,0 +1,28 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+local_branch_name="$(git rev-parse --abbrev-ref HEAD)"
+
+# Define the allowed branch name formats
+valid_branch_regex="^(main|develop|feature/[a-z0-9-]+|bugfix/[a-z0-9-]+|hotfix/[a-z0-9-]+|release/[a-z0-9.-]+)$"
+
+message="
+🚨 ERROR: Invalid branch name!
+Your branch name is: $local_branch_name
+
+Branch names in this project must adhere to this contract:
+- feature/your-feature-name
+- bugfix/your-bug-name
+- hotfix/your-hotfix-name
+- release/v1.0.0
+
+Please rename your branch using: git branch -m <new-name>
+"
+
+if [[ ! $local_branch_name =~ $valid_branch_regex ]]
+then
+    echo "$message"
+    exit 1
+fi
+
+exit 0
