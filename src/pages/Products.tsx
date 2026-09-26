@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
 
 const mockProducts = [
   // Forming Jewellery (01 to 05)
@@ -22,6 +23,7 @@ const Products = () => {
   const categoryParam = searchParams.get('category') || 'all';
   
   const [activeCategory, setActiveCategory] = useState(categoryParam);
+  const { addToCart } = useCart();
 
   // Sync state if URL changes (e.g. clicking navbar dropdown)
   useEffect(() => {
@@ -92,10 +94,18 @@ const Products = () => {
               )}
               
               {/* Quick Add Button */}
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 w-[85%]">
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 md:translate-y-4 md:opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 w-[85%]">
                 <button 
-                  onClick={(e) => e.preventDefault()} 
-                  className="btn-shine w-full bg-white/95 backdrop-blur-sm text-charcoal py-3.5 rounded-full text-[13px] font-semibold tracking-widest hover:bg-charcoal hover:text-white border border-charcoal/10 transition-all hover:border-transparent hover:shadow-[0_0_20px_rgba(63,58,54,0.4)]"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    addToCart({
+                      id: product.id,
+                      name: product.name,
+                      price: product.price,
+                      image: product.image
+                    });
+                  }} 
+                  className="btn-luxury btn-luxury-dark w-full bg-white/90 backdrop-blur-md py-3.5"
                 >
                   ADD TO CART
                 </button>

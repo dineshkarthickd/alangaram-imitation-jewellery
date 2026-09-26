@@ -25,9 +25,9 @@ const Home = () => {
           <h1 className="text-3xl sm:text-4xl md:text-4xl lg:text-5xl font-serif text-[#FDFBF7] leading-[1.25] md:leading-[1.2] mb-6 md:mb-8 drop-shadow-md pr-4">
             The <span className="italic font-light">subtle</span> art of adornment. Timeless pieces, made to be cherished.
           </h1>
-          <Link to="/products" className="btn-shine group rounded-full bg-[#FAF8F5]/95 backdrop-blur-md border border-[#C4A47C]/30 text-charcoal w-full md:w-auto flex items-center justify-center gap-2 px-8 py-4 md:py-3.5 text-[14px] font-sans hover:bg-white transition-all shadow-sm hover:shadow-[0_0_25px_rgba(196,164,124,0.4)]">
+          <Link to="/products" className="btn-luxury btn-luxury-dark bg-[#FAF8F5]/80 backdrop-blur-md px-10 py-4 w-full md:w-auto group">
             Discover the Collection
-            <ArrowUpRight className="w-[18px] h-[18px] opacity-70 transition-all duration-300 group-hover:translate-x-1 group-hover:-translate-y-1 group-hover:opacity-100" />
+            <ArrowUpRight size={16} className="transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:translate-x-1 group-hover:-translate-y-1" />
           </Link>
         </div>
       </header>

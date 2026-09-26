@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { User, ShoppingBag, Menu, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { cartCount } = useCart();
 
   // Listen for scroll events to trigger the sticky navbar effect
   useEffect(() => {
@@ -88,8 +90,13 @@ const Navbar = () => {
             
             <div className="flex items-center space-x-5 lg:space-x-6 text-charcoal">
               <button className="hidden sm:block hover:opacity-70 transition-opacity"><User size={19} strokeWidth={1.75} /></button>
-              <Link to="/cart" className="hover:opacity-70 transition-opacity">
+              <Link to="/cart" className="relative hover:opacity-70 transition-opacity flex items-center">
                 <ShoppingBag size={19} strokeWidth={1.75} />
+                {cartCount > 0 && (
+                  <span className="absolute -top-1.5 -right-2 bg-charcoal text-white text-[9px] font-bold w-[16px] h-[16px] rounded-full flex items-center justify-center pointer-events-none">
+                    {cartCount}
+                  </span>
+                )}
               </Link>
             </div>
           </div>
