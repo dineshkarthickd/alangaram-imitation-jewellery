@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ShoppingBag, ArrowLeft } from 'lucide-react';
+import { useCart } from '../context/CartContext';
+import ImageMagnifier from '../components/ImageMagnifier';
+import CustomerReviews from '../components/CustomerReviews';
 
 const mockProducts = [
   // Forming Jewellery
@@ -26,12 +29,25 @@ const ProductDetail = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   // Scroll to top when page loads and set initial image
+  const { addToCart } = useCart();
+  
   useEffect(() => {
     window.scrollTo(0, 0);
     if (product) {
       setSelectedImage(product.images[0]);
     }
   }, [id, product]);
+
+  const relatedProducts = mockProducts
+    .filter(p => p.category === product?.category && p.id !== product?.id)
+    .slice(0, 4);
+    
+  if (product && relatedProducts.length < 4) {
+    const extra = mockProducts
+      .filter(p => p.id !== product.id && !relatedProducts.find(r => r.id === p.id))
+      .slice(0, 4 - relatedProducts.length);
+    relatedProducts.push(...extra);
+  }
 
   if (!product) {
     return (
@@ -73,18 +89,11 @@ const ProductDetail = () => {
           </div>
 
           {/* Main Image */}
-          <div className="relative flex-1 w-full max-w-[460px] aspect-[4/5] rounded-xl overflow-hidden shadow-[0_15px_40px_rgba(0,0,0,0.08)] bg-[#FAF8F5]">
-            <img 
-              src={selectedImage || product.image} 
-              alt={product.name} 
-              className="w-full h-full object-cover mix-blend-multiply transition-transform duration-1000 hover:scale-105"
-            />
-            {hasOffer && (
-              <div className="absolute top-4 right-4 bg-[#C4A47C] text-white text-[11px] font-bold tracking-[0.2em] px-3 py-1.5 uppercase rounded-sm z-10 shadow-sm backdrop-blur-sm bg-opacity-90">
-                20% OFF
-              </div>
-            )}
-          </div>
+          <ImageMagnifier 
+            src={selectedImage || product.image} 
+            alt={product.name} 
+            hasOffer={hasOffer}
+          />
         </div>
         
         {/* Product Info Side */}
@@ -109,10 +118,19 @@ const ProductDetail = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 mt-auto md:mt-0">
-            <button className="btn-shine flex-1 bg-charcoal text-white py-4 px-8 rounded-full hover:bg-black transition-all hover:shadow-[0_0_25px_rgba(63,58,54,0.5)] uppercase tracking-widest text-[13px] flex items-center justify-center gap-3">
+            <button 
+              onClick={() => addToCart({ id: product.id, name: product.name, price: product.price, image: product.image })}
+              className="btn-luxury btn-luxury-solid flex-1 py-4"
+            >
               <ShoppingBag size={16} /> Add to Cart
             </button>
-            <button className="btn-shine flex-1 bg-white/50 backdrop-blur-sm border border-charcoal/20 text-charcoal py-4 px-8 rounded-full hover:bg-charcoal hover:text-white transition-all uppercase tracking-widest text-[13px] hover:shadow-[0_0_25px_rgba(63,58,54,0.3)]">
+            <button 
+              onClick={() => {
+                addToCart({ id: product.id, name: product.name, price: product.price, image: product.image });
+                navigate('/cart');
+              }}
+              className="btn-luxury btn-luxury-dark flex-1 py-4 bg-white/30 backdrop-blur-md"
+            >
               Buy Now
             </button>
           </div>
@@ -122,6 +140,32 @@ const ProductDetail = () => {
             <p className="flex items-center gap-3"><span className="text-charcoal">✓</span> 7-Day Return Policy</p>
             <p className="flex items-center gap-3"><span className="text-charcoal">✓</span> Handcrafted with premium materials</p>
           </div>
+        </div>
+      </div>
+
+      {/* Customer Reviews Section */}
+      <CustomerReviews />
+
+      {/* You May Also Like Section */}
+      <div className="mt-24 md:mt-32 pt-16 border-t border-charcoal/10">
+        <h2 className="text-2xl md:text-3xl font-serif text-charcoal text-center mb-12">You May Also Like</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+          {relatedProducts.map(item => (
+            <Link to={`/product/${item.id}`} key={item.id} className="group">
+              <div className="relative aspect-[4/5] bg-[#FAF8F5] rounded-xl overflow-hidden mb-4 shadow-sm border border-charcoal/5">
+                <img 
+                  src={item.image} 
+                  alt={item.name} 
+                  className="w-full h-full object-cover mix-blend-multiply transition-transform duration-700 group-hover:scale-105" 
+                />
+                <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              </div>
+              <div className="flex flex-col items-center text-center px-2">
+                <h3 className="font-serif text-[14px] md:text-[15px] text-charcoal mb-1">{item.name}</h3>
+                <p className="text-charcoal/70 text-[12px] md:text-[13px]">{item.price}</p>
+              </div>
+            </Link>
+          ))}
         </div>
       </div>
     </div>

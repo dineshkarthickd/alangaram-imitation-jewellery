@@ -7,9 +7,9 @@ import WhatsAppButton from './components/WhatsAppButton';
 import Home from './pages/Home';
 import Products from './pages/Products';
 import ProductDetail from './pages/ProductDetail';
-
-// Temporary placeholder pages
-const Cart = () => <div className="min-h-[80vh] flex items-center justify-center font-serif text-4xl text-charcoal opacity-0 animate-page-fade">Your Cart is Empty</div>;
+import Preloader from './components/Preloader';
+import Cart from './pages/Cart';
+import { CartProvider } from './context/CartContext';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -39,7 +39,9 @@ function App() {
   }, []);
 
   return (
-    <Router>
+    <CartProvider>
+      <Router>
+      <Preloader />
       <ScrollToTop />
       <div className="min-h-screen font-sans flex flex-col relative bg-gradient-to-br from-[#FCF1E6] via-[#FDFBF7] to-[#DFEEE8]">
         {/* Fixed Background Botanical Watermarks */}
@@ -70,7 +72,8 @@ function App() {
         <WhatsAppButton />
         </div>
       </div>
-    </Router>
+      </Router>
+    </CartProvider>
   );
 }
 
