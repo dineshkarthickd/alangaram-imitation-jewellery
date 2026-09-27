@@ -213,3 +213,14 @@
   }
 }
 
+/* Swiper Pagination Overrides */
+.swiper-pagination-bullet {
+  background: rgba(47, 44, 41, 0.4) !important;
+  opacity: 1 !important;
+  transition: all 0.3s ease;
+}
+.swiper-pagination-bullet-active {
+  background: #C4A47C !important;
+  transform: scale(1.2);
+}
+
