@@ -1,56 +1,79 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { ShoppingBag, ArrowLeft } from 'lucide-react';
+import { ShoppingBag, ArrowLeft, Loader2, Star } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import ImageMagnifier from '../components/ImageMagnifier';
-import CustomerReviews from '../components/CustomerReviews';
+import ReviewSection from '../components/ReviewSection';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper/modules';
+import { doc, getDoc, collection, query, where, limit, getDocs, orderBy } from 'firebase/firestore';
+import { db } from '../config/firebase';
 import 'swiper/css';
 import 'swiper/css/pagination';
-
-const mockProducts = [
-  // Forming Jewellery
-  { id: 1, name: "Classic Forming Necklace", price: "₹ 4,999", category: "Forming", image: "/Mock-Images/01.png", images: ["/Mock-Images/01.png", "/Mock-Images/01-1.png"], description: "An exquisite piece crafted with precision, bringing timeless elegance to your collection. The intricate detailing mimics pure gold craftsmanship." },
-  { id: 2, name: "Elegant Forming Bangles", price: "₹ 2,499", category: "Forming", image: "/Mock-Images/02.png", images: ["/Mock-Images/02.png", "/Mock-Images/02-2.png"], description: "Intricately designed bangles that add a touch of grace to any traditional attire. Smooth finish and comfortable for all-day wear." },
-  { id: 3, name: "Traditional Forming Jhumkas", price: "₹ 1,899", category: "Forming", image: "/Mock-Images/03.png", images: ["/Mock-Images/03.png", "/Mock-Images/03-3.png"], description: "Classic jhumkas that perfectly blend heritage design with modern craftsmanship. Lightweight yet making a bold statement." },
-  { id: 4, name: "Bridal Forming Set", price: "₹ 8,999", category: "Forming", image: "/Mock-Images/04.png", images: ["/Mock-Images/04.png", "/Mock-Images/04-4.png"], description: "A majestic bridal set designed to make your special day truly unforgettable. Complete with matching earrings and premium finishing." },
-  { id: 5, name: "Antique Forming Choker", price: "₹ 3,299", category: "Forming", image: "/Mock-Images/05.png", images: ["/Mock-Images/05.png", "/Mock-Images/05-5.png"], description: "A beautifully detailed antique choker that sits perfectly on the neckline. A statement piece for festive occasions." },
-  
-  // Imitation Jewellery
-  { id: 6, name: "Designer Imitation Necklace", price: "₹ 1,499", category: "Imitation", image: "/Mock-Images/06.png", images: ["/Mock-Images/06.png", "/Mock-Images/06-6.png"], description: "A contemporary imitation necklace designed for the modern woman. Blends seamlessly with both ethnic and fusion wear." },
-  { id: 7, name: "Kundan Imitation Earrings", price: "₹ 899", category: "Imitation", image: "/Mock-Images/07.png", images: ["/Mock-Images/07.png", "/Mock-Images/07-7.png"], description: "Stunning kundan-style earrings that catch the light beautifully. Intricate stone setting mimicking high-end polki designs." },
-  { id: 8, name: "Temple Imitation Set", price: "₹ 2,199", category: "Imitation", image: "/Mock-Images/08.png", images: ["/Mock-Images/08.png", "/Mock-Images/08-8.png"], description: "Inspired by temple architecture, this set brings divine beauty to your look. Features traditional motifs and rich antique plating." },
-  { id: 9, name: "Pearl Imitation Bangles", price: "₹ 599", category: "Imitation", image: "/Mock-Images/09.png", images: ["/Mock-Images/09.png", "/Mock-Images/09-9.png"], description: "Delicate imitation pearls elegantly arranged on beautiful bangles. Perfect for stacking or wearing as standalone pieces." },
-  { id: 10, name: "Partywear Imitation Choker", price: "₹ 1,799", category: "Imitation", image: "/Mock-Images/010.png", images: ["/Mock-Images/010.png", "/Mock-Images/010-10.png"], description: "A glamorous choker piece perfectly suited for evening parties and celebrations. High shine finish and secure fastening." },
-];
 
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const product = mockProducts.find(p => p.id === Number(id));
-  
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-
-  // Scroll to top when page loads and set initial image
   const { addToCart } = useCart();
   
+  const [product, setProduct] = useState<any>(null);
+  const [relatedProducts, setRelatedProducts] = useState<any[]>([]);
+  const [reviews, setReviews] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+  const fetchProductData = async () => {
+    setLoading(true);
+    try {
+      const docRef = doc(db, 'products', id!);
+      const docSnap = await getDoc(docRef);
+      
+      if (docSnap.exists()) {
+        const data = { id: docSnap.id, ...docSnap.data() } as any;
+        setProduct(data);
+        setSelectedImage(data.images[0]);
+
+        // Fetch related products
+        const qRel = query(collection(db, 'products'), where('category', '==', data.category), limit(5));
+        const relSnap = await getDocs(qRel);
+        setRelatedProducts(relSnap.docs.map(d => ({ id: d.id, ...d.data() })).filter(p => p.id !== data.id).slice(0, 4));
+          
+        // Fetch reviews
+        const qRev = query(collection(db, 'products', id!, 'reviews'), orderBy('createdAt', 'desc'));
+        const revSnap = await getDocs(qRev);
+        setReviews(revSnap.docs.map(d => ({ id: d.id, ...d.data() })));
+      } else {
+        setProduct(null);
+      }
+    } catch (error) {
+      console.error("Error fetching product:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
-    if (product) {
-      setSelectedImage(product.images[0]);
-    }
-  }, [id, product]);
+    if (id) fetchProductData();
+  }, [id]);
 
-  const relatedProducts = mockProducts
-    .filter(p => p.category === product?.category && p.id !== product?.id)
-    .slice(0, 4);
-    
-  if (product && relatedProducts.length < 4) {
-    const extra = mockProducts
-      .filter(p => p.id !== product.id && !relatedProducts.find(r => r.id === p.id))
-      .slice(0, 4 - relatedProducts.length);
-    relatedProducts.push(...extra);
+  const refreshReviews = async () => {
+    try {
+      const qRev = query(collection(db, 'products', id!, 'reviews'), orderBy('createdAt', 'desc'));
+      const revSnap = await getDocs(qRev);
+      setReviews(revSnap.docs.map(d => ({ id: d.id, ...d.data() })));
+    } catch (error) {
+      console.error("Error refreshing reviews:", error);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center text-charcoal">
+        <Loader2 className="w-10 h-10 animate-spin text-[#C4A47C] mb-4" />
+        <h2 className="font-serif text-xl uppercase tracking-widest text-charcoal/50">Loading Masterpiece</h2>
+      </div>
+    );
   }
 
   if (!product) {
@@ -62,7 +85,7 @@ const ProductDetail = () => {
     );
   }
 
-  const hasOffer = [1, 4, 7, 10, 11].includes(product.id);
+  const hasStock = product.stock > 0;
 
   return (
     <div className="pt-32 pb-24 px-8 max-w-6xl mx-auto min-h-screen opacity-0 animate-page-fade">
@@ -75,7 +98,7 @@ const ProductDetail = () => {
         <div className="w-full md:w-1/2 lg:w-[45%] flex flex-col-reverse sm:flex-row gap-4 md:gap-6 justify-start">
           {/* Thumbnails */}
           <div className="flex flex-row sm:flex-col gap-3 w-full sm:w-[70px] md:w-[85px] flex-shrink-0 overflow-x-auto sm:overflow-y-auto no-scrollbar pb-2 sm:pb-0">
-            {product.images.map((img, idx) => (
+            {product.images.map((img: string, idx: number) => (
               <button 
                 key={idx}
                 onClick={() => {
@@ -98,111 +121,210 @@ const ProductDetail = () => {
 
           {/* Main Image - Desktop (Hidden on Mobile) */}
           <div className="hidden md:block w-full">
-            <ImageMagnifier 
-              src={selectedImage || product.image} 
-              alt={product.name} 
-              hasOffer={hasOffer}
-            />
+            <div className="relative aspect-[3/4] rounded-xl overflow-hidden shadow-sm bg-[#FAF8F5]">
+              {selectedImage && <ImageMagnifier src={selectedImage} alt={product.name} />}
+              {!hasStock && (
+                <div className="absolute top-4 left-4 bg-red-900/90 text-white text-[10px] font-bold tracking-[0.2em] px-3 py-1.5 uppercase rounded-sm z-10 shadow-sm backdrop-blur-sm">
+                  OUT OF STOCK
+                </div>
+              )}
+              {hasStock && product.hasOffer && (
+                <div className="absolute top-4 left-4 bg-[#C4A47C] text-white text-[10px] font-bold tracking-[0.2em] px-3 py-1.5 uppercase rounded-sm z-10 shadow-sm backdrop-blur-sm bg-opacity-90">
+                  {product.offerPercentage}% OFF
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* Main Image - Mobile (Swiper) */}
-          <div className="block md:hidden w-full aspect-[4/5] rounded-2xl overflow-hidden shadow-sm relative bg-[#FAF8F5]">
-            {hasOffer && (
-              <div className="absolute top-4 right-4 bg-[#C4A47C] text-white text-[10px] font-bold tracking-[0.2em] px-2.5 py-1 uppercase rounded-sm z-10 shadow-sm backdrop-blur-sm bg-opacity-90">
-                20% OFF
-              </div>
-            )}
+          {/* Main Image - Mobile Swipe Gallery (Hidden on Desktop) */}
+          <div className="block md:hidden w-full relative">
             <Swiper
-              modules={[Pagination]}
               pagination={{ clickable: true }}
-              className="w-full h-full"
+              modules={[Pagination]}
+              className="w-full aspect-[3/4] rounded-xl overflow-hidden shadow-sm bg-[#FAF8F5]"
               onSwiper={(swiper) => {
-                // @ts-ignore - Store instance globally for easy access by thumbnails without complex state
+                // @ts-ignore
                 window.productSwiper = swiper;
               }}
-              onSlideChange={(swiper) => setSelectedImage(product.images[swiper.activeIndex])}
+              onSlideChange={(swiper) => {
+                setSelectedImage(product.images[swiper.activeIndex]);
+              }}
             >
-              {product.images.map((img, idx) => (
+              {product.images.map((img: string, idx: number) => (
                 <SwiperSlide key={idx}>
-                  <img src={img} alt={`${product.name} view ${idx + 1}`} className="w-full h-full object-cover mix-blend-multiply" />
+                  <img src={img} alt={`${product.name} ${idx}`} className="w-full h-full object-cover mix-blend-multiply pointer-events-none" />
                 </SwiperSlide>
               ))}
             </Swiper>
+            <div className="absolute top-4 left-4 z-20 flex flex-col gap-2">
+              {!hasStock && (
+                <div className="bg-red-900/90 text-white text-[10px] font-bold tracking-[0.2em] px-3 py-1.5 uppercase rounded-sm shadow-sm backdrop-blur-sm">
+                  OUT OF STOCK
+                </div>
+              )}
+              {hasStock && product.hasOffer && (
+                <div className="bg-[#C4A47C] text-white text-[10px] font-bold tracking-[0.2em] px-3 py-1.5 uppercase rounded-sm shadow-sm backdrop-blur-sm">
+                  {product.offerPercentage}% OFF
+                </div>
+              )}
+            </div>
           </div>
         </div>
-        
+
         {/* Product Info Side */}
-        <div className="w-full md:w-1/2 lg:w-[55%] flex flex-col justify-center pt-4 md:pt-8">
-          <p className="text-xs uppercase tracking-[0.25em] text-charcoal/50 mb-3">{product.category} Jewellery</p>
-          <h1 className="text-4xl md:text-5xl font-serif text-charcoal mb-4 leading-tight">{product.name}</h1>
-          <div className="text-2xl text-charcoal/80 mb-8 font-light">
-            {hasOffer ? (
-              <div className="flex items-center gap-4">
-                <span className="text-charcoal/40 line-through text-xl">₹ {Math.round(parseInt(product.price.replace(/\D/g, '')) * 1.25).toLocaleString('en-IN')}</span>
-                <span className="text-[#C4A47C] font-normal">{product.price}</span>
+        <div className="w-full md:w-1/2 lg:w-[45%] flex flex-col pt-2 md:pt-8">
+          <p className="text-sm tracking-widest text-charcoal/50 uppercase mb-3 flex items-center justify-between">
+            {product.category} Jewellery
+            <span className="font-mono text-xs">{product.productId}</span>
+          </p>
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif text-charcoal mb-3 leading-tight">{product.name}</h1>
+          
+          {/* Average Rating Display */}
+          {reviews.length > 0 && (
+            <div className="flex items-center gap-2 mb-4">
+              <div className="flex">
+                {[...Array(5)].map((_, i) => {
+                  const avg = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
+                  return <Star key={i} size={16} className={i < Math.round(avg) ? 'text-[#C4A47C] fill-[#C4A47C]' : 'text-charcoal/20'} />
+                })}
               </div>
-            ) : (
-              <p>{product.price}</p>
+              <span className="text-sm text-charcoal/60">({reviews.length} reviews)</span>
+            </div>
+          )}
+
+          <div className="flex items-center gap-4 mb-6">
+            <p className="text-2xl md:text-3xl font-medium text-[#C4A47C]">₹ {product.finalPrice}</p>
+            {product.hasOffer && (
+              <p className="text-lg md:text-xl text-charcoal/30 line-through">₹ {product.basePrice}</p>
             )}
           </div>
           
-          <div className="w-16 h-[1px] bg-charcoal/20 mb-8"></div>
+          <div className="h-[1px] w-full bg-charcoal/10 mb-8" />
           
-          <p className="text-charcoal/70 leading-relaxed font-light mb-10 text-[15px]">
+          <p className="text-charcoal/70 leading-relaxed mb-10 font-light text-[15px] md:text-base whitespace-pre-wrap">
             {product.description}
           </p>
+
+          <button 
+            disabled={!hasStock}
+            onClick={() => {
+              if (!hasStock) return;
+              addToCart({
+                id: product.id,
+                name: product.name,
+                price: `₹ ${product.finalPrice}`,
+                image: product.images[0]
+              });
+            }} 
+            className={`btn-luxury btn-luxury-solid w-full py-4 flex items-center justify-center gap-3 mb-8 ${!hasStock ? 'opacity-50 cursor-not-allowed bg-charcoal/50 border-none hover:bg-charcoal/50 hover:text-white' : ''}`}
+          >
+            {hasStock ? (
+              <><ShoppingBag size={18} /> Add to Cart</>
+            ) : (
+              'OUT OF STOCK'
+            )}
+          </button>
           
-          <div className="flex flex-col sm:flex-row gap-4 mt-auto md:mt-0">
-            <button 
-              onClick={() => addToCart({ id: product.id, name: product.name, price: product.price, image: product.image })}
-              className="btn-luxury btn-luxury-solid flex-1 py-4"
-            >
-              <ShoppingBag size={16} /> Add to Cart
-            </button>
-            <button 
-              onClick={() => {
-                addToCart({ id: product.id, name: product.name, price: product.price, image: product.image });
-                navigate('/cart');
-              }}
-              className="btn-luxury btn-luxury-dark flex-1 py-4 bg-white/30 backdrop-blur-md"
-            >
-              Buy Now
-            </button>
-          </div>
-          
-          <div className="mt-12 pt-8 border-t border-charcoal/10 text-[13px] text-charcoal/60 space-y-3 font-light">
-            <p className="flex items-center gap-3"><span className="text-charcoal">✓</span> Free Shipping within India</p>
-            <p className="flex items-center gap-3"><span className="text-charcoal">✓</span> 7-Day Return Policy</p>
-            <p className="flex items-center gap-3"><span className="text-charcoal">✓</span> Handcrafted with premium materials</p>
+          {hasStock && product.stock < 5 && (
+            <p className="text-orange-600/80 text-sm font-medium mb-8 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
+              Only {product.stock} items left in stock. Hurry!
+            </p>
+          )}
+
+          {/* Collapsible Details */}
+          <div className="border-t border-charcoal/10">
+            <details className="group [&_summary::-webkit-details-marker]:hidden" open>
+              <summary className="flex items-center justify-between py-5 cursor-pointer text-charcoal">
+                <span className="font-medium uppercase tracking-widest text-sm">Product Details</span>
+                <span className="transition duration-300 group-open:-rotate-180">
+                  <svg fill="none" height="24" shapeRendering="geometricPrecision" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
+                </span>
+              </summary>
+              <div className="text-charcoal/60 text-sm font-light leading-relaxed pb-6 animate-fade-in">
+                <ul className="list-disc pl-4 space-y-2">
+                  <li>Premium quality plating ensuring long-lasting shine.</li>
+                  <li>Hypoallergenic materials suitable for sensitive skin.</li>
+                  <li>Handcrafted finish mimicking pure gold aesthetics.</li>
+                  <li>Secure and comfortable fastening mechanism.</li>
+                </ul>
+              </div>
+            </details>
+            
+            <details className="group [&_summary::-webkit-details-marker]:hidden border-t border-charcoal/10">
+              <summary className="flex items-center justify-between py-5 cursor-pointer text-charcoal">
+                <span className="font-medium uppercase tracking-widest text-sm">Care Instructions</span>
+                <span className="transition duration-300 group-open:-rotate-180">
+                  <svg fill="none" height="24" shapeRendering="geometricPrecision" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
+                </span>
+              </summary>
+              <div className="text-charcoal/60 text-sm font-light leading-relaxed pb-6">
+                Avoid direct contact with perfume, deodorant, and water. Store in a cool, dry place inside a ziplock bag or airtight container when not in use.
+              </div>
+            </details>
           </div>
         </div>
       </div>
 
-      {/* Customer Reviews Section */}
-      <CustomerReviews />
+      <ReviewSection productId={id!} reviews={reviews} onReviewAdded={refreshReviews} />
 
-      {/* You May Also Like Section */}
-      <div className="mt-24 md:mt-32 pt-16 border-t border-charcoal/10">
-        <h2 className="text-2xl md:text-3xl font-serif text-charcoal text-center mb-12">You May Also Like</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
-          {relatedProducts.map(item => (
-            <Link to={`/product/${item.id}`} key={item.id} className="group">
-              <div className="relative aspect-[4/5] bg-[#FAF8F5] rounded-xl overflow-hidden mb-4 shadow-sm border border-charcoal/5">
-                <img 
-                  src={item.image} 
-                  alt={item.name} 
-                  className="w-full h-full object-cover mix-blend-multiply transition-transform duration-700 group-hover:scale-105" 
-                />
-                <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              </div>
-              <div className="flex flex-col items-center text-center px-2">
-                <h3 className="font-serif text-[14px] md:text-[15px] text-charcoal mb-1">{item.name}</h3>
-                <p className="text-charcoal/70 text-[12px] md:text-[13px]">{item.price}</p>
-              </div>
-            </Link>
-          ))}
+      {/* RELATED PIECES */}
+      {relatedProducts.length > 0 && (
+        <div className="mt-24 border-t border-charcoal/10 pt-16">
+          <h2 className="text-2xl font-serif text-charcoal mb-10 text-center">You May Also Like</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+            {relatedProducts.map(relProduct => {
+              const relHasStock = relProduct.stock > 0;
+              return (
+              <Link to={`/product/${relProduct.id}`} key={relProduct.id} className="group cursor-pointer">
+                <div className="relative aspect-[3/4] overflow-hidden bg-[#FAF8F5] mb-4 rounded-lg shadow-sm group-hover:shadow-md transition-shadow">
+                  {/* Main Image */}
+                  <img 
+                    src={relProduct.images[0]} 
+                    alt={relProduct.name} 
+                    className={`absolute inset-0 w-full h-full object-cover mix-blend-multiply transition-all duration-700 ${relProduct.images.length > 1 ? 'group-hover:opacity-0' : 'group-hover:scale-105'}`}
+                    loading="lazy"
+                  />
+                  {/* Model Image */}
+                  {relProduct.images.length > 1 && (
+                    <img 
+                      src={relProduct.images[1]} 
+                      alt={`${relProduct.name} worn`} 
+                      className="absolute inset-0 w-full h-full object-cover mix-blend-multiply opacity-0 transition-all duration-700 group-hover:opacity-100 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                  )}
+                  <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                  
+                  {/* Tags */}
+                  <div className="absolute top-2 right-2 flex flex-col gap-1 items-end pointer-events-none z-10">
+                    {!relHasStock && (
+                      <div className="bg-red-900/90 text-white text-[8px] font-bold tracking-[0.2em] px-2 py-1 uppercase rounded-sm shadow-sm">
+                        OUT OF STOCK
+                      </div>
+                    )}
+                    {relHasStock && relProduct.hasOffer && (
+                      <div className="bg-[#C4A47C] text-white text-[8px] font-bold tracking-[0.2em] px-2 py-1 uppercase rounded-sm shadow-sm">
+                        {relProduct.offerPercentage}% OFF
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="flex flex-col text-center">
+                  <h3 className="font-serif text-sm md:text-base text-charcoal mb-1 truncate px-2">{relProduct.name}</h3>
+                  <div className="flex items-center justify-center gap-2">
+                    {relProduct.hasOffer && (
+                      <span className="text-charcoal/40 text-[11px] line-through">₹ {relProduct.basePrice}</span>
+                    )}
+                    <p className="text-[#C4A47C] text-sm md:text-[15px] font-medium">₹ {relProduct.finalPrice}</p>
+                  </div>
+                </div>
+              </Link>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

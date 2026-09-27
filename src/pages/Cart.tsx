@@ -1,9 +1,11 @@
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 import { Trash2, ArrowRight, Minus, Plus, ShoppingBag } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Cart = () => {
   const { cartItems, removeFromCart, updateQuantity, cartTotal } = useCart();
+  const { currentUser, signInWithGoogle } = useAuth();
 
   if (cartItems.length === 0) {
     return (
@@ -98,8 +100,18 @@ const Cart = () => {
               <span className="font-serif text-2xl text-charcoal">₹ {cartTotal.toLocaleString('en-IN')}</span>
             </div>
             
-            <button className="btn-luxury btn-luxury-solid w-full py-4">
-              Proceed to Checkout <ArrowRight size={16} />
+            <button 
+              onClick={() => {
+                if (!currentUser) {
+                  signInWithGoogle();
+                } else {
+                  // In the future, this will route to Stripe/Razorpay
+                  alert("Proceeding to secure checkout...");
+                }
+              }}
+              className="btn-luxury btn-luxury-solid w-full py-4"
+            >
+              {currentUser ? 'Proceed to Checkout' : 'Sign in to Checkout'} <ArrowRight size={16} />
             </button>
             
             <p className="text-center text-[11px] text-charcoal/50 mt-4 uppercase tracking-widest">
