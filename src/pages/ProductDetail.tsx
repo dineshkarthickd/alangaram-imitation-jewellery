@@ -4,6 +4,10 @@ import { ShoppingBag, ArrowLeft } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import ImageMagnifier from '../components/ImageMagnifier';
 import CustomerReviews from '../components/CustomerReviews';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Pagination } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/pagination';
 
 const mockProducts = [
   // Forming Jewellery
@@ -70,11 +74,15 @@ const ProductDetail = () => {
         {/* Image Gallery Side */}
         <div className="w-full md:w-1/2 lg:w-[45%] flex flex-col-reverse sm:flex-row gap-4 md:gap-6 justify-start">
           {/* Thumbnails */}
-          <div className="flex sm:flex-col gap-3 w-full sm:w-[70px] md:w-[85px] flex-shrink-0 overflow-x-auto sm:overflow-y-auto no-scrollbar pb-2 sm:pb-0">
+          <div className="flex flex-row sm:flex-col gap-3 w-full sm:w-[70px] md:w-[85px] flex-shrink-0 overflow-x-auto sm:overflow-y-auto no-scrollbar pb-2 sm:pb-0">
             {product.images.map((img, idx) => (
               <button 
                 key={idx}
-                onClick={() => setSelectedImage(img)}
+                onClick={() => {
+                  setSelectedImage(img);
+                  // @ts-ignore - Safely trigger swiper if it exists on mobile
+                  if (window.productSwiper) window.productSwiper.slideTo(idx);
+                }}
                 className={`w-[70px] sm:w-full flex-shrink-0 aspect-[4/5] rounded-lg overflow-hidden border transition-all duration-300 ${
                   selectedImage === img ? 'border-charcoal opacity-100 shadow-md' : 'border-transparent opacity-50 hover:opacity-100'
                 }`}
@@ -88,12 +96,39 @@ const ProductDetail = () => {
             ))}
           </div>
 
-          {/* Main Image */}
-          <ImageMagnifier 
-            src={selectedImage || product.image} 
-            alt={product.name} 
-            hasOffer={hasOffer}
-          />
+          {/* Main Image - Desktop (Hidden on Mobile) */}
+          <div className="hidden md:block w-full">
+            <ImageMagnifier 
+              src={selectedImage || product.image} 
+              alt={product.name} 
+              hasOffer={hasOffer}
+            />
+          </div>
+
+          {/* Main Image - Mobile (Swiper) */}
+          <div className="block md:hidden w-full aspect-[4/5] rounded-2xl overflow-hidden shadow-sm relative bg-[#FAF8F5]">
+            {hasOffer && (
+              <div className="absolute top-4 right-4 bg-[#C4A47C] text-white text-[10px] font-bold tracking-[0.2em] px-2.5 py-1 uppercase rounded-sm z-10 shadow-sm backdrop-blur-sm bg-opacity-90">
+                20% OFF
+              </div>
+            )}
+            <Swiper
+              modules={[Pagination]}
+              pagination={{ clickable: true }}
+              className="w-full h-full"
+              onSwiper={(swiper) => {
+                // @ts-ignore - Store instance globally for easy access by thumbnails without complex state
+                window.productSwiper = swiper;
+              }}
+              onSlideChange={(swiper) => setSelectedImage(product.images[swiper.activeIndex])}
+            >
+              {product.images.map((img, idx) => (
+                <SwiperSlide key={idx}>
+                  <img src={img} alt={`${product.name} view ${idx + 1}`} className="w-full h-full object-cover mix-blend-multiply" />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
         </div>
         
         {/* Product Info Side */}
