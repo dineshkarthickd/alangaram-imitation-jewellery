@@ -1,12 +1,22 @@
 import { useState, useEffect } from 'react';
 import { User, ShoppingBag, Menu, X } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { cartCount } = useCart();
+  const { currentUser, signInWithGoogle, signOut, isAdmin } = useAuth();
+  const navigate = useNavigate();
+  
+  const handleLogout = async () => {
+    await signOut();
+    setIsMobileMenuOpen(false);
+    navigate('/');
+    window.scrollTo(0, 0);
+  };
 
   // Listen for scroll events to trigger the sticky navbar effect
   useEffect(() => {
@@ -89,7 +99,44 @@ const Navbar = () => {
           <div className="flex-1 flex justify-end items-center space-x-4 md:space-x-6 lg:space-x-8 text-[15px] lg:text-[16px] font-serif tracking-wide font-medium text-charcoal">
             
             <div className="flex items-center space-x-5 lg:space-x-6 text-charcoal">
-              <button className="hidden sm:block hover:opacity-70 transition-opacity"><User size={19} strokeWidth={1.75} /></button>
+              {isAdmin && (
+                <Link to="/admin" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hidden sm:block text-charcoal hover:opacity-70 transition-opacity whitespace-nowrap">
+                  Admin Dashboard
+                </Link>
+              )}
+              <div className="relative group flex items-center justify-center">
+                {currentUser ? (
+                  <>
+                    <button onClick={handleLogout} className="block hover:opacity-70 transition-opacity">
+                      {currentUser.photoURL ? (
+                        <img src={currentUser.photoURL} alt="Profile" className="w-[22px] h-[22px] rounded-full object-cover border border-charcoal/20" />
+                      ) : (
+                        <div className="w-[22px] h-[22px] rounded-full bg-charcoal text-white flex items-center justify-center text-[10px] font-sans font-bold">
+                          {currentUser.displayName?.charAt(0) || 'U'}
+                        </div>
+                      )}
+                    </button>
+                    {/* Hover Dropdown (Desktop Only) */}
+                    <div className="absolute top-full right-1/2 translate-x-1/2 pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                      <button onClick={handleLogout} className="hidden md:block bg-white/95 backdrop-blur-md shadow-sm border border-gold-light/30 px-5 py-2 rounded-sm text-sm text-charcoal/80 hover:text-charcoal whitespace-nowrap">
+                        Logout
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <button onClick={signInWithGoogle} className="block hover:opacity-70 transition-opacity">
+                      <User size={19} strokeWidth={1.75} />
+                    </button>
+                    {/* Hover Dropdown (Desktop Only) */}
+                    <div className="absolute top-full right-1/2 translate-x-1/2 pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                      <button onClick={signInWithGoogle} className="hidden md:block bg-white/95 backdrop-blur-md shadow-sm border border-gold-light/30 px-5 py-2 rounded-sm text-sm text-charcoal/80 hover:text-charcoal whitespace-nowrap">
+                        Login
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
               <Link to="/cart" className="relative hover:opacity-70 transition-opacity flex items-center">
                 <ShoppingBag size={19} strokeWidth={1.75} />
                 {cartCount > 0 && (
@@ -154,12 +201,17 @@ const Navbar = () => {
             </div>
           </div>
 
+          {isAdmin && (
+            <Link to="/admin" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-serif text-charcoal hover:text-gold transition-colors mt-4 block">
+              Admin Dashboard
+            </Link>
+          )}
         </div>
 
         {/* Sidebar Footer Accent */}
         <div className="p-8 bg-cream-dark mt-auto border-t border-charcoal/5">
           <p className="text-[10px] uppercase tracking-widest font-sans text-charcoal/50 mb-2">Customer Care</p>
-          <a href="mailto:support@alangaram.com" className="text-sm font-serif text-charcoal">support@alangaram.com</a>
+          <span className="text-[13px] font-serif text-charcoal select-all">alangaramimitationjewellery@gmail.com</span>
         </div>
       </div>
     </>

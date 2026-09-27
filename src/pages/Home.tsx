@@ -1,14 +1,64 @@
-import React from 'react';
-import { ArrowUpRight } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ArrowUpRight, Loader2 } from 'lucide-react';
 import heroImg from '../assets/hero.png';
 import { Link } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { EffectCoverflow, Pagination, Autoplay } from 'swiper/modules';
+import { doc, getDoc, collection, getDocs, query, orderBy } from 'firebase/firestore';
+import { db } from '../config/firebase';
 import 'swiper/css';
 import 'swiper/css/effect-coverflow';
 import 'swiper/css/pagination';
 
 const Home = () => {
+  const [bannerText, setBannerText] = useState('20% OFFER GRAB YOUR OFFERS SOON !!');
+  const [bannerDesign, setBannerDesign] = useState<1 | 2 | 3 | 4>(1);
+
+  useEffect(() => {
+    const fetchBanner = async () => {
+      try {
+        const docSnap = await getDoc(doc(db, 'settings', 'banner'));
+        if (docSnap.exists()) {
+          if (docSnap.data().text) setBannerText(docSnap.data().text);
+          if (docSnap.data().design) setBannerDesign(docSnap.data().design);
+        }
+      } catch (error) {
+        console.error('Failed to fetch banner:', error);
+      }
+    };
+    fetchBanner();
+  }, []);
+
+  const [featuredProducts, setFeaturedProducts] = useState<any[]>([]);
+  const [loadingFeatured, setLoadingFeatured] = useState(true);
+
+  useEffect(() => {
+    const fetchFeatured = async () => {
+      setLoadingFeatured(true);
+      try {
+        const q = query(collection(db, 'products'), orderBy('createdAt', 'desc'));
+        const snap = await getDocs(q);
+        const loaded = snap.docs.map(doc => ({ id: doc.id, ...doc.data() })).slice(0, 10);
+        setFeaturedProducts(loaded);
+      } catch (error) {
+        console.error("Failed to fetch featured products:", error);
+      } finally {
+        setLoadingFeatured(false);
+      }
+    };
+    fetchFeatured();
+  }, []);
+
+  const getBannerDesignClasses = (design: 1 | 2 | 3 | 4) => {
+    switch (design) {
+      case 1: return "bg-[#2F2C29] text-[#C4A47C] shadow-[inset_0_2px_15px_rgba(0,0,0,0.3)]";
+      case 2: return "bg-[#C4A47C] text-white shadow-sm";
+      case 3: return "bg-[#F0EBE1] text-[#3F3A36] border-y border-[#C4A47C]/40";
+      case 4: return "bg-transparent text-[#3F3A36] border-y border-[#3F3A36]/20";
+      default: return "bg-[#2F2C29] text-[#C4A47C] shadow-[inset_0_2px_15px_rgba(0,0,0,0.3)]";
+    }
+  };
+
   return (
     <div className="opacity-0 animate-page-fade">
       {/* HERO SECTION */}
@@ -33,12 +83,12 @@ const Home = () => {
       </header>
 
       {/* PROMO MARQUEE */}
-      <div className="w-full bg-[#2F2C29] text-[#E8DCCB] py-3.5 overflow-hidden flex whitespace-nowrap shadow-[inset_0_2px_15px_rgba(0,0,0,0.3)]">
+      <div className={`w-full py-3.5 overflow-hidden flex whitespace-nowrap transition-colors duration-500 ${getBannerDesignClasses(bannerDesign)}`}>
         <div className="animate-marquee flex gap-10 md:gap-16 text-[12px] md:text-[13px] tracking-[0.25em] font-medium uppercase items-center opacity-90">
           {[...Array(10)].map((_, i) => (
             <React.Fragment key={i}>
-              <span>20% OFFER GRAB YOUR OFFERS SOON !!</span>
-              <span className="text-[#C4A47C] text-lg leading-none">✧</span>
+              <span>{bannerText}</span>
+              <span className="text-current opacity-70 text-lg leading-none">✧</span>
             </React.Fragment>
           ))}
         </div>
@@ -51,61 +101,71 @@ const Home = () => {
           <h2 className="text-3xl sm:text-4xl font-serif text-charcoal">Adorn yourself with quiet beauty.</h2>
         </div>
 
-        <div className="w-full max-w-5xl mx-auto overflow-hidden pb-2">
-          <Swiper
-            effect={'coverflow'}
-            grabCursor={true}
-            centeredSlides={true}
-            slidesPerView={'auto'}
-            loop={true}
-            autoplay={{
-              delay: 3500,
-              disableOnInteraction: false,
-            }}
-            coverflowEffect={{
-              rotate: 15,
-              stretch: 0,
-              depth: 150,
-              modifier: 1.2,
-              slideShadows: false,
-            }}
-            pagination={{ clickable: true }}
-            modules={[EffectCoverflow, Pagination, Autoplay]}
-            className="w-full pt-8 pb-12 px-4"
-          >
-            {[
-              { id: 1, name: "Classic Forming Necklace", price: "₹ 4,999", img: "/Mock-Images/01.png" },
-              { id: 2, name: "Elegant Forming Bangles", price: "₹ 2,499", img: "/Mock-Images/02.png" },
-              { id: 3, name: "Traditional Forming Jhumkas", price: "₹ 1,899", img: "/Mock-Images/03.png" },
-              { id: 4, name: "Bridal Forming Set", price: "₹ 8,999", img: "/Mock-Images/04.png" },
-              { id: 5, name: "Antique Forming Choker", price: "₹ 3,299", img: "/Mock-Images/05.png" },
-              { id: 6, name: "Designer Imitation Set", price: "₹ 1,499", img: "/Mock-Images/06.png" },
-              { id: 7, name: "Kundan Imitation Earrings", price: "₹ 899", img: "/Mock-Images/07.png" }
-            ].map((item) => {
-              const hasOffer = [1, 4, 7].includes(item.id);
-              return (
-              <SwiperSlide key={item.id} className="!w-[220px] md:!w-[280px]">
-                <Link to={`/product/${item.id}`} className="group cursor-pointer block pb-8">
-                  <div className="relative aspect-[3/4] overflow-hidden bg-[#FAF8F5] rounded-xl shadow-[0_10px_20px_rgba(0,0,0,0.1)] md:shadow-[0_15px_30px_rgba(0,0,0,0.1)]">
-                    <img 
-                      src={item.img} 
-                      alt={item.name} 
-                      className="w-full h-full object-cover mix-blend-multiply transition-transform duration-700 group-hover:scale-105"
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                    
-                    {hasOffer && (
-                      <div className="absolute top-4 right-4 bg-[#C4A47C] text-white text-[10px] font-bold tracking-[0.2em] px-2.5 py-1 uppercase rounded-sm z-10 shadow-sm backdrop-blur-sm bg-opacity-90">
-                        20% OFF
+        <div className="w-full max-w-5xl mx-auto overflow-hidden pb-2 min-h-[400px]">
+          {loadingFeatured ? (
+            <div className="flex justify-center items-center h-[350px]">
+               <Loader2 className="w-10 h-10 animate-spin text-[#C4A47C]" />
+            </div>
+          ) : featuredProducts.length === 0 ? (
+            <div className="flex justify-center items-center h-[350px] text-charcoal/50">
+               Check back soon for new arrivals.
+            </div>
+          ) : (
+            <Swiper
+              effect={'coverflow'}
+              grabCursor={true}
+              centeredSlides={true}
+              slidesPerView={'auto'}
+              loop={featuredProducts.length > 2}
+              autoplay={{ delay: 3500, disableOnInteraction: false }}
+              coverflowEffect={{ rotate: 15, stretch: 0, depth: 150, modifier: 1.2, slideShadows: false }}
+              pagination={{ clickable: true }}
+              modules={[EffectCoverflow, Pagination, Autoplay]}
+              className="w-full pt-8 pb-12 px-4"
+            >
+              {featuredProducts.map((item) => {
+                const hasStock = item.stock > 0;
+                return (
+                <SwiperSlide key={item.id} className="!w-[220px] md:!w-[280px]">
+                  <Link to={`/product/${item.id}`} className="group cursor-pointer block pb-8">
+                    <div className="relative aspect-[3/4] overflow-hidden bg-[#FAF8F5] rounded-xl shadow-[0_10px_20px_rgba(0,0,0,0.1)] md:shadow-[0_15px_30px_rgba(0,0,0,0.1)]">
+                      {/* Main Image */}
+                      <img 
+                        src={item.images[0]} 
+                        alt={item.name} 
+                        className={`absolute inset-0 w-full h-full object-cover mix-blend-multiply transition-all duration-700 ${item.images.length > 1 ? 'group-hover:opacity-0' : 'group-hover:scale-105'}`}
+                        loading="lazy"
+                      />
+                      {/* Model Image */}
+                      {item.images.length > 1 && (
+                        <img 
+                          src={item.images[1]} 
+                          alt={`${item.name} worn`} 
+                          className="absolute inset-0 w-full h-full object-cover mix-blend-multiply opacity-0 transition-all duration-700 group-hover:opacity-100 group-hover:scale-105"
+                          loading="lazy"
+                        />
+                      )}
+                      <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                      
+                      <div className="absolute top-4 right-4 flex flex-col gap-2 items-end z-10 pointer-events-none">
+                        {!hasStock && (
+                          <div className="bg-red-900/90 text-white text-[10px] font-bold tracking-[0.2em] px-2.5 py-1 uppercase rounded-sm shadow-sm backdrop-blur-sm">
+                            OUT OF STOCK
+                          </div>
+                        )}
+                        {hasStock && item.hasOffer && (
+                          <div className="bg-[#C4A47C] text-white text-[10px] font-bold tracking-[0.2em] px-2.5 py-1 uppercase rounded-sm shadow-sm backdrop-blur-sm">
+                            {item.offerPercentage}% OFF
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
-                </Link>
-              </SwiperSlide>
-              );
-            })}
-          </Swiper>
+                    </div>
+                  </Link>
+                </SwiperSlide>
+                );
+              })}
+            </Swiper>
+          )}
         </div>
         
         <div className="mt-2 text-center pb-2">

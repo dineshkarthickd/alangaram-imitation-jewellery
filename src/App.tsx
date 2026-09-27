@@ -9,7 +9,9 @@ import Products from './pages/Products';
 import ProductDetail from './pages/ProductDetail';
 import Preloader from './components/Preloader';
 import Cart from './pages/Cart';
+import AdminDashboard from './pages/AdminDashboard';
 import { CartProvider } from './context/CartContext';
+import { AuthProvider } from './context/AuthContext';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -39,8 +41,9 @@ function App() {
   }, []);
 
   return (
-    <CartProvider>
-      <Router>
+    <AuthProvider>
+      <CartProvider>
+        <Router>
       <Preloader />
       <ScrollToTop />
       <div className="min-h-screen font-sans flex flex-col relative bg-gradient-to-br from-[#FCF1E6] via-[#FDFBF7] to-[#DFEEE8]">
@@ -65,6 +68,7 @@ function App() {
               <Route path="/products" element={<Products />} />
               <Route path="/product/:id" element={<ProductDetail />} />
               <Route path="/cart" element={<Cart />} />
+              <Route path="/admin" element={<AdminDashboard />} />
             </Routes>
           </main>
 
@@ -73,7 +77,8 @@ function App() {
         </div>
       </div>
       </Router>
-    </CartProvider>
+      </CartProvider>
+    </AuthProvider>
   );
 }
 
