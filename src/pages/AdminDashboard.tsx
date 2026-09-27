@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { collection, addDoc, doc, setDoc, getDoc, getDocs, query, orderBy, deleteDoc, updateDoc } from 'firebase/firestore';
+import { collection, addDoc, doc, setDoc, getDoc, getDocs, query, where, orderBy, deleteDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { Upload, Plus, Loader2, CheckCircle2, Settings2, Image as ImageIcon, LayoutList, AlertCircle, AlertTriangle, PackageOpen, Edit2, Trash2, MessageSquare, Eye, EyeOff, Star, ChevronDown } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -120,7 +120,7 @@ const AdminDashboard = () => {
             )
           );
           const reviewArrays = await Promise.all(reviewPromises);
-          const fetchedReviews = reviewArrays.flat();
+          const fetchedReviews: any[] = reviewArrays.flat();
 
           // Sort newest first
           fetchedReviews.sort((a, b) => {
