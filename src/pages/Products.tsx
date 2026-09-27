@@ -34,7 +34,6 @@ const Products = () => {
   }, []);
 
   const handleCategoryChange = (cat: string) => {
-    setActiveCategory(cat);
     setSearchParams(cat === 'all' ? {} : { category: cat });
   };
 
