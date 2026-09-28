@@ -1,8 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { 
   signInWithPopup,
-  signInWithRedirect,
-  getRedirectResult,
   signOut as firebaseSignOut,
   onAuthStateChanged
 } from 'firebase/auth';
@@ -14,7 +12,7 @@ interface AuthContextType {
   currentUser: User | null;
   loading: boolean;
   isAdmin: boolean;
-  signInWithGoogle: () => void;
+  signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -28,9 +26,6 @@ export const useAuth = () => {
   return context;
 };
 
-// Detect mobile browsers — popups are blocked on mobile
-const isMobile = () => /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-
 const resolveAdminStatus = async (user: User): Promise<boolean> => {
   try {
     const docSnap = await getDoc(doc(db, 'settings', 'admins'));
@@ -38,7 +33,6 @@ const resolveAdminStatus = async (user: User): Promise<boolean> => {
       const emails: string[] = docSnap.data().emails;
       return emails.includes(user.email!);
     }
-    // Fallback if DB doc doesn't exist yet
     const defaultAdmins = [
       'dineshkarthick1610@gmail.com',
       'alangarmimitationjewellery@gmail.com',
@@ -55,59 +49,40 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
 
-  // Sign in with Google — popup on desktop, redirect on mobile
-  const signInWithGoogle = () => {
+  // Standard Popup Login - fixed by vercel.json COOP headers
+  const signInWithGoogle = async () => {
     try {
-      if (isMobile()) {
-        // Mobile: full-page redirect — don't await, page navigates away
-        signInWithRedirect(auth, googleProvider);
-      } else {
-        signInWithPopup(auth, googleProvider);
-      }
+      await signInWithPopup(auth, googleProvider);
     } catch (error) {
-      console.error("Error signing in with Google:", error);
-    }
-  };
-
-  // Sign out
-  const signOut = async () => {
-    try {
-      await firebaseSignOut(auth);
-    } catch (error) {
-      console.error("Error signing out:", error);
+      console.error('Error signing in with Google:', error);
       throw error;
     }
   };
 
-  // On mount: resolve any pending redirect sign-in result (mobile flow)
-  useEffect(() => {
-    getRedirectResult(auth).catch((error) => {
-      // Only log real errors, not the "no redirect" case
-      if (error?.code !== 'auth/null-user') {
-        console.error("Redirect sign-in error:", error);
-      }
-    });
-  }, []);
+  const signOut = async () => {
+    try {
+      await firebaseSignOut(auth);
+    } catch (error) {
+      console.error('Error signing out:', error);
+      throw error;
+    }
+  };
 
   // Auto-logout after 6 hours of inactivity
-  const INACTIVITY_LIMIT_MS = 6 * 60 * 60 * 1000; // 6 hours
+  const INACTIVITY_LIMIT_MS = 6 * 60 * 60 * 1000;
   const LAST_ACTIVE_KEY = 'alangaram_last_active';
 
   useEffect(() => {
     if (!currentUser) return;
 
-    // Record activity timestamp on any meaningful user interaction
     const updateActivity = () => {
       localStorage.setItem(LAST_ACTIVE_KEY, Date.now().toString());
     };
 
     const events = ['mousedown', 'keydown', 'scroll', 'touchstart', 'click'];
     events.forEach(e => window.addEventListener(e, updateActivity, { passive: true }));
-
-    // Seed initial activity when user logs in
     updateActivity();
 
-    // Check inactivity every 60 seconds
     const interval = setInterval(() => {
       const lastActive = parseInt(localStorage.getItem(LAST_ACTIVE_KEY) || '0', 10);
       if (Date.now() - lastActive > INACTIVITY_LIMIT_MS) {
@@ -122,34 +97,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   }, [currentUser]);
 
-  // Listen to auth state changes
+  // Auth state listener
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);
-
       if (user?.email) {
         const adminStatus = await resolveAdminStatus(user);
         setIsAdmin(adminStatus);
       } else {
         setIsAdmin(false);
       }
-
       setLoading(false);
     });
-
     return unsubscribe;
   }, []);
 
-  const value = {
-    currentUser,
-    loading,
-    isAdmin,
-    signInWithGoogle,
-    signOut
-  };
-
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider value={{ currentUser, loading, isAdmin, signInWithGoogle, signOut }}>
       {!loading && children}
     </AuthContext.Provider>
   );

@@ -206,6 +206,41 @@ const Navbar = () => {
               Admin Dashboard
             </Link>
           )}
+
+          {/* Mobile Auth Button */}
+          <div className="pt-8 mt-4 border-t border-charcoal/10">
+            {currentUser ? (
+              <div className="flex flex-col space-y-4">
+                <div className="flex items-center space-x-3">
+                  {currentUser.photoURL ? (
+                    <img src={currentUser.photoURL} alt="Profile" className="w-8 h-8 rounded-full border border-charcoal/20" />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-charcoal text-white flex items-center justify-center text-sm font-bold">
+                      {currentUser.displayName?.charAt(0) || 'U'}
+                    </div>
+                  )}
+                  <span className="font-serif text-charcoal text-lg truncate">{currentUser.displayName}</span>
+                </div>
+                <button 
+                  onClick={handleLogout}
+                  className="text-left font-sans text-sm tracking-widest uppercase text-charcoal/60 hover:text-charcoal transition-colors"
+                >
+                  Sign Out
+                </button>
+              </div>
+            ) : (
+              <button 
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  signInWithGoogle();
+                }}
+                className="flex items-center space-x-3 text-2xl font-serif text-charcoal hover:text-gold transition-colors"
+              >
+                <User size={24} />
+                <span>Login / Register</span>
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Sidebar Footer Accent */}
