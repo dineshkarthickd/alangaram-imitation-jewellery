@@ -44,7 +44,7 @@ const Navbar = () => {
   return (
     <>
       <nav 
-        className={`fixed z-50 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] left-1/2 -translate-x-1/2 rounded-[2rem] border ${
+        className={`fixed z-40 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] left-1/2 -translate-x-1/2 rounded-[2rem] border ${
           isScrolled 
             ? 'top-4 bg-cream/95 backdrop-blur-md border-charcoal/10 shadow-lg py-1.5 md:py-2 w-[92%] max-w-[800px]' 
             : 'top-6 md:top-8 bg-white/30 backdrop-blur-lg border-white/40 shadow-[0_8px_30px_rgb(0,0,0,0.05)] py-2 md:py-2.5 w-[95%] max-w-[1400px]'
@@ -109,7 +109,7 @@ const Navbar = () => {
                   <>
                     <button onClick={handleLogout} className="block hover:opacity-70 transition-opacity">
                       {currentUser.photoURL ? (
-                        <img src={currentUser.photoURL} alt="Profile" className="w-[22px] h-[22px] rounded-full object-cover border border-charcoal/20" />
+                        <img src={currentUser.photoURL} alt="Profile" referrerPolicy="no-referrer" className="w-[22px] h-[22px] rounded-full object-cover border border-charcoal/20" />
                       ) : (
                         <div className="w-[22px] h-[22px] rounded-full bg-charcoal text-white flex items-center justify-center text-[10px] font-sans font-bold">
                           {currentUser.displayName?.charAt(0) || 'U'}
@@ -118,9 +118,14 @@ const Navbar = () => {
                     </button>
                     {/* Hover Dropdown (Desktop Only) */}
                     <div className="absolute top-full right-1/2 translate-x-1/2 pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
-                      <button onClick={handleLogout} className="hidden md:block bg-white/95 backdrop-blur-md shadow-sm border border-gold-light/30 px-5 py-2 rounded-sm text-sm text-charcoal/80 hover:text-charcoal whitespace-nowrap">
-                        Logout
-                      </button>
+                      <div className="hidden md:flex flex-col bg-white/95 backdrop-blur-md shadow-sm border border-gold-light/30 rounded-sm overflow-hidden">
+                        <Link to="/my-orders" className="px-5 py-2.5 text-sm text-charcoal/80 hover:text-charcoal hover:bg-cream transition-colors whitespace-nowrap border-b border-charcoal/5">
+                          My Orders
+                        </Link>
+                        <button onClick={handleLogout} className="px-5 py-2.5 text-sm text-charcoal/80 hover:text-charcoal hover:bg-cream transition-colors whitespace-nowrap text-left">
+                          Logout
+                        </button>
+                      </div>
                     </div>
                   </>
                 ) : (
@@ -182,16 +187,16 @@ const Navbar = () => {
         </div>
         
         {/* Sidebar Links & Accordions */}
-        <div className="flex flex-col flex-grow overflow-y-auto px-8 py-10 space-y-8">
-          <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-serif text-charcoal hover:text-gold transition-colors">
+        <div className="flex flex-col flex-grow overflow-y-auto px-8 py-8 space-y-6">
+          <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-serif text-charcoal hover:text-gold transition-colors">
             Home
           </Link>
           
-          <div className="flex flex-col space-y-5">
-            <Link to="/products" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-serif text-charcoal hover:text-gold transition-colors">
+          <div className="flex flex-col space-y-4">
+            <Link to="/products" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-serif text-charcoal hover:text-gold transition-colors">
               Products
             </Link>
-            <div className="flex flex-col pl-4 space-y-4 font-sans text-[15px] text-charcoal/70">
+            <div className="flex flex-col pl-4 space-y-3 font-sans text-[14px] text-charcoal/70">
               <Link to="/products?category=forming" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-charcoal flex items-center gap-3 transition-colors">
                 <div className="w-1 h-1 rounded-full bg-gold"></div> Forming Jewellery
               </Link>
@@ -202,28 +207,34 @@ const Navbar = () => {
           </div>
 
           {isAdmin && (
-            <Link to="/admin" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-serif text-charcoal hover:text-gold transition-colors mt-4 block">
+            <Link to="/admin" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-serif text-charcoal hover:text-gold transition-colors mt-2 block">
               Admin Dashboard
             </Link>
           )}
 
+          {currentUser && (
+            <Link to="/my-orders" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-serif text-charcoal hover:text-gold transition-colors mt-2 block">
+              My Orders
+            </Link>
+          )}
+
           {/* Mobile Auth Button */}
-          <div className="pt-8 mt-4 border-t border-charcoal/10">
+          <div className="pt-6 mt-2 border-t border-charcoal/10">
             {currentUser ? (
-              <div className="flex flex-col space-y-4">
-                <div className="flex items-center space-x-3">
+              <div className="flex flex-col space-y-5">
+                <div className="flex items-center space-x-3 mb-2">
                   {currentUser.photoURL ? (
-                    <img src={currentUser.photoURL} alt="Profile" className="w-8 h-8 rounded-full border border-charcoal/20" />
+                    <img src={currentUser.photoURL} alt="Profile" referrerPolicy="no-referrer" className="w-8 h-8 rounded-full border border-charcoal/20" />
                   ) : (
                     <div className="w-8 h-8 rounded-full bg-charcoal text-white flex items-center justify-center text-sm font-bold">
                       {currentUser.displayName?.charAt(0) || 'U'}
                     </div>
                   )}
-                  <span className="font-serif text-charcoal text-lg truncate">{currentUser.displayName}</span>
+                  <span className="font-serif text-charcoal text-base truncate">{currentUser.displayName}</span>
                 </div>
                 <button 
                   onClick={handleLogout}
-                  className="text-left font-sans text-sm tracking-widest uppercase text-charcoal/60 hover:text-charcoal transition-colors"
+                  className="text-left text-xl font-serif text-charcoal hover:text-gold transition-colors block"
                 >
                   Sign Out
                 </button>
@@ -234,10 +245,10 @@ const Navbar = () => {
                   setIsMobileMenuOpen(false);
                   signInWithGoogle();
                 }}
-                className="flex items-center space-x-3 text-2xl font-serif text-charcoal hover:text-gold transition-colors"
+                className="flex items-center space-x-3 text-xl font-serif text-charcoal hover:text-gold transition-colors w-full text-left"
               >
-                <User size={24} />
-                <span>Login / Register</span>
+                <User size={20} />
+                <span>Sign In</span>
               </button>
             )}
           </div>

@@ -1,15 +1,16 @@
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { Trash2, ArrowRight, Minus, Plus, ShoppingBag } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Cart = () => {
   const { cartItems, removeFromCart, updateQuantity, cartTotal } = useCart();
   const { currentUser, signInWithGoogle } = useAuth();
+  const navigate = useNavigate();
 
   if (cartItems.length === 0) {
     return (
-      <div className="min-h-[80vh] flex flex-col items-center justify-center pt-24 px-8 opacity-0 animate-page-fade">
+      <div className="min-h-[80vh] flex flex-col items-center justify-center pt-24 px-8">
         <div className="w-24 h-24 bg-cream rounded-full flex items-center justify-center mb-6 text-charcoal/30">
           <ShoppingBag size={40} strokeWidth={1} />
         </div>
@@ -23,7 +24,7 @@ const Cart = () => {
   }
 
   return (
-    <div className="pt-32 pb-24 px-6 md:px-12 max-w-7xl mx-auto min-h-screen opacity-0 animate-page-fade">
+    <div className="pt-32 pb-24 px-6 md:px-12 max-w-7xl mx-auto min-h-screen">
       <h1 className="text-3xl md:text-4xl font-serif text-charcoal mb-10 border-b border-charcoal/10 pb-6">Shopping Cart</h1>
       
       <div className="flex flex-col lg:flex-row gap-12 lg:gap-16">
@@ -105,11 +106,10 @@ const Cart = () => {
                 if (!currentUser) {
                   signInWithGoogle();
                 } else {
-                  // In the future, this will route to Stripe/Razorpay
-                  alert("Proceeding to secure checkout...");
+                  navigate('/checkout');
                 }
               }}
-              className="btn-luxury btn-luxury-solid w-full py-4"
+              className="btn-luxury btn-luxury-solid w-full py-4 flex items-center justify-center gap-2"
             >
               {currentUser ? 'Proceed to Checkout' : 'Sign in to Checkout'} <ArrowRight size={16} />
             </button>

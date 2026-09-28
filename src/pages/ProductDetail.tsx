@@ -88,7 +88,7 @@ const ProductDetail = () => {
   const hasStock = product.stock > 0;
 
   return (
-    <div className="pt-32 pb-24 px-8 max-w-6xl mx-auto min-h-screen opacity-0 animate-page-fade">
+    <div className="pt-32 pb-24 px-8 max-w-6xl mx-auto min-h-screen">
       <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-sm uppercase tracking-widest text-charcoal/60 hover:text-charcoal transition-colors mb-10 group">
         <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Back
       </button>

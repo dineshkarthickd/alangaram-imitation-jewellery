@@ -60,7 +60,7 @@ const Home = () => {
   };
 
   return (
-    <div className="opacity-0 animate-page-fade">
+    <div>
       {/* HERO SECTION */}
       <header className="relative w-full h-[75vh] lg:h-[80vh] overflow-hidden flex items-center justify-start">
         <div 
