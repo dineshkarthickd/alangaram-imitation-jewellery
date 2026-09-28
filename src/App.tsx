@@ -12,6 +12,8 @@ import Cart from './pages/Cart';
 import AdminDashboard from './pages/AdminDashboard';
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
+import Checkout from './pages/Checkout';
+import MyOrders from './pages/MyOrders';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -19,6 +21,15 @@ const ScrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [pathname]);
   return null;
+};
+
+const PageTransition = ({ children }: { children: React.ReactNode }) => {
+  const location = useLocation();
+  return (
+    <div key={location.pathname} className="animate-page-fade flex-grow flex flex-col">
+      {children}
+    </div>
+  );
 };
 
 function App() {
@@ -62,14 +73,18 @@ function App() {
         <div className="relative z-10 flex flex-col flex-grow">
           <Navbar />
           
-          <main className="flex-grow">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/products" element={<Products />} />
-              <Route path="/product/:id" element={<ProductDetail />} />
-              <Route path="/cart" element={<Cart />} />
-              <Route path="/admin" element={<AdminDashboard />} />
-            </Routes>
+          <main className="flex-grow flex flex-col">
+            <PageTransition>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/products" element={<Products />} />
+                <Route path="/product/:id" element={<ProductDetail />} />
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/checkout" element={<Checkout />} />
+                <Route path="/my-orders" element={<MyOrders />} />
+                <Route path="/admin" element={<AdminDashboard />} />
+              </Routes>
+            </PageTransition>
           </main>
 
         <Footer />

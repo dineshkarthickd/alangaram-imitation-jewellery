@@ -42,7 +42,7 @@ const Products = () => {
     : products.filter(p => p.category.toLowerCase() === activeCategory.toLowerCase());
 
   return (
-    <div className="pt-32 pb-24 px-6 md:px-12 lg:px-20 max-w-[1400px] mx-auto min-h-screen opacity-0 animate-page-fade">
+    <div className="pt-32 pb-24 px-6 md:px-12 lg:px-20 max-w-[1400px] mx-auto min-h-screen">
       
       {/* HEADER */}
       <div className="text-center mb-16">
