@@ -91,6 +91,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
   }, []);
 
+  // Auto-logout after 6 hours of inactivity
+  const INACTIVITY_LIMIT_MS = 6 * 60 * 60 * 1000; // 6 hours
+  const LAST_ACTIVE_KEY = 'alangaram_last_active';
+
+  useEffect(() => {
+    if (!currentUser) return;
+
+    // Record activity timestamp on any meaningful user interaction
+    const updateActivity = () => {
+      localStorage.setItem(LAST_ACTIVE_KEY, Date.now().toString());
+    };
+
+    const events = ['mousedown', 'mousemove', 'keydown', 'scroll', 'touchstart', 'click'];
+    events.forEach(e => window.addEventListener(e, updateActivity, { passive: true }));
+
+    // Seed initial activity when user logs in
+    updateActivity();
+
+    // Check inactivity every 60 seconds
+    const interval = setInterval(() => {
+      const lastActive = parseInt(localStorage.getItem(LAST_ACTIVE_KEY) || '0', 10);
+      if (Date.now() - lastActive > INACTIVITY_LIMIT_MS) {
+        localStorage.removeItem(LAST_ACTIVE_KEY);
+        firebaseSignOut(auth);
+      }
+    }, 60 * 1000);
+
+    return () => {
+      events.forEach(e => window.removeEventListener(e, updateActivity));
+      clearInterval(interval);
+    };
+  }, [currentUser]);
+
   // Listen to auth state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
