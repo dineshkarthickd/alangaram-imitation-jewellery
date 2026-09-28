@@ -14,7 +14,7 @@ interface AuthContextType {
   currentUser: User | null;
   loading: boolean;
   isAdmin: boolean;
-  signInWithGoogle: () => Promise<void>;
+  signInWithGoogle: () => void;
   signOut: () => Promise<void>;
 }
 
@@ -56,18 +56,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isAdmin, setIsAdmin] = useState(false);
 
   // Sign in with Google — popup on desktop, redirect on mobile
-  const signInWithGoogle = async () => {
+  const signInWithGoogle = () => {
     try {
       if (isMobile()) {
-        // Mobile: full-page redirect — page reloads after Google login
-        await signInWithRedirect(auth, googleProvider);
+        // Mobile: full-page redirect — don't await, page navigates away
+        signInWithRedirect(auth, googleProvider);
       } else {
-        // Desktop: popup works fine
-        await signInWithPopup(auth, googleProvider);
+        signInWithPopup(auth, googleProvider);
       }
     } catch (error) {
       console.error("Error signing in with Google:", error);
-      throw error;
     }
   };
 
@@ -103,7 +101,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       localStorage.setItem(LAST_ACTIVE_KEY, Date.now().toString());
     };
 
-    const events = ['mousedown', 'mousemove', 'keydown', 'scroll', 'touchstart', 'click'];
+    const events = ['mousedown', 'keydown', 'scroll', 'touchstart', 'click'];
     events.forEach(e => window.addEventListener(e, updateActivity, { passive: true }));
 
     // Seed initial activity when user logs in
