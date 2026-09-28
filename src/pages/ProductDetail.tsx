@@ -270,7 +270,7 @@ const ProductDetail = () => {
 
       {/* RELATED PIECES */}
       {relatedProducts.length > 0 && (
-        <div className="mt-24 border-t border-charcoal/10 pt-16">
+        <div className="mt-8 md:mt-24 border-t border-charcoal/10 pt-8 md:pt-16">
           <h2 className="text-2xl font-serif text-charcoal mb-10 text-center">You May Also Like</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
             {relatedProducts.map(relProduct => {

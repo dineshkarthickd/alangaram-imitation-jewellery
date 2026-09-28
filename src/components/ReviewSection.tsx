@@ -46,7 +46,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId, reviews, onRev
   };
 
   return (
-    <div className="mt-24 border-t border-charcoal/10 pt-16 animate-fade-in">
+    <div className="mt-8 md:mt-24 border-t border-charcoal/10 pt-8 md:pt-16 animate-fade-in">
       <h2 className="text-2xl font-serif text-charcoal mb-10 flex items-center gap-3">
         <MessageSquare size={24} className="text-[#C4A47C]" /> 
         Customer Reviews
