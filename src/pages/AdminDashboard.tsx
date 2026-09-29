@@ -19,52 +19,52 @@ const AdminDashboard = () => {
   if (!isAdmin) return <Navigate to="/" replace />;
 
   return (
-    <div className="min-h-screen pt-32 pb-24 px-12 max-w-7xl mx-auto">
-      <h1 className="text-4xl font-serif text-charcoal mb-2">Admin Dashboard</h1>
-      <p className="text-charcoal/60 mb-10 border-b border-charcoal/10 pb-6">Manage your products, inventory, and website settings.</p>
+    <div className="min-h-screen pt-24 md:pt-32 pb-16 md:pb-24 px-4 md:px-12 w-full max-w-[100vw] md:max-w-7xl mx-auto min-w-0 overflow-x-hidden">
+      <h1 className="text-2xl md:text-4xl font-serif text-charcoal mb-1 md:mb-2">Admin Dashboard</h1>
+      <p className="text-[11px] md:text-base text-charcoal/60 mb-6 md:mb-10 border-b border-charcoal/10 pb-4 md:pb-6">Manage your products, inventory, and website settings.</p>
 
-      <div className="flex flex-row gap-12">
+      <div className="flex flex-col md:flex-row gap-6 md:gap-12 w-full min-w-0">
         
         {/* Service List Sidebar */}
-        <div className="w-72 flex flex-col space-y-3 flex-shrink-0">
+        <div className="w-full md:w-72 flex flex-row md:flex-col gap-2 md:space-y-3 md:flex-shrink-0 overflow-x-auto no-scrollbar pb-2 md:pb-0 min-w-0">
           <button 
             onClick={() => { 
               setActiveTab('upload'); 
               setEditingProduct(null); 
             }} 
-            className={`flex items-center gap-3 text-left px-5 py-4 rounded-xl transition-all duration-300 font-medium ${activeTab === 'upload' ? 'bg-[#C4A47C] text-white shadow-md' : 'bg-white/50 text-charcoal/70 hover:bg-white border border-charcoal/5'}`}
+            className={`flex flex-shrink-0 items-center gap-2 text-left px-3 md:px-5 py-2 md:py-4 rounded-lg md:rounded-xl transition-all duration-300 font-medium text-[10px] md:text-base ${activeTab === 'upload' ? 'bg-[#C4A47C] text-white shadow-md' : 'bg-white/50 text-charcoal/70 hover:bg-white border border-charcoal/5'}`}
           >
-            <ImageIcon size={18} /> {editingProduct ? 'Edit Product' : 'Add New Product'}
+            <ImageIcon size={14} className="md:w-[18px] md:h-[18px]" /> {editingProduct ? 'Edit' : 'Add'}
           </button>
           <button 
             onClick={() => setActiveTab('manage')} 
-            className={`flex items-center justify-between px-5 py-4 rounded-xl transition-all duration-300 font-medium ${activeTab === 'manage' ? 'bg-[#C4A47C] text-white shadow-md' : 'bg-white/50 text-charcoal/70 hover:bg-white border border-charcoal/5'}`}
+            className={`flex flex-shrink-0 items-center gap-2 px-3 md:px-5 py-2 md:py-4 rounded-lg md:rounded-xl transition-all duration-300 font-medium text-[10px] md:text-base ${activeTab === 'manage' ? 'bg-[#C4A47C] text-white shadow-md' : 'bg-white/50 text-charcoal/70 hover:bg-white border border-charcoal/5'}`}
           >
-            <div className="flex items-center gap-3"><LayoutList size={18} /> Manage Inventory</div>
-            {lowStockCount > 0 && <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full animate-pulse">{lowStockCount}</span>}
+            <div className="flex items-center gap-2"><LayoutList size={14} className="md:w-[18px] md:h-[18px]" /> Inventory</div>
+            {lowStockCount > 0 && <span className="bg-red-500 text-white text-[8px] md:text-xs font-bold px-1.5 md:px-2 py-0.5 md:py-1 rounded-full animate-pulse">{lowStockCount}</span>}
           </button>
           <button 
             onClick={() => setActiveTab('reviews')} 
-            className={`flex items-center gap-3 text-left px-5 py-4 rounded-xl transition-all duration-300 font-medium ${activeTab === 'reviews' ? 'bg-[#C4A47C] text-white shadow-md' : 'bg-white/50 text-charcoal/70 hover:bg-white border border-charcoal/5'}`}
+            className={`flex flex-shrink-0 items-center gap-2 text-left px-3 md:px-5 py-2 md:py-4 rounded-lg md:rounded-xl transition-all duration-300 font-medium text-[10px] md:text-base ${activeTab === 'reviews' ? 'bg-[#C4A47C] text-white shadow-md' : 'bg-white/50 text-charcoal/70 hover:bg-white border border-charcoal/5'}`}
           >
-            <MessageSquare size={18} /> Manage Reviews
+            <MessageSquare size={14} className="md:w-[18px] md:h-[18px]" /> Reviews
           </button>
           <button 
             onClick={() => setActiveTab('orders')} 
-            className={`flex items-center gap-3 text-left px-5 py-4 rounded-xl transition-all duration-300 font-medium ${activeTab === 'orders' ? 'bg-[#C4A47C] text-white shadow-md' : 'bg-white/50 text-charcoal/70 hover:bg-white border border-charcoal/5'}`}
+            className={`flex flex-shrink-0 items-center gap-2 text-left px-3 md:px-5 py-2 md:py-4 rounded-lg md:rounded-xl transition-all duration-300 font-medium text-[10px] md:text-base ${activeTab === 'orders' ? 'bg-[#C4A47C] text-white shadow-md' : 'bg-white/50 text-charcoal/70 hover:bg-white border border-charcoal/5'}`}
           >
-            <Package size={18} /> Manage Orders
+            <Package size={14} className="md:w-[18px] md:h-[18px]" /> Orders
           </button>
           <button 
             onClick={() => setActiveTab('banner')} 
-            className={`flex items-center gap-3 text-left px-5 py-4 rounded-xl transition-all duration-300 font-medium ${activeTab === 'banner' ? 'bg-[#C4A47C] text-white shadow-md' : 'bg-white/50 text-charcoal/70 hover:bg-white border border-charcoal/5'}`}
+            className={`flex flex-shrink-0 items-center gap-2 text-left px-3 md:px-5 py-2 md:py-4 rounded-lg md:rounded-xl transition-all duration-300 font-medium text-[10px] md:text-base ${activeTab === 'banner' ? 'bg-[#C4A47C] text-white shadow-md' : 'bg-white/50 text-charcoal/70 hover:bg-white border border-charcoal/5'}`}
           >
-            <Settings2 size={18} /> Store Settings
+            <Settings2 size={14} className="md:w-[18px] md:h-[18px]" /> Settings
           </button>
         </div>
 
         {/* Main Content Area */}
-        <div className="flex-1">
+        <div className="flex-1 min-w-0">
           {activeTab === 'upload' && (
             <AdminAddProduct 
               editingProduct={editingProduct} 

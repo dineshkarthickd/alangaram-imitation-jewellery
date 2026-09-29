@@ -11,6 +11,13 @@
 }
 
 @layer base {
+  html, body, #root {
+    overflow-x: clip; /* Fixes iOS scroll lag compared to hidden */
+    width: 100%;
+    max-width: 100vw;
+    position: relative;
+  }
+  
   body {
     background-color: var(--color-cream);
     color: var(--color-charcoal);

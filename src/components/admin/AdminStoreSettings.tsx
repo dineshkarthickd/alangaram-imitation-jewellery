@@ -91,10 +91,10 @@ const AdminStoreSettings = () => {
   };
 
   return (
-    <div className="animate-fade-in space-y-8 bg-white/50 p-8 rounded-2xl border border-charcoal/5 shadow-sm">
+    <div className="animate-fade-in space-y-6 md:space-y-8 bg-white/50 p-4 md:p-8 rounded-xl md:rounded-2xl border border-charcoal/5 shadow-sm">
       <div>
-        <h2 className="text-2xl font-serif text-charcoal mb-2">Store Settings</h2>
-        <p className="text-charcoal/60 text-sm mb-6">Manage global store configurations and admin access.</p>
+        <h2 className="text-lg md:text-2xl font-serif text-charcoal mb-1 md:mb-2">Store Settings</h2>
+        <p className="text-charcoal/60 text-[10px] md:text-sm mb-4 md:mb-6">Manage global store configurations and admin access.</p>
       </div>
 
       {globalError && (
@@ -110,47 +110,47 @@ const AdminStoreSettings = () => {
         </div>
       )}
 
-      <form onSubmit={handleSaveSettings} className="space-y-12">
+      <form onSubmit={handleSaveSettings} className="space-y-12 min-w-0">
         {/* Payment Settings Section */}
-        <div>
+        <div className="min-w-0">
           <h3 className="text-lg font-serif text-charcoal mb-4 border-b border-charcoal/10 pb-2">Payment Settings (GPay UPI)</h3>
-          <p className="text-sm text-charcoal/60 mb-6">Configure the exact UPI ID and registered Name for receiving payments.</p>
+          <p className="text-[10px] md:text-sm text-charcoal/60 mb-6">Configure the exact UPI ID and registered Name for receiving payments.</p>
           
-          <div className="grid grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm uppercase tracking-wider text-charcoal/70 mb-2">UPI ID</label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 min-w-0">
+            <div className="min-w-0">
+              <label className="block text-[10px] md:text-sm uppercase tracking-wider text-charcoal/70 mb-2">UPI ID</label>
               <input type="text" value={upiId} onChange={(e) => setUpiId(e.target.value)}
-                className="w-full bg-transparent border-b border-charcoal/20 py-3 outline-none focus:border-[#C4A47C] transition-colors"
+                className="w-full bg-transparent border-b border-charcoal/20 py-2 md:py-3 outline-none focus:border-[#C4A47C] transition-colors text-[10px] md:text-sm"
                 placeholder="yourname@okbank"
               />
             </div>
-            <div>
-              <label className="block text-sm uppercase tracking-wider text-charcoal/70 mb-2">Payee Name</label>
+            <div className="min-w-0">
+              <label className="block text-[10px] md:text-sm uppercase tracking-wider text-charcoal/70 mb-2">Payee Name</label>
               <input type="text" value={payeeName} onChange={(e) => setPayeeName(e.target.value)}
-                className="w-full bg-transparent border-b border-charcoal/20 py-3 outline-none focus:border-[#C4A47C] transition-colors"
+                className="w-full bg-transparent border-b border-charcoal/20 py-2 md:py-3 outline-none focus:border-[#C4A47C] transition-colors text-[10px] md:text-sm"
                 placeholder="Alangaram Jewellery"
               />
             </div>
           </div>
         </div>
         {/* Admin Access Section */}
-        <div>
+        <div className="min-w-0">
           <h3 className="text-lg font-serif text-charcoal mb-4 border-b border-charcoal/10 pb-2">Admin Dashboard Access</h3>
-          <p className="text-sm text-charcoal/60 mb-6">Specify up to 2 Google accounts that are authorized to access this dashboard.</p>
+          <p className="text-[10px] md:text-sm text-charcoal/60 mb-6">Specify up to 2 Google accounts that are authorized to access this dashboard.</p>
           
-          <div className="grid grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm uppercase tracking-wider text-charcoal/70 mb-2">Primary Admin Email</label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 min-w-0">
+            <div className="min-w-0">
+              <label className="block text-[10px] md:text-sm uppercase tracking-wider text-charcoal/70 mb-2">Primary Admin Email</label>
               <input type="email" value={adminEmail1} onChange={(e) => { setAdminEmail1(e.target.value); setSettingsErrors({...settingsErrors, adminEmail1: ''}); }}
-                className={`w-full bg-transparent border-b py-3 outline-none transition-colors ${settingsErrors.adminEmail1 ? 'border-red-500' : 'border-charcoal/20 focus:border-[#C4A47C]'}`}
+                className={`w-full bg-transparent border-b py-2 md:py-3 outline-none transition-colors text-[10px] md:text-sm ${settingsErrors.adminEmail1 ? 'border-red-500' : 'border-charcoal/20 focus:border-[#C4A47C]'}`}
                 placeholder="admin@gmail.com"
               />
-              {settingsErrors.adminEmail1 && <p className="text-red-500 text-xs mt-1.5 animate-fade-in font-medium">{settingsErrors.adminEmail1}</p>}
+              {settingsErrors.adminEmail1 && <p className="text-red-500 text-[10px] md:text-xs mt-1.5 animate-fade-in font-medium">{settingsErrors.adminEmail1}</p>}
             </div>
-            <div>
-              <label className="block text-sm uppercase tracking-wider text-charcoal/70 mb-2">Secondary Admin Email (Optional)</label>
+            <div className="min-w-0">
+              <label className="block text-[10px] md:text-sm uppercase tracking-wider text-charcoal/70 mb-2">Secondary Admin Email (Optional)</label>
               <input type="email" value={adminEmail2} onChange={(e) => setAdminEmail2(e.target.value)}
-                className="w-full bg-transparent border-b border-charcoal/20 py-3 outline-none focus:border-[#C4A47C] transition-colors"
+                className="w-full bg-transparent border-b border-charcoal/20 py-2 md:py-3 outline-none focus:border-[#C4A47C] transition-colors text-[10px] md:text-sm"
                 placeholder="co-owner@gmail.com"
               />
             </div>
@@ -158,30 +158,30 @@ const AdminStoreSettings = () => {
         </div>
 
         {/* Banner Section */}
-        <div>
+        <div className="min-w-0">
           <h3 className="text-lg font-serif text-charcoal mb-4 border-b border-charcoal/10 pb-2">Offer Banner Alternation</h3>
-          <div className="space-y-8 mt-4">
-            <div>
-              <label className="block text-sm uppercase tracking-wider text-charcoal/70 mb-3">Banner Text</label>
+          <div className="space-y-4 md:space-y-8 mt-4 min-w-0">
+            <div className="min-w-0">
+              <label className="block text-[10px] md:text-sm uppercase tracking-wider text-charcoal/70 mb-2 md:mb-3">Banner Text</label>
               <input type="text" value={bannerText} onChange={(e) => { setBannerText(e.target.value); setSettingsErrors({...settingsErrors, bannerText: ''}); }}
-                className={`w-full bg-transparent border-b py-3 outline-none transition-colors ${settingsErrors.bannerText ? 'border-red-500' : 'border-charcoal/20 focus:border-[#C4A47C]'}`}
+                className={`w-full bg-transparent border-b py-2 md:py-3 outline-none transition-colors text-[10px] md:text-sm ${settingsErrors.bannerText ? 'border-red-500' : 'border-charcoal/20 focus:border-[#C4A47C]'}`}
               />
-              {settingsErrors.bannerText && <p className="text-red-500 text-xs mt-1.5 animate-fade-in font-medium">{settingsErrors.bannerText}</p>}
+              {settingsErrors.bannerText && <p className="text-red-500 text-[10px] md:text-xs mt-1.5 animate-fade-in font-medium">{settingsErrors.bannerText}</p>}
             </div>
-            <div>
-              <label className="block text-sm uppercase tracking-wider text-charcoal/70 mb-4">Select Design Palette</label>
-              <div className="grid grid-cols-2 gap-4">
-                <button type="button" onClick={() => setBannerDesign(1)} className={`p-4 rounded-xl border-2 transition-all ${bannerDesign === 1 ? 'border-[#C4A47C]' : 'border-transparent bg-white hover:border-charcoal/20'}`}>
-                  <div className="w-full h-10 bg-[#3F3A36] text-[#C4A47C] flex items-center justify-center text-xs tracking-widest font-sans rounded-md">CHARCOAL & GOLD</div>
+            <div className="min-w-0">
+              <label className="block text-[10px] md:text-sm uppercase tracking-wider text-charcoal/70 mb-3 md:mb-4">Select Design Palette</label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 min-w-0">
+                <button type="button" onClick={() => setBannerDesign(1)} className={`p-2 md:p-4 rounded-xl border-2 transition-all ${bannerDesign === 1 ? 'border-[#C4A47C]' : 'border-transparent bg-white hover:border-charcoal/20'}`}>
+                  <div className="w-full h-10 bg-[#3F3A36] text-[#C4A47C] flex items-center justify-center text-[10px] md:text-xs tracking-widest font-sans rounded-md text-center p-2">CHARCOAL & GOLD</div>
                 </button>
-                <button type="button" onClick={() => setBannerDesign(2)} className={`p-4 rounded-xl border-2 transition-all ${bannerDesign === 2 ? 'border-[#C4A47C]' : 'border-transparent bg-white hover:border-charcoal/20'}`}>
-                  <div className="w-full h-10 bg-[#C4A47C] text-white flex items-center justify-center text-xs tracking-widest font-sans rounded-md">SOLID GOLD</div>
+                <button type="button" onClick={() => setBannerDesign(2)} className={`p-2 md:p-4 rounded-xl border-2 transition-all ${bannerDesign === 2 ? 'border-[#C4A47C]' : 'border-transparent bg-white hover:border-charcoal/20'}`}>
+                  <div className="w-full h-10 bg-[#C4A47C] text-white flex items-center justify-center text-[10px] md:text-xs tracking-widest font-sans rounded-md text-center p-2">SOLID GOLD</div>
                 </button>
-                <button type="button" onClick={() => setBannerDesign(3)} className={`p-4 rounded-xl border-2 transition-all ${bannerDesign === 3 ? 'border-[#C4A47C]' : 'border-transparent bg-white hover:border-charcoal/20'}`}>
-                  <div className="w-full h-10 bg-[#F0EBE1] border-y border-[#C4A47C] text-[#3F3A36] flex items-center justify-center text-xs tracking-widest font-sans rounded-md">CREAM BORDERED</div>
+                <button type="button" onClick={() => setBannerDesign(3)} className={`p-2 md:p-4 rounded-xl border-2 transition-all ${bannerDesign === 3 ? 'border-[#C4A47C]' : 'border-transparent bg-white hover:border-charcoal/20'}`}>
+                  <div className="w-full h-10 bg-[#F0EBE1] border-y border-[#C4A47C] text-[#3F3A36] flex items-center justify-center text-[10px] md:text-xs tracking-widest font-sans rounded-md text-center p-2">CREAM BORDERED</div>
                 </button>
-                <button type="button" onClick={() => setBannerDesign(4)} className={`p-4 rounded-xl border-2 transition-all ${bannerDesign === 4 ? 'border-[#C4A47C]' : 'border-transparent bg-white hover:border-charcoal/20'}`}>
-                  <div className="w-full h-10 bg-transparent border-y border-[#3F3A36] text-[#3F3A36] flex items-center justify-center text-xs tracking-widest font-sans rounded-md">MINIMALIST CLEAR</div>
+                <button type="button" onClick={() => setBannerDesign(4)} className={`p-2 md:p-4 rounded-xl border-2 transition-all ${bannerDesign === 4 ? 'border-[#C4A47C]' : 'border-transparent bg-white hover:border-charcoal/20'}`}>
+                  <div className="w-full h-10 bg-transparent border-y border-[#3F3A36] text-[#3F3A36] flex items-center justify-center text-[10px] md:text-xs tracking-widest font-sans rounded-md text-center p-2">MINIMALIST CLEAR</div>
                 </button>
               </div>
             </div>

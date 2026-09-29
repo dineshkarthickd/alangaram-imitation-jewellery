@@ -71,30 +71,30 @@ const AdminManageInventory: React.FC<AdminManageInventoryProps> = ({ onEditProdu
   const lowStockCount = productsList.filter(p => p.stock < 3).length;
 
   return (
-    <div className="animate-fade-in bg-white/50 p-8 rounded-2xl border border-charcoal/5 shadow-sm min-h-[500px] relative">
-      <div className="flex flex-row justify-between items-end gap-4 mb-8">
-        <div>
+    <div className="animate-fade-in bg-white/50 p-4 md:p-8 rounded-2xl border border-charcoal/5 shadow-sm min-h-[500px] relative">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-8 min-w-0">
+        <div className="min-w-0">
           <h2 className="text-2xl font-serif text-charcoal mb-2">Inventory Management</h2>
-          <p className="text-charcoal/60 text-sm">Monitor stock levels and view all live products.</p>
+          <p className="text-charcoal/60 text-[10px] md:text-sm">Monitor stock levels and view all live products.</p>
         </div>
         {lowStockCount > 0 && (
-          <div className="flex items-center gap-2 bg-red-50 text-red-600 px-4 py-2 rounded-lg border border-red-100">
+          <div className="flex items-center gap-2 bg-red-50 text-red-600 px-4 py-2 md:py-3 rounded-lg border border-red-100 min-w-0">
             <AlertTriangle size={18} />
-            <span className="text-sm font-semibold">{lowStockCount} Items need restocking!</span>
+            <span className="text-[10px] md:text-sm font-semibold">{lowStockCount} Items need restocking!</span>
           </div>
         )}
       </div>
 
       {/* Stock Filter Pills */}
-      <div className="flex flex-wrap gap-2 mb-6">
-        <button onClick={() => setStockFilter('all')} className={`px-4 py-2 rounded-full text-sm transition-all ${stockFilter === 'all' ? 'bg-[#C4A47C] text-white' : 'bg-white border border-charcoal/10 text-charcoal/70 hover:border-[#C4A47C]'}`}>All Products</button>
-        <button onClick={() => setStockFilter('active')} className={`px-4 py-2 rounded-full text-sm transition-all ${stockFilter === 'active' ? 'bg-[#C4A47C] text-white' : 'bg-white border border-charcoal/10 text-charcoal/70 hover:border-[#C4A47C]'}`}>Active Stock</button>
-        <button onClick={() => setStockFilter('low')} className={`px-4 py-2 rounded-full text-sm transition-all ${stockFilter === 'low' ? 'bg-orange-500 text-white' : 'bg-white border border-orange-200 text-orange-600 hover:border-orange-500'}`}>Low Stock</button>
-        <button onClick={() => setStockFilter('out')} className={`px-4 py-2 rounded-full text-sm transition-all ${stockFilter === 'out' ? 'bg-red-500 text-white' : 'bg-white border border-red-200 text-red-600 hover:border-red-500'}`}>Out of Stock</button>
+      <div className="flex flex-wrap gap-2 mb-6 min-w-0">
+        <button onClick={() => setStockFilter('all')} className={`px-4 py-2 md:py-3 rounded-full text-[10px] md:text-sm transition-all ${stockFilter === 'all' ? 'bg-[#C4A47C] text-white' : 'bg-white border border-charcoal/10 text-charcoal/70 hover:border-[#C4A47C]'}`}>All Products</button>
+        <button onClick={() => setStockFilter('active')} className={`px-4 py-2 md:py-3 rounded-full text-[10px] md:text-sm transition-all ${stockFilter === 'active' ? 'bg-[#C4A47C] text-white' : 'bg-white border border-charcoal/10 text-charcoal/70 hover:border-[#C4A47C]'}`}>Active Stock</button>
+        <button onClick={() => setStockFilter('low')} className={`px-4 py-2 md:py-3 rounded-full text-[10px] md:text-sm transition-all ${stockFilter === 'low' ? 'bg-orange-500 text-white' : 'bg-white border border-orange-200 text-orange-600 hover:border-orange-500'}`}>Low Stock</button>
+        <button onClick={() => setStockFilter('out')} className={`px-4 py-2 md:py-3 rounded-full text-[10px] md:text-sm transition-all ${stockFilter === 'out' ? 'bg-red-500 text-white' : 'bg-white border border-red-200 text-red-600 hover:border-red-500'}`}>Out of Stock</button>
       </div>
 
       {globalError && (
-        <div className="mb-8 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-3 text-red-700 shadow-sm">
+        <div className="mb-8 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-3 text-red-700 shadow-sm min-w-0">
           <p className="font-medium">{globalError}</p>
         </div>
       )}
@@ -114,56 +114,56 @@ const AdminManageInventory: React.FC<AdminManageInventoryProps> = ({ onEditProdu
                 <ArrowLeft size={20} /> Back to Inventory
               </button>
 
-              <div className="bg-white border border-charcoal/10 rounded-xl p-6 shadow-sm flex flex-row gap-8">
-                <div className="w-1/3 flex-shrink-0">
+              <div className="bg-white border border-charcoal/10 rounded-xl p-4 md:p-6 shadow-sm flex flex-col md:flex-row gap-4 md:gap-8 min-w-0">
+                <div className="w-full md:w-1/3 flex-shrink-0">
                   <img src={selectedAdminProduct.images[0]} alt={selectedAdminProduct.name} className="w-full aspect-square object-cover rounded-lg border border-charcoal/10 shadow-sm" />
                 </div>
-                <div className="w-full flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-start justify-between gap-4 mb-2">
-                      <h3 className="text-2xl font-serif text-charcoal">{selectedAdminProduct.name}</h3>
+                <div className="w-full flex flex-col justify-between min-w-0">
+                  <div className="min-w-0">
+                    <div className="flex flex-col md:flex-row items-start justify-between gap-4 mb-2 min-w-0">
+                      <h3 className="text-2xl font-serif text-charcoal truncate w-full">{selectedAdminProduct.name}</h3>
                       {selectedAdminProduct.stock === 0 ? (
-                        <span className="text-xs font-medium bg-red-100 text-red-700 px-3 py-1 rounded-full whitespace-nowrap">Out of Stock</span>
+                        <span className="text-[10px] md:text-xs font-medium bg-red-100 text-red-700 px-3 py-1 rounded-full whitespace-nowrap">Out of Stock</span>
                       ) : selectedAdminProduct.stock < 3 ? (
-                        <span className="text-xs font-medium bg-orange-100 text-orange-700 px-3 py-1 rounded-full whitespace-nowrap">Low Stock ({selectedAdminProduct.stock})</span>
+                        <span className="text-[10px] md:text-xs font-medium bg-orange-100 text-orange-700 px-3 py-1 rounded-full whitespace-nowrap">Low Stock ({selectedAdminProduct.stock})</span>
                       ) : (
-                        <span className="text-xs font-medium bg-green-100 text-green-700 px-3 py-1 rounded-full whitespace-nowrap">In Stock ({selectedAdminProduct.stock})</span>
+                        <span className="text-[10px] md:text-xs font-medium bg-green-100 text-green-700 px-3 py-1 rounded-full whitespace-nowrap">In Stock ({selectedAdminProduct.stock})</span>
                       )}
                     </div>
-                    <p className="text-sm text-charcoal/50 font-mono mb-4">ID: {selectedAdminProduct.productId}</p>
+                    <p className="text-[10px] md:text-sm text-charcoal/50 font-mono mb-4">ID: {selectedAdminProduct.productId}</p>
                     
                     <div className="space-y-3 bg-[#FAF8F5] p-4 rounded-lg border border-charcoal/5 mb-6">
-                      <div className="flex justify-between">
-                        <span className="text-sm text-charcoal/60">Category</span>
-                        <span className="font-medium text-charcoal capitalize">{selectedAdminProduct.category}</span>
+                      <div className="flex justify-between min-w-0">
+                        <span className="text-[10px] md:text-sm text-charcoal/60">Category</span>
+                        <span className="font-medium text-charcoal capitalize text-[10px] md:text-sm">{selectedAdminProduct.category}</span>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-sm text-charcoal/60">Base Price</span>
-                        <span className="font-medium text-charcoal">₹{selectedAdminProduct.basePrice}</span>
+                      <div className="flex justify-between min-w-0">
+                        <span className="text-[10px] md:text-sm text-charcoal/60">Base Price</span>
+                        <span className="font-medium text-charcoal text-[10px] md:text-sm">₹{selectedAdminProduct.basePrice}</span>
                       </div>
                       {selectedAdminProduct.hasOffer && (
-                        <div className="flex justify-between">
-                          <span className="text-sm text-charcoal/60">Offer</span>
-                          <span className="font-medium text-[#C4A47C]">-{selectedAdminProduct.offerPercentage}% OFF</span>
+                        <div className="flex justify-between min-w-0">
+                          <span className="text-[10px] md:text-sm text-charcoal/60">Offer</span>
+                          <span className="font-medium text-[#C4A47C] text-[10px] md:text-sm">-{selectedAdminProduct.offerPercentage}% OFF</span>
                         </div>
                       )}
-                      <div className="flex justify-between pt-3 border-t border-charcoal/10">
-                        <span className="font-medium text-charcoal">Final Price</span>
-                        <span className="font-bold text-lg text-[#C4A47C]">₹{selectedAdminProduct.finalPrice}</span>
+                      <div className="flex justify-between pt-3 border-t border-charcoal/10 min-w-0">
+                        <span className="font-medium text-charcoal text-[12px] md:text-base">Final Price</span>
+                        <span className="font-bold text-base md:text-lg text-[#C4A47C]">₹{selectedAdminProduct.finalPrice}</span>
                       </div>
                     </div>
-                    <p className="text-sm text-charcoal/70 leading-relaxed">
+                    <p className="text-[10px] md:text-sm text-charcoal/70 leading-relaxed">
                       {selectedAdminProduct.description}
                     </p>
                   </div>
                   
-                  <div className="flex gap-4 mt-8 pt-6 border-t border-charcoal/10">
+                  <div className="flex flex-col md:flex-row gap-4 mt-8 pt-6 border-t border-charcoal/10 min-w-0">
                     <button 
                       onClick={() => {
                         onEditProduct(selectedAdminProduct);
                         setSelectedAdminProduct(null);
                       }}
-                      className="flex-1 flex items-center justify-center gap-2 bg-[#C4A47C] text-white py-2.5 rounded-md hover:bg-[#A98C68] transition-colors font-medium text-sm"
+                      className="flex-1 flex items-center justify-center gap-2 bg-[#C4A47C] text-white py-2 md:py-2.5 rounded-md hover:bg-[#A98C68] transition-colors font-medium text-[10px] md:text-sm"
                     >
                       <Edit2 size={16} className="block" /> Edit Product
                     </button>
@@ -172,7 +172,7 @@ const AdminManageInventory: React.FC<AdminManageInventoryProps> = ({ onEditProdu
                         requestProductDelete(selectedAdminProduct.id, selectedAdminProduct.name);
                         setSelectedAdminProduct(null);
                       }}
-                      className="flex-1 flex items-center justify-center gap-2 bg-white border border-red-200 text-red-600 py-2.5 rounded-md hover:bg-red-50 hover:border-red-300 transition-colors font-medium text-sm"
+                      className="flex-1 flex items-center justify-center gap-2 bg-white border border-red-200 text-red-600 py-2 md:py-2.5 rounded-md hover:bg-red-50 hover:border-red-300 transition-colors font-medium text-[10px] md:text-sm"
                     >
                       <Trash2 size={16} className="block" /> Delete Product
                     </button>
@@ -191,25 +191,25 @@ const AdminManageInventory: React.FC<AdminManageInventoryProps> = ({ onEditProdu
                 <div 
                   key={product.id} 
                   onClick={() => setSelectedAdminProduct(product)}
-                  className="bg-white border border-charcoal/10 rounded-xl p-5 flex flex-row gap-4 items-center cursor-pointer hover:shadow-md transition-all group"
+                  className="bg-white border border-charcoal/10 rounded-xl p-4 md:p-5 flex flex-col md:flex-row gap-4 items-start md:items-center cursor-pointer hover:shadow-md transition-all group min-w-0"
                 >
-                  <div className="flex gap-4 flex-grow">
-                    <div className="w-20 h-20 bg-cream rounded-md overflow-hidden flex-shrink-0 border border-charcoal/5">
+                  <div className="flex gap-4 flex-grow min-w-0 w-full md:w-auto">
+                    <div className="w-16 h-16 md:w-20 md:h-20 bg-cream rounded-md overflow-hidden flex-shrink-0 border border-charcoal/5">
                       <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     </div>
                     <div className="flex flex-col justify-center min-w-0">
-                      <h3 className="font-medium text-charcoal text-base leading-snug line-clamp-2 pr-4">{product.name}</h3>
-                      <p className="text-charcoal/50 text-xs mt-1.5 font-mono">ID: {product.productId}</p>
+                      <h3 className="font-medium text-charcoal text-[12px] md:text-base leading-snug line-clamp-2 pr-4">{product.name}</h3>
+                      <p className="text-charcoal/50 text-[10px] md:text-xs mt-1.5 font-mono">ID: {product.productId}</p>
                     </div>
                   </div>
 
-                  <div className="flex flex-col items-end justify-center w-[220px] flex-shrink-0">
-                    <div className="flex items-center gap-2 mb-2">
+                  <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-center w-full md:w-[220px] flex-shrink-0 min-w-0">
+                    <div className="flex items-center gap-2 md:mb-2 min-w-0">
                       {product.hasOffer && <span className="text-[10px] uppercase text-charcoal/40 line-through">₹{product.basePrice}</span>}
-                      <p className="font-semibold text-[#C4A47C] text-sm">₹{product.finalPrice}</p>
+                      <p className="font-semibold text-[#C4A47C] text-[12px] md:text-sm">₹{product.finalPrice}</p>
                     </div>
-                    <div className="text-right">
-                      <div className="flex items-center justify-end gap-1.5 text-xs font-medium">
+                    <div className="text-right min-w-0">
+                      <div className="flex items-center justify-end gap-1.5 text-[10px] md:text-xs font-medium">
                         {product.stock === 0 ? (
                           <span className="text-red-600">Out of Stock</span>
                         ) : product.stock < 3 ? (
@@ -237,21 +237,21 @@ const AdminManageInventory: React.FC<AdminManageInventoryProps> = ({ onEditProdu
             <h3 className="text-xl font-serif text-charcoal mb-2">
               Delete Product
             </h3>
-            <p className="text-sm text-charcoal/60 mb-6 leading-relaxed">
+            <p className="text-[10px] md:text-sm text-charcoal/60 mb-6 leading-relaxed">
               Are you sure you want to permanently delete <span className="font-semibold text-charcoal">"{deleteConfirm.name}"</span>? This action cannot be undone.
             </p>
-            <div className="flex gap-3 w-full">
+            <div className="flex gap-3 w-full min-w-0">
               <button 
                 onClick={() => setDeleteConfirm(null)}
                 disabled={isDeleting}
-                className="flex-1 py-3 text-sm font-medium text-charcoal bg-charcoal/5 hover:bg-charcoal/10 rounded-xl transition-colors disabled:opacity-50"
+                className="flex-1 py-2 md:py-3 text-[10px] md:text-sm font-medium text-charcoal bg-charcoal/5 hover:bg-charcoal/10 rounded-xl transition-colors disabled:opacity-50"
               >
                 Cancel
               </button>
               <button 
                 onClick={executeDelete}
                 disabled={isDeleting}
-                className="flex-1 py-3 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-xl transition-colors flex justify-center items-center gap-2 disabled:opacity-50"
+                className="flex-1 py-2 md:py-3 text-[10px] md:text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-xl transition-colors flex justify-center items-center gap-2 disabled:opacity-50"
               >
                 {isDeleting ? <Loader2 size={16} className="animate-spin" /> : 'Yes, Delete'}
               </button>
