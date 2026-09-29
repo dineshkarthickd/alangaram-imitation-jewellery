@@ -34,6 +34,15 @@ const Preloader = () => {
         isAnimatingOut ? '-translate-y-full' : 'translate-y-0'
       }`}
     >
+      {/* Loader Image */}
+      <div className="mb-2 md:mb-4 overflow-hidden flex justify-center">
+        <img 
+          src="/Mock-Images/Loader Image.png" 
+          alt="Alangaram Loader" 
+          className="w-32 md:w-44 h-auto object-contain opacity-0 animate-preloader-text"
+        />
+      </div>
+
       {/* Brand Name with Reveal Animation */}
       <div className="overflow-hidden mb-2 md:mb-3">
         <h1 className="text-3xl md:text-6xl font-serif text-[#E8DCCB] tracking-[0.1em] md:tracking-[0.15em] uppercase opacity-0 animate-preloader-text text-center px-4">

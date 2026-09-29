@@ -400,8 +400,12 @@ const MyOrders = () => {
       <h1 className="font-serif text-2xl md:text-4xl text-charcoal mb-6 md:mb-8">My Orders</h1>
 
       {allOrderItems.length === 0 ? (
-        <div className="text-center py-12 md:py-16 bg-white border border-charcoal/10 rounded-xl md:rounded-2xl mx-auto w-full min-w-0">
-          <Package size={32} className="md:w-[48px] md:h-[48px] mx-auto text-charcoal/20 mb-3 md:mb-4" />
+        <div className="text-center py-12 md:py-16 bg-white border border-charcoal/10 rounded-xl md:rounded-2xl mx-auto w-full min-w-0 flex flex-col items-center">
+          <img 
+            src="/Mock-Images/Loader Image.png" 
+            alt="Empty Orders Logo" 
+            className="w-16 md:w-20 h-auto object-contain opacity-100 mb-3 md:mb-4"
+          />
           <h2 className="font-serif text-lg md:text-xl text-charcoal mb-1.5 md:mb-2">No orders yet</h2>
           <p className="text-charcoal/60 mb-4 md:mb-6 text-[12px] md:text-base">When you place an order, it will appear here.</p>
           <button onClick={() => navigate('/products')} className="btn-luxury btn-luxury-solid px-6 md:px-8 py-2 md:py-3 text-[10px] md:text-sm">
