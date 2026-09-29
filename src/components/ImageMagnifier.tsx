@@ -55,7 +55,7 @@ const ImageMagnifier: React.FC<ImageMagnifierProps> = ({ src, alt, hasOffer }) =
       />
       
       {/* Zoom Icon Hint (disappears on hover, hidden on mobile) */}
-      <div className={`hidden md:block absolute bottom-4 right-4 bg-white/80 backdrop-blur-sm p-2 rounded-full text-charcoal/60 shadow-sm pointer-events-none transition-opacity duration-300 ${isHovering ? 'opacity-0' : 'opacity-100'}`}>
+      <div className={`block absolute bottom-4 right-4 bg-white/80 backdrop-blur-sm p-2 rounded-full text-charcoal/60 shadow-sm pointer-events-none transition-opacity duration-300 ${isHovering ? 'opacity-0' : 'opacity-100'}`}>
         <ZoomIn size={20} strokeWidth={1.5} />
       </div>
 

@@ -4,12 +4,8 @@ import { ShoppingBag, ArrowLeft, Loader2, Star } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import ImageMagnifier from '../components/ImageMagnifier';
 import ReviewSection from '../components/ReviewSection';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination } from 'swiper/modules';
 import { doc, getDoc, collection, query, where, limit, getDocs, orderBy } from 'firebase/firestore';
 import { db } from '../config/firebase';
-import 'swiper/css';
-import 'swiper/css/pagination';
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -93,20 +89,18 @@ const ProductDetail = () => {
         <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Back
       </button>
       
-      <div className="flex flex-col md:flex-row gap-12 lg:gap-16 items-start">
+      <div className="flex flex-row gap-12 lg:gap-16 items-start">
         {/* Image Gallery Side */}
-        <div className="w-full md:w-1/2 lg:w-[45%] flex flex-col-reverse sm:flex-row gap-4 md:gap-6 justify-start">
+        <div className="w-1/2 lg:w-[45%] flex flex-row gap-6 justify-start">
           {/* Thumbnails */}
-          <div className="flex flex-row sm:flex-col gap-3 w-full sm:w-[70px] md:w-[85px] flex-shrink-0 overflow-x-auto sm:overflow-y-auto no-scrollbar pb-2 sm:pb-0">
+          <div className="flex flex-col gap-3 w-[85px] flex-shrink-0 overflow-y-auto no-scrollbar">
             {product.images.map((img: string, idx: number) => (
               <button 
                 key={idx}
                 onClick={() => {
                   setSelectedImage(img);
-                  // @ts-ignore - Safely trigger swiper if it exists on mobile
-                  if (window.productSwiper) window.productSwiper.slideTo(idx);
                 }}
-                className={`w-[70px] sm:w-full flex-shrink-0 aspect-[4/5] rounded-lg overflow-hidden border transition-all duration-300 ${
+                className={`w-full flex-shrink-0 aspect-[4/5] rounded-lg overflow-hidden border transition-all duration-300 ${
                   selectedImage === img ? 'border-charcoal opacity-100 shadow-md' : 'border-transparent opacity-50 hover:opacity-100'
                 }`}
               >
@@ -119,8 +113,8 @@ const ProductDetail = () => {
             ))}
           </div>
 
-          {/* Main Image - Desktop (Hidden on Mobile) */}
-          <div className="hidden md:block w-full">
+          {/* Main Image - Desktop */}
+          <div className="block w-full">
             <div className="relative aspect-[3/4] rounded-xl overflow-hidden shadow-sm bg-[#FAF8F5]">
               {selectedImage && <ImageMagnifier src={selectedImage} alt={product.name} />}
               {!hasStock && (
@@ -135,49 +129,15 @@ const ProductDetail = () => {
               )}
             </div>
           </div>
-
-          {/* Main Image - Mobile Swipe Gallery (Hidden on Desktop) */}
-          <div className="block md:hidden w-full relative">
-            <Swiper
-              pagination={{ clickable: true }}
-              modules={[Pagination]}
-              className="w-full aspect-[3/4] rounded-xl overflow-hidden shadow-sm bg-[#FAF8F5]"
-              onSwiper={(swiper) => {
-                // @ts-ignore
-                window.productSwiper = swiper;
-              }}
-              onSlideChange={(swiper) => {
-                setSelectedImage(product.images[swiper.activeIndex]);
-              }}
-            >
-              {product.images.map((img: string, idx: number) => (
-                <SwiperSlide key={idx}>
-                  <img src={img} alt={`${product.name} ${idx}`} className="w-full h-full object-cover mix-blend-multiply pointer-events-none" />
-                </SwiperSlide>
-              ))}
-            </Swiper>
-            <div className="absolute top-4 left-4 z-20 flex flex-col gap-2">
-              {!hasStock && (
-                <div className="bg-red-900/90 text-white text-[10px] font-bold tracking-[0.2em] px-3 py-1.5 uppercase rounded-sm shadow-sm backdrop-blur-sm">
-                  OUT OF STOCK
-                </div>
-              )}
-              {hasStock && product.hasOffer && (
-                <div className="bg-[#C4A47C] text-white text-[10px] font-bold tracking-[0.2em] px-3 py-1.5 uppercase rounded-sm shadow-sm backdrop-blur-sm">
-                  {product.offerPercentage}% OFF
-                </div>
-              )}
-            </div>
-          </div>
         </div>
 
         {/* Product Info Side */}
-        <div className="w-full md:w-1/2 lg:w-[45%] flex flex-col pt-2 md:pt-8">
+        <div className="w-1/2 lg:w-[45%] flex flex-col pt-8">
           <p className="text-sm tracking-widest text-charcoal/50 uppercase mb-3 flex items-center justify-between">
             {product.category} Jewellery
             <span className="font-mono text-xs">{product.productId}</span>
           </p>
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif text-charcoal mb-3 leading-tight">{product.name}</h1>
+          <h1 className="text-4xl lg:text-5xl font-serif text-charcoal mb-3 leading-tight">{product.name}</h1>
           
           {/* Average Rating Display */}
           {reviews.length > 0 && (
@@ -193,15 +153,15 @@ const ProductDetail = () => {
           )}
 
           <div className="flex items-center gap-4 mb-6">
-            <p className="text-2xl md:text-3xl font-medium text-[#C4A47C]">₹ {product.finalPrice}</p>
+            <p className="text-3xl font-medium text-[#C4A47C]">₹ {product.finalPrice}</p>
             {product.hasOffer && (
-              <p className="text-lg md:text-xl text-charcoal/30 line-through">₹ {product.basePrice}</p>
+              <p className="text-xl text-charcoal/30 line-through">₹ {product.basePrice}</p>
             )}
           </div>
           
           <div className="h-[1px] w-full bg-charcoal/10 mb-8" />
           
-          <p className="text-charcoal/70 leading-relaxed mb-10 font-light text-[15px] md:text-base whitespace-pre-wrap">
+          <p className="text-charcoal/70 leading-relaxed mb-10 font-light text-base whitespace-pre-wrap">
             {product.description}
           </p>
 
@@ -270,9 +230,9 @@ const ProductDetail = () => {
 
       {/* RELATED PIECES */}
       {relatedProducts.length > 0 && (
-        <div className="mt-8 md:mt-24 border-t border-charcoal/10 pt-8 md:pt-16">
+        <div className="mt-24 border-t border-charcoal/10 pt-16">
           <h2 className="text-2xl font-serif text-charcoal mb-10 text-center">You May Also Like</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+          <div className="grid grid-cols-4 gap-8">
             {relatedProducts.map(relProduct => {
               const relHasStock = relProduct.stock > 0;
               return (
@@ -311,12 +271,12 @@ const ProductDetail = () => {
                   </div>
                 </div>
                 <div className="flex flex-col text-center">
-                  <h3 className="font-serif text-sm md:text-base text-charcoal mb-1 truncate px-2">{relProduct.name}</h3>
+                  <h3 className="font-serif text-base text-charcoal mb-1 truncate px-2">{relProduct.name}</h3>
                   <div className="flex items-center justify-center gap-2">
                     {relProduct.hasOffer && (
                       <span className="text-charcoal/40 text-[11px] line-through">₹ {relProduct.basePrice}</span>
                     )}
-                    <p className="text-[#C4A47C] text-sm md:text-[15px] font-medium">₹ {relProduct.finalPrice}</p>
+                    <p className="text-[#C4A47C] text-[15px] font-medium">₹ {relProduct.finalPrice}</p>
                   </div>
                 </div>
               </Link>

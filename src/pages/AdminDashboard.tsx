@@ -19,14 +19,14 @@ const AdminDashboard = () => {
   if (!isAdmin) return <Navigate to="/" replace />;
 
   return (
-    <div className="min-h-screen pt-32 pb-24 px-6 md:px-12 max-w-7xl mx-auto">
-      <h1 className="text-3xl md:text-4xl font-serif text-charcoal mb-2">Admin Dashboard</h1>
+    <div className="min-h-screen pt-32 pb-24 px-12 max-w-7xl mx-auto">
+      <h1 className="text-4xl font-serif text-charcoal mb-2">Admin Dashboard</h1>
       <p className="text-charcoal/60 mb-10 border-b border-charcoal/10 pb-6">Manage your products, inventory, and website settings.</p>
 
-      <div className="flex flex-col md:flex-row gap-8 lg:gap-12">
+      <div className="flex flex-row gap-12">
         
         {/* Service List Sidebar */}
-        <div className="w-full md:w-72 flex flex-col space-y-3 flex-shrink-0">
+        <div className="w-72 flex flex-col space-y-3 flex-shrink-0">
           <button 
             onClick={() => { 
               setActiveTab('upload'); 

@@ -91,7 +91,7 @@ const AdminStoreSettings = () => {
   };
 
   return (
-    <div className="animate-fade-in space-y-8 bg-white/50 p-4 sm:p-8 rounded-2xl border border-charcoal/5 shadow-sm">
+    <div className="animate-fade-in space-y-8 bg-white/50 p-8 rounded-2xl border border-charcoal/5 shadow-sm">
       <div>
         <h2 className="text-2xl font-serif text-charcoal mb-2">Store Settings</h2>
         <p className="text-charcoal/60 text-sm mb-6">Manage global store configurations and admin access.</p>
@@ -116,7 +116,7 @@ const AdminStoreSettings = () => {
           <h3 className="text-lg font-serif text-charcoal mb-4 border-b border-charcoal/10 pb-2">Payment Settings (GPay UPI)</h3>
           <p className="text-sm text-charcoal/60 mb-6">Configure the exact UPI ID and registered Name for receiving payments.</p>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-2 gap-6">
             <div>
               <label className="block text-sm uppercase tracking-wider text-charcoal/70 mb-2">UPI ID</label>
               <input type="text" value={upiId} onChange={(e) => setUpiId(e.target.value)}
@@ -138,7 +138,7 @@ const AdminStoreSettings = () => {
           <h3 className="text-lg font-serif text-charcoal mb-4 border-b border-charcoal/10 pb-2">Admin Dashboard Access</h3>
           <p className="text-sm text-charcoal/60 mb-6">Specify up to 2 Google accounts that are authorized to access this dashboard.</p>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-2 gap-6">
             <div>
               <label className="block text-sm uppercase tracking-wider text-charcoal/70 mb-2">Primary Admin Email</label>
               <input type="email" value={adminEmail1} onChange={(e) => { setAdminEmail1(e.target.value); setSettingsErrors({...settingsErrors, adminEmail1: ''}); }}
@@ -170,7 +170,7 @@ const AdminStoreSettings = () => {
             </div>
             <div>
               <label className="block text-sm uppercase tracking-wider text-charcoal/70 mb-4">Select Design Palette</label>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-4">
                 <button type="button" onClick={() => setBannerDesign(1)} className={`p-4 rounded-xl border-2 transition-all ${bannerDesign === 1 ? 'border-[#C4A47C]' : 'border-transparent bg-white hover:border-charcoal/20'}`}>
                   <div className="w-full h-10 bg-[#3F3A36] text-[#C4A47C] flex items-center justify-center text-xs tracking-widest font-sans rounded-md">CHARCOAL & GOLD</div>
                 </button>

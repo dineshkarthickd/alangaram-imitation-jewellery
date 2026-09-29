@@ -237,7 +237,7 @@ const Checkout = () => {
         <div className="w-16 h-16 bg-cream rounded-full flex items-center justify-center mb-6">
           <AlertCircle size={32} className="text-[#C4A47C]" />
         </div>
-        <h1 className="font-serif text-3xl md:text-4xl text-charcoal mb-4 text-center">Login Required</h1>
+        <h1 className="font-serif text-4xl text-charcoal mb-4 text-center">Login Required</h1>
         <p className="text-charcoal/60 mb-8 text-center max-w-md">You need to log in to securely place an order and track your shipments.</p>
         <button onClick={signInWithGoogle} className="btn-luxury px-8 py-3">
           Sign In with Google
@@ -250,7 +250,7 @@ const Checkout = () => {
   if (verificationStep) {
     return (
       <div className="pt-32 pb-24 px-6 min-h-[70vh] flex flex-col items-center justify-center animate-fade-in">
-        <h1 className="font-serif text-3xl md:text-4xl text-charcoal mb-4 text-center">Verify Payment</h1>
+        <h1 className="font-serif text-4xl text-charcoal mb-4 text-center">Verify Payment</h1>
         
         {desktopQRUrl ? (
           <>
@@ -311,7 +311,7 @@ const Checkout = () => {
         <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mb-6 shadow-sm border border-green-100 animate-bounce">
           <CheckCircle2 size={40} className="text-green-600" />
         </div>
-        <h1 className="font-serif text-3xl md:text-4xl text-charcoal mb-2 text-center">Order Confirmed!</h1>
+        <h1 className="font-serif text-4xl text-charcoal mb-2 text-center">Order Confirmed!</h1>
         <p className="text-charcoal/60 mb-6 text-center">Thank you for your purchase. Your masterpiece is on its way.</p>
         <div className="bg-cream/50 px-6 py-3 rounded-md border border-charcoal/5 mb-8">
           <p className="font-mono text-sm tracking-wider text-charcoal/70">Order ID: {placedOrderId}</p>
@@ -324,7 +324,7 @@ const Checkout = () => {
   }
 
   return (
-    <div className="pt-32 pb-24 px-6 md:px-12 max-w-[1200px] mx-auto animate-fade-in">
+    <div className="pt-32 pb-24 px-12 max-w-[1200px] mx-auto animate-fade-in">
       
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-charcoal/40 mb-12">
@@ -333,16 +333,16 @@ const Checkout = () => {
         <span className="text-charcoal font-medium">Checkout</span>
       </div>
 
-      <h1 className="font-serif text-3xl md:text-4xl text-charcoal mb-12">Secure Checkout</h1>
+      <h1 className="font-serif text-4xl text-charcoal mb-12">Secure Checkout</h1>
 
-      <div className="flex flex-col lg:flex-row gap-12">
+      <div className="flex flex-row gap-12">
         
         {/* LEFT COL: FORM */}
         <div className="flex-[3] bg-white/40 p-8 rounded-2xl border border-charcoal/5 shadow-sm backdrop-blur-sm h-fit">
           <h2 className="font-serif text-xl text-charcoal mb-8 border-b border-charcoal/10 pb-4">Shipping Information</h2>
           
           <form id="checkout-form" onSubmit={handlePlaceOrder} className="space-y-6" noValidate>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-2 gap-6">
               <div>
                 <label className="block text-xs uppercase tracking-widest text-charcoal/60 mb-2">Full Name *</label>
                 <input type="text" name="name" value={formData.name} onChange={handleChange} className={`w-full bg-white/50 border ${formErrors.name ? 'border-red-500' : 'border-charcoal/10'} px-4 py-3 rounded-md outline-none focus:border-[#C4A47C] transition-colors`} />
@@ -354,7 +354,7 @@ const Checkout = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-2 gap-6">
               <div>
                 <label className="block text-xs uppercase tracking-widest text-charcoal/60 mb-2">Phone Number *</label>
                 <input type="tel" name="phone" value={formData.phone} onChange={handleChange} placeholder="+91" className={`w-full bg-white/50 border ${formErrors.phone ? 'border-red-500' : 'border-charcoal/10'} px-4 py-3 rounded-md outline-none focus:border-[#C4A47C] transition-colors`} />
@@ -367,7 +367,7 @@ const Checkout = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-2 gap-6">
               <div>
                 <label className="block text-xs uppercase tracking-widest text-charcoal/60 mb-2">State *</label>
                 <div className="relative z-50">

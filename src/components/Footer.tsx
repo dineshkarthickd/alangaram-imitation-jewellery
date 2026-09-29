@@ -2,12 +2,12 @@ import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
-    <footer className="bg-cream-dark pt-10 md:pt-14 pb-6 md:pb-8 px-6 md:px-8 border-t border-charcoal/5">
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 mb-8 md:mb-12">
+    <footer className="bg-cream-dark pt-14 pb-8 px-8 border-t border-charcoal/5">
+      <div className="max-w-6xl mx-auto grid grid-cols-12 gap-12 mb-12">
         
         {/* LEFT: SOCIAL LINKS */}
-        <div className="md:col-span-4">
-          <h4 className="font-serif text-xl md:text-[1.35rem] text-charcoal mb-3 md:mb-5">Connect With Us</h4>
+        <div className="col-span-4">
+          <h4 className="font-serif text-[1.35rem] text-charcoal mb-5">Connect With Us</h4>
           <div className="flex space-x-5 text-charcoal/70 items-center">
             <a href="https://www.instagram.com/alangaramimitationjewellery" target="_blank" rel="noopener noreferrer" className="hover:text-charcoal hover:-translate-y-1 transition-all duration-300" aria-label="Instagram">
               <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -34,24 +34,24 @@ const Footer = () => {
               <rect width="20" height="16" x="2" y="4" rx="2"/>
               <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
             </svg>
-            <span className="text-[13px] md:text-[14px] font-sans tracking-wide select-all break-all">alangaramimitationjewellery@gmail.com</span>
+            <span className="text-[14px] font-sans tracking-wide select-all break-all">alangaramimitationjewellery@gmail.com</span>
           </div>
         </div>
 
         {/* CENTER: QUICK LINKS */}
-        <div className="hidden md:block md:col-span-3">
-          <h4 className="font-serif text-xl md:text-[1.35rem] text-charcoal mb-3 md:mb-5">Quick Links</h4>
-          <div className="flex flex-col space-y-2 md:space-y-4 text-charcoal/70">
-            <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:text-charcoal transition-colors text-[14px] md:text-[15px] font-medium tracking-wide w-fit">Home</Link>
-            <Link to="/products" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:text-charcoal transition-colors text-[14px] md:text-[15px] font-medium tracking-wide w-fit">Collections</Link>
-            <Link to="/cart" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:text-charcoal transition-colors text-[14px] md:text-[15px] font-medium tracking-wide w-fit">Shopping Cart</Link>
+        <div className="block col-span-3">
+          <h4 className="font-serif text-[1.35rem] text-charcoal mb-5">Quick Links</h4>
+          <div className="flex flex-col space-y-4 text-charcoal/70">
+            <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:text-charcoal transition-colors text-[15px] font-medium tracking-wide w-fit">Home</Link>
+            <Link to="/products" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:text-charcoal transition-colors text-[15px] font-medium tracking-wide w-fit">Collections</Link>
+            <Link to="/cart" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:text-charcoal transition-colors text-[15px] font-medium tracking-wide w-fit">Shopping Cart</Link>
           </div>
         </div>
 
         {/* RIGHT: BRAND STORY */}
-        <div className="hidden md:block md:col-span-5">
-          <h4 className="font-serif text-xl md:text-[1.35rem] text-charcoal mb-3 md:mb-4">Our Story</h4>
-          <p className="text-[13px] md:text-[14px] text-charcoal/80 leading-relaxed font-light">
+        <div className="block col-span-5">
+          <h4 className="font-serif text-[1.35rem] text-charcoal mb-4">Our Story</h4>
+          <p className="text-[14px] text-charcoal/80 leading-relaxed font-light">
             Crafting timeless imitation jewellery that blends deep-rooted tradition with modern elegance. Every piece is curated to add a touch of grace to your everyday moments. Made to be cherished.
           </p>
         </div>
@@ -60,8 +60,8 @@ const Footer = () => {
       
       {/* COPYRIGHT */}
       <div className="text-center text-[13px] tracking-wide text-charcoal/80 pt-8 border-t border-charcoal/10">
-        © {new Date().getFullYear()} Alangaram Imitation Jewellery. All rights reserved. <br className="md:hidden" />
-        <span className="hidden md:inline"> | </span>
+        © {new Date().getFullYear()} Alangaram Imitation Jewellery. All rights reserved. 
+        <span className="inline"> | </span>
         Developed by <a href="https://portfolio-dinesh-karthick.vercel.app/" target="_blank" rel="noopener noreferrer" className="text-charcoal hover:text-black transition-colors underline decoration-charcoal/40 underline-offset-2 font-medium">Dinesh Karthick Durgadas</a>
       </div>
     </footer>

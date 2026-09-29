@@ -92,8 +92,8 @@ const AdminManageReviews = () => {
   };
 
   return (
-    <div className="animate-fade-in bg-white/50 p-4 sm:p-8 rounded-2xl border border-charcoal/5 shadow-sm min-h-[500px] relative">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-8">
+    <div className="animate-fade-in bg-white/50 p-8 rounded-2xl border border-charcoal/5 shadow-sm min-h-[500px] relative">
+      <div className="flex flex-row justify-between items-end gap-4 mb-8">
         <div>
           <h2 className="text-2xl font-serif text-charcoal mb-2">Review Management</h2>
           <p className="text-charcoal/60 text-sm">Monitor, hide, and remove customer reviews across all products.</p>

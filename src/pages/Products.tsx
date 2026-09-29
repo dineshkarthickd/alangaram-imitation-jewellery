@@ -42,18 +42,18 @@ const Products = () => {
     : products.filter(p => p.category.toLowerCase() === activeCategory.toLowerCase());
 
   return (
-    <div className="pt-32 pb-24 px-6 md:px-12 lg:px-20 max-w-[1400px] mx-auto min-h-screen">
+    <div className="pt-32 pb-24 px-12 lg:px-20 max-w-[1400px] mx-auto min-h-screen">
       
       {/* HEADER */}
       <div className="text-center mb-16">
-        <h1 className="text-4xl md:text-5xl font-serif text-charcoal mb-6">Our Collections</h1>
+        <h1 className="text-5xl font-serif text-charcoal mb-6">Our Collections</h1>
         <p className="text-charcoal/70 max-w-2xl mx-auto font-light leading-relaxed">
           Explore our exquisite range of handcrafted jewellery. From the enduring elegance of forming pieces to the trendy allure of our imitation collection.
         </p>
       </div>
 
       {/* FILTERS */}
-      <div className="flex flex-wrap justify-center gap-4 md:gap-6 mb-16">
+      <div className="flex flex-wrap justify-center gap-6 mb-16">
         <button 
           onClick={() => handleCategoryChange('all')}
           className={`px-8 py-3 rounded-full transition-all duration-300 font-medium tracking-widest text-[13px] uppercase ${activeCategory === 'all' ? 'bg-charcoal text-white shadow-md' : 'bg-white/40 text-charcoal/60 hover:bg-white hover:text-charcoal hover:shadow-sm'}`}
@@ -84,7 +84,7 @@ const Products = () => {
 
       {/* PRODUCT GRID */}
       {!loading && (
-        <div key={activeCategory} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-16 animate-page-fade">
+        <div key={activeCategory} className="grid grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-16 animate-page-fade">
           {filteredProducts.map(product => {
             const hasStock = product.stock > 0;
             
@@ -126,7 +126,7 @@ const Products = () => {
                 
                 {/* Quick Add Button */}
                 {hasStock && (
-                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 md:translate-y-4 md:opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 w-[85%]">
+                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 w-[85%]">
                     <button 
                       onClick={(e) => {
                         e.preventDefault();
