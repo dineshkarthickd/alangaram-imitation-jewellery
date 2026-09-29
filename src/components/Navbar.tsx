@@ -85,13 +85,20 @@ const Navbar = () => {
 
           {/* CENTER: THE ROYAL LOGO */}
           <div className="flex-[2] md:flex-1 flex justify-center">
-            <Link to="/" className="flex flex-col items-center justify-center">
-              <span className={`font-serif text-charcoal leading-none tracking-tight transition-all duration-500 ${isScrolled ? 'text-lg md:text-xl' : 'text-xl md:text-3xl'}`}>
-                Alangaram
-              </span>
-              <span className={`font-sans tracking-[0.2em] font-medium uppercase text-charcoal transition-all duration-500 ${isScrolled ? 'text-[6px] md:text-[8px] mt-0.5 md:mt-1' : 'text-[6px] md:text-[9px] mt-1 md:mt-1.5'}`}>
-                Imitation Jewellery
-              </span>
+            <Link to="/" className="flex items-center gap-2 md:gap-3">
+              <img 
+                src="/Mock-Images/Loader Image.png" 
+                alt="Alangaram Logo" 
+                className={`transition-all duration-500 object-contain ${isScrolled ? 'w-6 md:w-8' : 'w-7 md:w-10'}`} 
+              />
+              <div className="flex flex-col items-center justify-center">
+                <span className={`font-serif text-charcoal leading-none tracking-tight transition-all duration-500 ${isScrolled ? 'text-lg md:text-xl' : 'text-xl md:text-3xl'}`}>
+                  Alangaram
+                </span>
+                <span className={`font-sans tracking-[0.2em] font-medium uppercase text-charcoal transition-all duration-500 ${isScrolled ? 'text-[6px] md:text-[8px] mt-0.5 md:mt-1' : 'text-[6px] md:text-[9px] mt-1 md:mt-1.5'}`}>
+                  Imitation Jewellery
+                </span>
+              </div>
             </Link>
           </div>
 

@@ -1,6 +1,6 @@
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
-import { Trash2, ArrowRight, Minus, Plus, ShoppingBag } from 'lucide-react';
+import { Trash2, ArrowRight, Minus, Plus, } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 
 const Cart = () => {
@@ -11,8 +11,12 @@ const Cart = () => {
   if (cartItems.length === 0) {
     return (
       <div className="min-h-[80vh] flex flex-col items-center justify-center pt-16 md:pt-24 px-4 md:px-8">
-        <div className="w-16 h-16 md:w-24 md:h-24 bg-cream rounded-full flex items-center justify-center mb-4 md:mb-6 text-charcoal/30">
-          <ShoppingBag size={24} className="md:w-[40px] md:h-[40px]" strokeWidth={1} />
+        <div className="mb-4 md:mb-6">
+          <img 
+            src="/Mock-Images/Loader Image.png" 
+            alt="Empty Cart Logo" 
+            className="w-20 md:w-28 h-auto object-contain opacity-100"
+          />
         </div>
         <h1 className="font-serif text-2xl md:text-4xl text-charcoal mb-3 md:mb-4">Your Cart is Empty</h1>
         <p className="text-charcoal/60 mb-6 md:mb-8 max-w-md text-center text-[12px] md:text-base">Looks like you haven't added any elegant pieces to your collection yet.</p>
