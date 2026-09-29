@@ -26,7 +26,7 @@ const ScrollToTop = () => {
 const PageTransition = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
   return (
-    <div key={location.pathname} className="animate-page-fade flex-grow flex flex-col">
+    <div key={location.pathname} className="animate-page-fade w-full min-w-0 flex-grow flex flex-col">
       {children}
     </div>
   );
@@ -35,6 +35,9 @@ const PageTransition = ({ children }: { children: React.ReactNode }) => {
 function App() {
   // Initialize Smooth Scrolling globally
   useEffect(() => {
+    const isMobile = window.innerWidth <= 768 || window.matchMedia("(pointer: coarse)").matches;
+    if (isMobile) return; // Let native buttery smooth scroll handle mobile devices
+    
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -57,7 +60,7 @@ function App() {
         <Router>
       <Preloader />
       <ScrollToTop />
-      <div className="min-h-screen font-sans flex flex-col relative bg-gradient-to-br from-[#FCF1E6] via-[#FDFBF7] to-[#DFEEE8]">
+      <div className="min-h-screen w-full min-w-0 overflow-x-hidden font-sans flex flex-col relative bg-gradient-to-br from-[#FCF1E6] via-[#FDFBF7] to-[#DFEEE8]">
         {/* Fixed Background Botanical Watermarks */}
         <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
           {/* Top Right Branch */}
@@ -70,10 +73,10 @@ function App() {
           </svg>
         </div>
 
-        <div className="relative z-10 flex flex-col flex-grow">
+        <div className="relative z-10 w-full min-w-0 flex flex-col flex-grow">
           <Navbar />
           
-          <main className="flex-grow flex flex-col">
+          <main className="flex-grow w-full min-w-0 flex flex-col">
             <PageTransition>
               <Routes>
                 <Route path="/" element={<Home />} />

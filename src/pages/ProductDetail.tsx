@@ -6,6 +6,10 @@ import ImageMagnifier from '../components/ImageMagnifier';
 import ReviewSection from '../components/ReviewSection';
 import { doc, getDoc, collection, query, where, limit, getDocs, orderBy } from 'firebase/firestore';
 import { db } from '../config/firebase';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Pagination } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/pagination';
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -84,16 +88,47 @@ const ProductDetail = () => {
   const hasStock = product.stock > 0;
 
   return (
-    <div className="pt-32 pb-24 px-8 max-w-6xl mx-auto min-h-screen">
-      <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-sm uppercase tracking-widest text-charcoal/60 hover:text-charcoal transition-colors mb-10 group">
+    <div className="pt-24 md:pt-32 pb-16 md:pb-24 px-4 md:px-8 w-full max-w-full md:max-w-6xl mx-auto min-h-screen min-w-0 overflow-hidden md:overflow-visible">
+      <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-xs md:text-sm uppercase tracking-widest text-charcoal/60 hover:text-charcoal transition-colors mb-6 md:mb-10 group">
         <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Back
       </button>
       
-      <div className="flex flex-row gap-12 lg:gap-16 items-start">
-        {/* Image Gallery Side */}
-        <div className="w-1/2 lg:w-[45%] flex flex-row gap-6 justify-start">
+      <div className="flex flex-col md:flex-row gap-6 md:gap-12 lg:gap-16 items-start w-full min-w-0">
+        {/* MOBILE: Swipeable Gallery */}
+        <div className="block md:hidden w-full relative min-w-0 px-2 md:px-0">
+          <Swiper
+            modules={[Pagination]}
+            pagination={{ clickable: true }}
+            className="w-full rounded-2xl overflow-hidden shadow-md aspect-[4/5] bg-[#FAF8F5]"
+          >
+            {product.images.map((img: string, idx: number) => (
+              <SwiperSlide key={idx} className="flex items-center justify-center p-2">
+                <div className="relative w-full h-full bg-[#FAF8F5] rounded-xl overflow-hidden">
+                  <img 
+                    src={img} 
+                    alt={`${product.name} view ${idx + 1}`} 
+                    className="w-full h-full object-contain mix-blend-multiply"
+                  />
+                  {!hasStock && (
+                    <div className="absolute top-3 left-3 bg-red-900/90 text-white text-[8px] font-bold tracking-[0.2em] px-2 py-1 uppercase rounded-sm z-10 shadow-sm backdrop-blur-sm">
+                      OUT OF STOCK
+                    </div>
+                  )}
+                  {hasStock && product.hasOffer && (
+                    <div className="absolute top-3 left-3 bg-[#C4A47C] text-white text-[8px] font-bold tracking-[0.2em] px-2 py-1 uppercase rounded-sm z-10 shadow-sm backdrop-blur-sm bg-opacity-90">
+                      {product.offerPercentage}% OFF
+                    </div>
+                  )}
+                </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </div>
+
+        {/* DESKTOP: Image Gallery Side */}
+        <div className="hidden md:flex w-full md:w-1/2 lg:w-[45%] flex-row gap-6 justify-start">
           {/* Thumbnails */}
-          <div className="flex flex-col gap-3 w-[85px] flex-shrink-0 overflow-y-auto no-scrollbar">
+          <div className="flex flex-col gap-3 w-[85px] overflow-y-auto no-scrollbar">
             {product.images.map((img: string, idx: number) => (
               <button 
                 key={idx}
@@ -113,7 +148,7 @@ const ProductDetail = () => {
             ))}
           </div>
 
-          {/* Main Image - Desktop */}
+          {/* Main Image */}
           <div className="block w-full">
             <div className="relative aspect-[3/4] rounded-xl overflow-hidden shadow-sm bg-[#FAF8F5]">
               {selectedImage && <ImageMagnifier src={selectedImage} alt={product.name} />}
@@ -132,36 +167,36 @@ const ProductDetail = () => {
         </div>
 
         {/* Product Info Side */}
-        <div className="w-1/2 lg:w-[45%] flex flex-col pt-8">
-          <p className="text-sm tracking-widest text-charcoal/50 uppercase mb-3 flex items-center justify-between">
+        <div className="w-full md:w-1/2 lg:w-[45%] flex flex-col pt-0 md:pt-8 min-w-0 overflow-hidden">
+          <p className="text-[9px] md:text-sm tracking-widest text-charcoal/50 uppercase mb-2 md:mb-3 flex items-center justify-between">
             {product.category} Jewellery
-            <span className="font-mono text-xs">{product.productId}</span>
+            <span className="font-mono text-[8px] md:text-xs">{product.productId}</span>
           </p>
-          <h1 className="text-4xl lg:text-5xl font-serif text-charcoal mb-3 leading-tight">{product.name}</h1>
+          <h1 className="text-[20px] md:text-4xl lg:text-5xl font-serif text-charcoal mb-2 md:mb-3 leading-tight">{product.name}</h1>
           
           {/* Average Rating Display */}
           {reviews.length > 0 && (
-            <div className="flex items-center gap-2 mb-4">
+            <div className="flex items-center gap-1 md:gap-2 mb-3 md:mb-4">
               <div className="flex">
                 {[...Array(5)].map((_, i) => {
                   const avg = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
-                  return <Star key={i} size={16} className={i < Math.round(avg) ? 'text-[#C4A47C] fill-[#C4A47C]' : 'text-charcoal/20'} />
+                  return <Star key={i} size={16} className={`w-[12px] h-[12px] md:w-[16px] md:h-[16px] ${i < Math.round(avg) ? 'text-[#C4A47C] fill-[#C4A47C]' : 'text-charcoal/20'}`} />
                 })}
               </div>
-              <span className="text-sm text-charcoal/60">({reviews.length} reviews)</span>
+              <span className="text-[9px] md:text-sm text-charcoal/60">({reviews.length} reviews)</span>
             </div>
           )}
 
-          <div className="flex items-center gap-4 mb-6">
-            <p className="text-3xl font-medium text-[#C4A47C]">₹ {product.finalPrice}</p>
+          <div className="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
+            <p className="text-[18px] md:text-3xl font-medium text-[#C4A47C]">₹ {product.finalPrice}</p>
             {product.hasOffer && (
-              <p className="text-xl text-charcoal/30 line-through">₹ {product.basePrice}</p>
+              <p className="text-[13px] md:text-xl text-charcoal/30 line-through">₹ {product.basePrice}</p>
             )}
           </div>
           
-          <div className="h-[1px] w-full bg-charcoal/10 mb-8" />
+          <div className="h-[1px] w-full bg-charcoal/10 mb-4 md:mb-8" />
           
-          <p className="text-charcoal/70 leading-relaxed mb-10 font-light text-base whitespace-pre-wrap">
+          <p className="text-charcoal/70 leading-relaxed mb-6 md:mb-10 font-light text-[11px] md:text-base whitespace-pre-wrap">
             {product.description}
           </p>
 
@@ -176,18 +211,18 @@ const ProductDetail = () => {
                 image: product.images[0]
               });
             }} 
-            className={`btn-luxury btn-luxury-solid w-full py-4 flex items-center justify-center gap-3 mb-8 ${!hasStock ? 'opacity-50 cursor-not-allowed bg-charcoal/50 border-none hover:bg-charcoal/50 hover:text-white' : ''}`}
+            className={`btn-luxury btn-luxury-solid w-full py-2.5 md:py-4 flex items-center justify-center gap-2 md:gap-3 mb-4 md:mb-8 text-[10px] md:text-sm ${!hasStock ? 'opacity-50 cursor-not-allowed bg-charcoal/50 border-none hover:bg-charcoal/50 hover:text-white' : ''}`}
           >
             {hasStock ? (
-              <><ShoppingBag size={18} /> Add to Cart</>
+              <><ShoppingBag size={14} className="md:w-[18px] md:h-[18px]" /> Add to Cart</>
             ) : (
               'OUT OF STOCK'
             )}
           </button>
           
           {hasStock && product.stock < 5 && (
-            <p className="text-orange-600/80 text-sm font-medium mb-8 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
+            <p className="text-orange-600/80 text-[10px] md:text-sm font-medium mb-4 md:mb-8 flex items-center gap-1.5 md:gap-2">
+              <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-orange-500 animate-pulse"></span>
               Only {product.stock} items left in stock. Hurry!
             </p>
           )}
@@ -195,14 +230,14 @@ const ProductDetail = () => {
           {/* Collapsible Details */}
           <div className="border-t border-charcoal/10">
             <details className="group [&_summary::-webkit-details-marker]:hidden" open>
-              <summary className="flex items-center justify-between py-5 cursor-pointer text-charcoal">
-                <span className="font-medium uppercase tracking-widest text-sm">Product Details</span>
+              <summary className="flex items-center justify-between py-3 md:py-5 cursor-pointer text-charcoal">
+                <span className="font-medium uppercase tracking-widest text-[9px] md:text-sm">Product Details</span>
                 <span className="transition duration-300 group-open:-rotate-180">
-                  <svg fill="none" height="24" shapeRendering="geometricPrecision" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
+                  <svg fill="none" height="20" shapeRendering="geometricPrecision" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" viewBox="0 0 24 24" className="w-[14px] md:w-[24px]"><path d="M6 9l6 6 6-6"></path></svg>
                 </span>
               </summary>
-              <div className="text-charcoal/60 text-sm font-light leading-relaxed pb-6 animate-fade-in">
-                <ul className="list-disc pl-4 space-y-2">
+              <div className="text-charcoal/60 text-[10px] md:text-sm font-light leading-relaxed pb-3 md:pb-6 animate-fade-in">
+                <ul className="list-disc pl-4 space-y-1.5 md:space-y-2">
                   <li>Premium quality plating ensuring long-lasting shine.</li>
                   <li>Hypoallergenic materials suitable for sensitive skin.</li>
                   <li>Handcrafted finish mimicking pure gold aesthetics.</li>
@@ -211,14 +246,14 @@ const ProductDetail = () => {
               </div>
             </details>
             
-            <details className="group [&_summary::-webkit-details-marker]:hidden border-t border-charcoal/10">
-              <summary className="flex items-center justify-between py-5 cursor-pointer text-charcoal">
-                <span className="font-medium uppercase tracking-widest text-sm">Care Instructions</span>
+            <details className="group [&_summary::-webkit-details-marker]:hidden border-t border-charcoal/10" open>
+              <summary className="flex items-center justify-between py-3 md:py-5 cursor-pointer text-charcoal">
+                <span className="font-medium uppercase tracking-widest text-[9px] md:text-sm">Care Instructions</span>
                 <span className="transition duration-300 group-open:-rotate-180">
-                  <svg fill="none" height="24" shapeRendering="geometricPrecision" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
+                  <svg fill="none" height="20" shapeRendering="geometricPrecision" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" viewBox="0 0 24 24" className="w-[14px] md:w-[24px]"><path d="M6 9l6 6 6-6"></path></svg>
                 </span>
               </summary>
-              <div className="text-charcoal/60 text-sm font-light leading-relaxed pb-6">
+              <div className="text-charcoal/60 text-[10px] md:text-sm font-light leading-relaxed pb-3 md:pb-6">
                 Avoid direct contact with perfume, deodorant, and water. Store in a cool, dry place inside a ziplock bag or airtight container when not in use.
               </div>
             </details>
@@ -230,14 +265,14 @@ const ProductDetail = () => {
 
       {/* RELATED PIECES */}
       {relatedProducts.length > 0 && (
-        <div className="mt-24 border-t border-charcoal/10 pt-16">
-          <h2 className="text-2xl font-serif text-charcoal mb-10 text-center">You May Also Like</h2>
-          <div className="grid grid-cols-4 gap-8">
+        <div className="mt-16 md:mt-24 border-t border-charcoal/10 pt-10 md:pt-16">
+          <h2 className="text-xl md:text-2xl font-serif text-charcoal mb-6 md:mb-10 text-center">You May Also Like</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
             {relatedProducts.map(relProduct => {
               const relHasStock = relProduct.stock > 0;
               return (
               <Link to={`/product/${relProduct.id}`} key={relProduct.id} className="group cursor-pointer">
-                <div className="relative aspect-[3/4] overflow-hidden bg-[#FAF8F5] mb-4 rounded-lg shadow-sm group-hover:shadow-md transition-shadow">
+                <div className="relative aspect-[3/4] overflow-hidden bg-[#FAF8F5] mb-3 md:mb-4 rounded-lg shadow-sm group-hover:shadow-md transition-shadow">
                   {/* Main Image */}
                   <img 
                     src={relProduct.images[0]} 
@@ -259,24 +294,24 @@ const ProductDetail = () => {
                   {/* Tags */}
                   <div className="absolute top-2 right-2 flex flex-col gap-1 items-end pointer-events-none z-10">
                     {!relHasStock && (
-                      <div className="bg-red-900/90 text-white text-[8px] font-bold tracking-[0.2em] px-2 py-1 uppercase rounded-sm shadow-sm">
+                      <div className="bg-red-900/90 text-white text-[7px] md:text-[8px] font-bold tracking-[0.2em] px-2 py-1 uppercase rounded-sm shadow-sm">
                         OUT OF STOCK
                       </div>
                     )}
                     {relHasStock && relProduct.hasOffer && (
-                      <div className="bg-[#C4A47C] text-white text-[8px] font-bold tracking-[0.2em] px-2 py-1 uppercase rounded-sm shadow-sm">
+                      <div className="bg-[#C4A47C] text-white text-[7px] md:text-[8px] font-bold tracking-[0.2em] px-2 py-1 uppercase rounded-sm shadow-sm">
                         {relProduct.offerPercentage}% OFF
                       </div>
                     )}
                   </div>
                 </div>
-                <div className="flex flex-col text-center">
-                  <h3 className="font-serif text-base text-charcoal mb-1 truncate px-2">{relProduct.name}</h3>
+                <div className="flex flex-col text-center px-1">
+                  <h3 className="font-serif text-[13px] md:text-base text-charcoal mb-1 truncate">{relProduct.name}</h3>
                   <div className="flex items-center justify-center gap-2">
                     {relProduct.hasOffer && (
-                      <span className="text-charcoal/40 text-[11px] line-through">₹ {relProduct.basePrice}</span>
+                      <span className="text-charcoal/40 text-[10px] md:text-[11px] line-through">₹ {relProduct.basePrice}</span>
                     )}
-                    <p className="text-[#C4A47C] text-[15px] font-medium">₹ {relProduct.finalPrice}</p>
+                    <p className="text-[#C4A47C] text-[13px] md:text-[15px] font-medium">₹ {relProduct.finalPrice}</p>
                   </div>
                 </div>
               </Link>

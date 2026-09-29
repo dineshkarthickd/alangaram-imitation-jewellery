@@ -169,63 +169,63 @@ const AdminAddProduct: React.FC<AdminAddProductProps> = ({ editingProduct, setEd
     : formData.price;
 
   return (
-    <div className="animate-fade-in">
+    <div className="animate-fade-in min-w-0">
       {globalError && (
-        <div className="mb-8 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-3 text-red-700 shadow-sm">
+        <div className="mb-8 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-3 text-red-700 shadow-sm min-w-0">
           <AlertCircle size={20} className="flex-shrink-0" />
-          <p className="font-medium">{globalError}</p>
+          <p className="font-medium text-[10px] md:text-sm">{globalError}</p>
         </div>
       )}
       {success && !globalError && (
-        <div className="mb-8 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center gap-3 text-green-700 shadow-sm">
-          <CheckCircle2 size={20} />
-          <p>{editingProduct ? 'Product successfully updated!' : 'Product successfully added to inventory and Cloudinary!'}</p>
+        <div className="mb-8 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center gap-3 text-green-700 shadow-sm min-w-0">
+          <CheckCircle2 size={20} className="flex-shrink-0" />
+          <p className="text-[10px] md:text-sm">{editingProduct ? 'Product successfully updated!' : 'Product successfully added to inventory and Cloudinary!'}</p>
         </div>
       )}
 
-      <form onSubmit={handleProductSubmit} className="space-y-10 bg-white/50 p-8 rounded-2xl border border-charcoal/5 shadow-sm">
+      <form onSubmit={handleProductSubmit} className="space-y-6 md:space-y-10 bg-white/50 p-4 md:p-8 rounded-2xl border border-charcoal/5 shadow-sm min-w-0">
         
-        <h2 className="text-2xl font-serif text-charcoal mb-6 border-b border-charcoal/10 pb-4">
+        <h2 className="text-xl md:text-2xl font-serif text-charcoal mb-4 md:mb-6 border-b border-charcoal/10 pb-4">
           {editingProduct ? 'Update Existing Product' : 'Create New Product'}
         </h2>
         
         {/* ID & Basic Info */}
-        <div className="grid grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm uppercase tracking-wider text-charcoal/70 mb-2">Product ID (SKU)</label>
-            <div className={`flex items-center border-b transition-colors ${formErrors.productId ? 'border-red-500' : 'border-charcoal/20 focus-within:border-[#C4A47C]'}`}>
-              <span className="text-charcoal/50 font-serif text-xl pl-2 pr-1 pb-2">#</span>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 min-w-0">
+          <div className="min-w-0">
+            <label className="block text-[10px] md:text-sm uppercase tracking-wider text-charcoal/70 mb-2">Product ID (SKU)</label>
+            <div className={`flex items-center border-b transition-colors min-w-0 ${formErrors.productId ? 'border-red-500' : 'border-charcoal/20 focus-within:border-[#C4A47C]'}`}>
+              <span className="text-charcoal/50 font-serif text-lg md:text-xl pl-2 pr-1 pb-2">#</span>
               <input 
                 type="number" placeholder="101" disabled={!!editingProduct}
-                className="w-full bg-transparent py-3 outline-none disabled:opacity-50"
+                className="w-full bg-transparent py-2 md:py-3 outline-none disabled:opacity-50 text-[10px] md:text-sm"
                 value={formData.productId} onChange={(e) => { setFormData({...formData, productId: e.target.value}); setFormErrors({...formErrors, productId: ''}); }}
               />
             </div>
-            {formErrors.productId && <p className="text-red-500 text-xs mt-1.5 animate-fade-in font-medium">{formErrors.productId}</p>}
+            {formErrors.productId && <p className="text-red-500 text-[10px] md:text-xs mt-1.5 animate-fade-in font-medium">{formErrors.productId}</p>}
           </div>
-          <div>
-            <label className="block text-sm uppercase tracking-wider text-charcoal/70 mb-2">Product Name</label>
+          <div className="min-w-0">
+            <label className="block text-[10px] md:text-sm uppercase tracking-wider text-charcoal/70 mb-2">Product Name</label>
             <input 
               type="text" placeholder="e.g. Classic Gold Choker"
-              className={`w-full bg-transparent border-b py-3 outline-none transition-colors ${formErrors.name ? 'border-red-500' : 'border-charcoal/20 focus:border-[#C4A47C]'}`}
+              className={`w-full bg-transparent border-b py-2 md:py-3 outline-none transition-colors text-[10px] md:text-sm ${formErrors.name ? 'border-red-500' : 'border-charcoal/20 focus:border-[#C4A47C]'}`}
               value={formData.name} onChange={(e) => { setFormData({...formData, name: e.target.value}); setFormErrors({...formErrors, name: ''}); }}
             />
-            {formErrors.name && <p className="text-red-500 text-xs mt-1.5 animate-fade-in font-medium">{formErrors.name}</p>}
+            {formErrors.name && <p className="text-red-500 text-[10px] md:text-xs mt-1.5 animate-fade-in font-medium">{formErrors.name}</p>}
           </div>
         </div>
 
         {/* Dual Image Upload */}
-        <div>
-          <label className="block text-sm uppercase tracking-wider text-charcoal/70 mb-4">Product Imagery (Cloudinary)</label>
-          <div className="grid grid-cols-2 gap-6">
+        <div className="min-w-0">
+          <label className="block text-[10px] md:text-sm uppercase tracking-wider text-charcoal/70 mb-2 md:mb-4">Product Imagery (Cloudinary)</label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 min-w-0">
             {/* Main Image */}
-            <div>
-              <label className={`flex flex-col items-center justify-center w-full h-56 border-2 border-dashed rounded-xl cursor-pointer bg-cream/30 hover:bg-cream/70 transition-colors overflow-hidden relative ${formErrors.mainImage ? 'border-red-500' : 'border-charcoal/20'}`}>
+            <div className="min-w-0">
+              <label className={`flex flex-col items-center justify-center w-full h-40 md:h-56 border-2 border-dashed rounded-xl cursor-pointer bg-cream/30 hover:bg-cream/70 transition-colors overflow-hidden relative min-w-0 ${formErrors.mainImage ? 'border-red-500' : 'border-charcoal/20'}`}>
                 {mainPreview ? <img src={mainPreview} className="w-full h-full object-contain" /> : (
-                  <div className="flex flex-col items-center text-center p-4">
-                    <Upload className="w-8 h-8 mb-2 text-charcoal/40" />
-                    <p className="text-sm font-semibold text-[#C4A47C]">Product Image</p>
-                    <p className="text-xs text-charcoal/50 mt-1">(Standalone item)</p>
+                  <div className="flex flex-col items-center text-center p-4 min-w-0">
+                    <Upload className="w-6 h-6 md:w-8 md:h-8 mb-2 text-charcoal/40" />
+                    <p className="text-[10px] md:text-sm font-semibold text-[#C4A47C]">Product Image</p>
+                    <p className="text-[10px] md:text-xs text-charcoal/50 mt-1">(Standalone item)</p>
                   </div>
                 )}
                 <input type="file" className="hidden" accept="image/*" onChange={(e) => {
@@ -234,16 +234,16 @@ const AdminAddProduct: React.FC<AdminAddProductProps> = ({ editingProduct, setEd
                   }
                 }} />
               </label>
-              {formErrors.mainImage && <p className="text-red-500 text-xs mt-1.5 animate-fade-in font-medium">{formErrors.mainImage}</p>}
+              {formErrors.mainImage && <p className="text-red-500 text-[10px] md:text-xs mt-1.5 animate-fade-in font-medium">{formErrors.mainImage}</p>}
             </div>
 
             {/* Model Image */}
-            <label className="flex flex-col items-center justify-center w-full h-56 border-2 border-charcoal/20 border-dashed rounded-xl cursor-pointer bg-cream/30 hover:bg-cream/70 transition-colors overflow-hidden relative">
+            <label className="flex flex-col items-center justify-center w-full h-40 md:h-56 border-2 border-charcoal/20 border-dashed rounded-xl cursor-pointer bg-cream/30 hover:bg-cream/70 transition-colors overflow-hidden relative min-w-0">
               {modelPreview ? <img src={modelPreview} className="w-full h-full object-contain" /> : (
-                <div className="flex flex-col items-center text-center p-4">
-                  <Upload className="w-8 h-8 mb-2 text-charcoal/40" />
-                  <p className="text-sm font-semibold text-charcoal/70">Model Image <span className="font-normal text-xs opacity-70">(Optional)</span></p>
-                  <p className="text-xs text-charcoal/50 mt-1">Model wearing the item</p>
+                <div className="flex flex-col items-center text-center p-4 min-w-0">
+                  <Upload className="w-6 h-6 md:w-8 md:h-8 mb-2 text-charcoal/40" />
+                  <p className="text-[10px] md:text-sm font-semibold text-charcoal/70">Model Image <span className="font-normal text-[10px] md:text-xs opacity-70">(Optional)</span></p>
+                  <p className="text-[10px] md:text-xs text-charcoal/50 mt-1">Model wearing the item</p>
                 </div>
               )}
               <input type="file" className="hidden" accept="image/*" onChange={(e) => {
@@ -256,71 +256,71 @@ const AdminAddProduct: React.FC<AdminAddProductProps> = ({ editingProduct, setEd
         </div>
 
         {/* Pricing & Offers */}
-        <div className="p-6 border border-[#C4A47C]/20 rounded-xl bg-[#C4A47C]/5 space-y-6">
-          <div className="grid grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm uppercase tracking-wider text-charcoal/70 mb-2">Base Price (₹)</label>
+        <div className="p-4 md:p-6 border border-[#C4A47C]/20 rounded-xl bg-[#C4A47C]/5 space-y-4 md:space-y-6 min-w-0">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 min-w-0">
+            <div className="min-w-0">
+              <label className="block text-[10px] md:text-sm uppercase tracking-wider text-charcoal/70 mb-2">Base Price (₹)</label>
               <input 
                 type="number" placeholder="e.g. 2499"
-                className={`w-full bg-transparent border-b py-3 outline-none transition-colors ${formErrors.price ? 'border-red-500' : 'border-charcoal/20 focus:border-[#C4A47C]'}`}
+                className={`w-full bg-transparent border-b py-2 md:py-3 outline-none transition-colors text-[10px] md:text-sm ${formErrors.price ? 'border-red-500' : 'border-charcoal/20 focus:border-[#C4A47C]'}`}
                 value={formData.price} onChange={(e) => { setFormData({...formData, price: e.target.value}); setFormErrors({...formErrors, price: ''}); }}
               />
-              {formErrors.price && <p className="text-red-500 text-xs mt-1.5 animate-fade-in font-medium">{formErrors.price}</p>}
+              {formErrors.price && <p className="text-red-500 text-[10px] md:text-xs mt-1.5 animate-fade-in font-medium">{formErrors.price}</p>}
             </div>
-            <div className="flex flex-col justify-center pt-6">
-              <label className="flex items-center gap-3 cursor-pointer">
+            <div className="flex flex-col justify-center md:pt-6 min-w-0">
+              <label className="flex items-center gap-3 cursor-pointer min-w-0">
                 <input 
                   type="checkbox" 
-                  className="w-5 h-5 accent-[#C4A47C]"
+                  className="w-4 h-4 md:w-5 md:h-5 accent-[#C4A47C] flex-shrink-0"
                   checked={formData.hasOffer} 
                   onChange={(e) => setFormData({...formData, hasOffer: e.target.checked})}
                 />
-                <span className="text-charcoal font-medium">Apply Special Offer to this product</span>
+                <span className="text-charcoal font-medium text-[10px] md:text-base">Apply Special Offer to this product</span>
               </label>
             </div>
           </div>
 
           {formData.hasOffer && (
-            <div className="grid grid-cols-2 gap-6 animate-fade-in">
-              <div>
-                <label className="block text-sm uppercase tracking-wider text-charcoal/70 mb-2">Discount Percentage (%)</label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 animate-fade-in min-w-0">
+              <div className="min-w-0">
+                <label className="block text-[10px] md:text-sm uppercase tracking-wider text-charcoal/70 mb-2">Discount Percentage (%)</label>
                 <input 
                   type="number" placeholder="e.g. 20" min="1" max="99"
-                  className={`w-full bg-transparent border-b py-3 outline-none font-bold transition-colors ${formErrors.offerPercentage ? 'border-red-500 text-red-500' : 'border-[#C4A47C] focus:border-[#C4A47C] text-[#C4A47C]'}`}
+                  className={`w-full bg-transparent border-b py-2 md:py-3 outline-none font-bold transition-colors text-[10px] md:text-sm ${formErrors.offerPercentage ? 'border-red-500 text-red-500' : 'border-[#C4A47C] focus:border-[#C4A47C] text-[#C4A47C]'}`}
                   value={formData.offerPercentage} onChange={(e) => { setFormData({...formData, offerPercentage: e.target.value}); setFormErrors({...formErrors, offerPercentage: ''}); }}
                 />
-                {formErrors.offerPercentage && <p className="text-red-500 text-xs mt-1.5 animate-fade-in font-medium">{formErrors.offerPercentage}</p>}
+                {formErrors.offerPercentage && <p className="text-red-500 text-[10px] md:text-xs mt-1.5 animate-fade-in font-medium">{formErrors.offerPercentage}</p>}
               </div>
-              <div className="flex flex-col justify-end pb-2">
-                <p className="text-sm text-charcoal/60">Final Selling Price: <strong className="text-xl text-[#C4A47C]">₹ {calculatedOfferPrice || '0'}</strong></p>
+              <div className="flex flex-col justify-end md:pb-2 min-w-0">
+                <p className="text-[10px] md:text-sm text-charcoal/60">Final Selling Price: <strong className="text-lg md:text-xl text-[#C4A47C]">₹ {calculatedOfferPrice || '0'}</strong></p>
               </div>
             </div>
           )}
         </div>
 
         {/* Stock & Category */}
-        <div className="grid grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm uppercase tracking-wider text-charcoal/70 mb-2">Initial Stock Quantity</label>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 min-w-0">
+          <div className="min-w-0">
+            <label className="block text-[10px] md:text-sm uppercase tracking-wider text-charcoal/70 mb-2">Initial Stock Quantity</label>
             <input 
               type="number" placeholder="e.g. 10" min="0"
-              className={`w-full bg-transparent border-b py-3 outline-none transition-colors ${formErrors.stock ? 'border-red-500' : 'border-charcoal/20 focus:border-[#C4A47C]'}`}
+              className={`w-full bg-transparent border-b py-2 md:py-3 outline-none transition-colors text-[10px] md:text-sm ${formErrors.stock ? 'border-red-500' : 'border-charcoal/20 focus:border-[#C4A47C]'}`}
               value={formData.stock} onChange={(e) => { setFormData({...formData, stock: e.target.value}); setFormErrors({...formErrors, stock: ''}); }}
             />
-            {formErrors.stock && <p className="text-red-500 text-xs mt-1.5 animate-fade-in font-medium">{formErrors.stock}</p>}
+            {formErrors.stock && <p className="text-red-500 text-[10px] md:text-xs mt-1.5 animate-fade-in font-medium">{formErrors.stock}</p>}
           </div>
-          <div className="relative">
-            <label className="block text-sm uppercase tracking-wider text-charcoal/70 mb-2">Category</label>
+          <div className="relative min-w-0">
+            <label className="block text-[10px] md:text-sm uppercase tracking-wider text-charcoal/70 mb-2">Category</label>
             <div 
-              className={`w-full bg-transparent border-b py-3 flex justify-between items-center cursor-pointer transition-colors ${formErrors.category ? 'border-red-500' : 'border-charcoal/20 hover:border-[#C4A47C]'}`}
+              className={`w-full bg-transparent border-b py-2 md:py-3 flex justify-between items-center cursor-pointer transition-colors text-[10px] md:text-sm min-w-0 ${formErrors.category ? 'border-red-500' : 'border-charcoal/20 hover:border-[#C4A47C]'}`}
               onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}
             >
-              <span className={formData.category ? 'text-charcoal' : 'text-charcoal/50'}>
+              <span className={`truncate pr-2 ${formData.category ? 'text-charcoal' : 'text-charcoal/50'}`}>
                 {formData.category ? `${formData.category} Jewellery` : 'Select Category'}
               </span>
-              <ChevronDown size={18} className={`text-charcoal/50 transition-transform duration-300 ${isCategoryDropdownOpen ? 'rotate-180' : ''}`} />
+              <ChevronDown size={18} className={`text-charcoal/50 transition-transform duration-300 flex-shrink-0 ${isCategoryDropdownOpen ? 'rotate-180' : ''}`} />
             </div>
-            {formErrors.category && <p className="text-red-500 text-xs mt-1.5 animate-fade-in font-medium">{formErrors.category}</p>}
+            {formErrors.category && <p className="text-red-500 text-[10px] md:text-xs mt-1.5 animate-fade-in font-medium">{formErrors.category}</p>}
             
             {/* Custom Dropdown Menu */}
             {isCategoryDropdownOpen && (
@@ -328,7 +328,7 @@ const AdminAddProduct: React.FC<AdminAddProductProps> = ({ editingProduct, setEd
                 {['Forming', 'Imitation'].map((cat) => (
                   <div 
                     key={cat}
-                    className={`px-4 py-3 cursor-pointer transition-colors ${formData.category === cat ? 'bg-[#C4A47C]/10 text-[#C4A47C] font-medium' : 'text-charcoal hover:bg-charcoal/5'}`}
+                    className={`px-4 py-2 md:py-3 cursor-pointer transition-colors text-[10px] md:text-sm ${formData.category === cat ? 'bg-[#C4A47C]/10 text-[#C4A47C] font-medium' : 'text-charcoal hover:bg-charcoal/5'}`}
                     onClick={() => {
                       setFormData({...formData, category: cat});
                       setFormErrors({...formErrors, category: ''});
@@ -343,26 +343,28 @@ const AdminAddProduct: React.FC<AdminAddProductProps> = ({ editingProduct, setEd
           </div>
         </div>
 
-        <div>
-          <label className="block text-sm uppercase tracking-wider text-charcoal/70 mb-2">Description</label>
+        <div className="min-w-0">
+          <label className="block text-[10px] md:text-sm uppercase tracking-wider text-charcoal/70 mb-2">Description</label>
           <textarea 
             rows={3} placeholder="Detailed description of the piece..."
-            className={`w-full bg-transparent border-b py-3 outline-none transition-colors resize-none ${formErrors.description ? 'border-red-500' : 'border-charcoal/20 focus:border-[#C4A47C]'}`}
+            className={`w-full bg-transparent border-b py-2 md:py-3 outline-none transition-colors resize-none text-[10px] md:text-sm ${formErrors.description ? 'border-red-500' : 'border-charcoal/20 focus:border-[#C4A47C]'}`}
             value={formData.description} onChange={(e) => { setFormData({...formData, description: e.target.value}); setFormErrors({...formErrors, description: ''}); }}
           ></textarea>
-          {formErrors.description && <p className="text-red-500 text-xs mt-1.5 animate-fade-in font-medium">{formErrors.description}</p>}
+          {formErrors.description && <p className="text-red-500 text-[10px] md:text-xs mt-1.5 animate-fade-in font-medium">{formErrors.description}</p>}
         </div>
 
-        <button type="submit" disabled={loading} className="btn-luxury btn-luxury-solid w-full py-4 flex items-center justify-center gap-2">
-          {loading ? (
-            <><Loader2 className="animate-spin" size={20} /> <span className="inline">Processing & Uploading...</span></>
-          ) : (
-            <>
-              <Plus size={20} className="block" /> 
-              <span className="inline">{editingProduct ? 'Update Product' : 'Create Product & Add to Store'}</span>
-            </>
-          )}
-        </button>
+        <div className="w-full flex justify-center mt-3 md:mt-4">
+          <button type="submit" disabled={loading} className="btn-luxury btn-luxury-solid w-[85%] md:w-full py-2.5 md:py-4 flex items-center justify-center gap-1.5 md:gap-2 text-[9px] md:text-sm min-w-0">
+            {loading ? (
+              <><Loader2 className="animate-spin md:w-[20px] md:h-[20px] w-3 h-3" /> <span className="inline">Processing & Uploading...</span></>
+            ) : (
+              <>
+                <Plus size={20} className="hidden md:block" /> 
+                <span className="inline">{editingProduct ? 'Update Product' : 'Create Product & Add to Store'}</span>
+              </>
+            )}
+          </button>
+        </div>
       </form>
     </div>
   );
