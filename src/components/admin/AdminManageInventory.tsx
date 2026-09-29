@@ -71,8 +71,8 @@ const AdminManageInventory: React.FC<AdminManageInventoryProps> = ({ onEditProdu
   const lowStockCount = productsList.filter(p => p.stock < 3).length;
 
   return (
-    <div className="animate-fade-in bg-white/50 p-4 sm:p-8 rounded-2xl border border-charcoal/5 shadow-sm min-h-[500px] relative">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-8">
+    <div className="animate-fade-in bg-white/50 p-8 rounded-2xl border border-charcoal/5 shadow-sm min-h-[500px] relative">
+      <div className="flex flex-row justify-between items-end gap-4 mb-8">
         <div>
           <h2 className="text-2xl font-serif text-charcoal mb-2">Inventory Management</h2>
           <p className="text-charcoal/60 text-sm">Monitor stock levels and view all live products.</p>
@@ -87,10 +87,10 @@ const AdminManageInventory: React.FC<AdminManageInventoryProps> = ({ onEditProdu
 
       {/* Stock Filter Pills */}
       <div className="flex flex-wrap gap-2 mb-6">
-        <button onClick={() => setStockFilter('all')} className={`px-4 py-2 rounded-full text-xs sm:text-sm transition-all ${stockFilter === 'all' ? 'bg-[#C4A47C] text-white' : 'bg-white border border-charcoal/10 text-charcoal/70 hover:border-[#C4A47C]'}`}>All Products</button>
-        <button onClick={() => setStockFilter('active')} className={`px-4 py-2 rounded-full text-xs sm:text-sm transition-all ${stockFilter === 'active' ? 'bg-[#C4A47C] text-white' : 'bg-white border border-charcoal/10 text-charcoal/70 hover:border-[#C4A47C]'}`}>Active Stock</button>
-        <button onClick={() => setStockFilter('low')} className={`px-4 py-2 rounded-full text-xs sm:text-sm transition-all ${stockFilter === 'low' ? 'bg-orange-500 text-white' : 'bg-white border border-orange-200 text-orange-600 hover:border-orange-500'}`}>Low Stock</button>
-        <button onClick={() => setStockFilter('out')} className={`px-4 py-2 rounded-full text-xs sm:text-sm transition-all ${stockFilter === 'out' ? 'bg-red-500 text-white' : 'bg-white border border-red-200 text-red-600 hover:border-red-500'}`}>Out of Stock</button>
+        <button onClick={() => setStockFilter('all')} className={`px-4 py-2 rounded-full text-sm transition-all ${stockFilter === 'all' ? 'bg-[#C4A47C] text-white' : 'bg-white border border-charcoal/10 text-charcoal/70 hover:border-[#C4A47C]'}`}>All Products</button>
+        <button onClick={() => setStockFilter('active')} className={`px-4 py-2 rounded-full text-sm transition-all ${stockFilter === 'active' ? 'bg-[#C4A47C] text-white' : 'bg-white border border-charcoal/10 text-charcoal/70 hover:border-[#C4A47C]'}`}>Active Stock</button>
+        <button onClick={() => setStockFilter('low')} className={`px-4 py-2 rounded-full text-sm transition-all ${stockFilter === 'low' ? 'bg-orange-500 text-white' : 'bg-white border border-orange-200 text-orange-600 hover:border-orange-500'}`}>Low Stock</button>
+        <button onClick={() => setStockFilter('out')} className={`px-4 py-2 rounded-full text-sm transition-all ${stockFilter === 'out' ? 'bg-red-500 text-white' : 'bg-white border border-red-200 text-red-600 hover:border-red-500'}`}>Out of Stock</button>
       </div>
 
       {globalError && (
@@ -114,8 +114,8 @@ const AdminManageInventory: React.FC<AdminManageInventoryProps> = ({ onEditProdu
                 <ArrowLeft size={20} /> Back to Inventory
               </button>
 
-              <div className="bg-white border border-charcoal/10 rounded-xl p-6 shadow-sm flex flex-col md:flex-row gap-8">
-                <div className="w-full md:w-1/3 flex-shrink-0">
+              <div className="bg-white border border-charcoal/10 rounded-xl p-6 shadow-sm flex flex-row gap-8">
+                <div className="w-1/3 flex-shrink-0">
                   <img src={selectedAdminProduct.images[0]} alt={selectedAdminProduct.name} className="w-full aspect-square object-cover rounded-lg border border-charcoal/10 shadow-sm" />
                 </div>
                 <div className="w-full flex flex-col justify-between">
@@ -165,7 +165,7 @@ const AdminManageInventory: React.FC<AdminManageInventoryProps> = ({ onEditProdu
                       }}
                       className="flex-1 flex items-center justify-center gap-2 bg-[#C4A47C] text-white py-2.5 rounded-md hover:bg-[#A98C68] transition-colors font-medium text-sm"
                     >
-                      <Edit2 size={16} className="hidden sm:block" /> Edit Product
+                      <Edit2 size={16} className="block" /> Edit Product
                     </button>
                     <button 
                       onClick={() => {
@@ -174,7 +174,7 @@ const AdminManageInventory: React.FC<AdminManageInventoryProps> = ({ onEditProdu
                       }}
                       className="flex-1 flex items-center justify-center gap-2 bg-white border border-red-200 text-red-600 py-2.5 rounded-md hover:bg-red-50 hover:border-red-300 transition-colors font-medium text-sm"
                     >
-                      <Trash2 size={16} className="hidden sm:block" /> Delete Product
+                      <Trash2 size={16} className="block" /> Delete Product
                     </button>
                   </div>
                 </div>
@@ -191,20 +191,20 @@ const AdminManageInventory: React.FC<AdminManageInventoryProps> = ({ onEditProdu
                 <div 
                   key={product.id} 
                   onClick={() => setSelectedAdminProduct(product)}
-                  className="bg-white border border-charcoal/10 rounded-xl p-4 md:p-5 flex flex-col md:flex-row gap-4 md:items-center cursor-pointer hover:shadow-md transition-all group"
+                  className="bg-white border border-charcoal/10 rounded-xl p-5 flex flex-row gap-4 items-center cursor-pointer hover:shadow-md transition-all group"
                 >
                   <div className="flex gap-4 flex-grow">
-                    <div className="w-16 h-16 md:w-20 md:h-20 bg-cream rounded-md overflow-hidden flex-shrink-0 border border-charcoal/5">
+                    <div className="w-20 h-20 bg-cream rounded-md overflow-hidden flex-shrink-0 border border-charcoal/5">
                       <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     </div>
                     <div className="flex flex-col justify-center min-w-0">
-                      <h3 className="font-medium text-charcoal text-sm md:text-base leading-snug line-clamp-2 pr-4">{product.name}</h3>
-                      <p className="text-charcoal/50 text-xs mt-1 md:mt-1.5 font-mono">ID: {product.productId}</p>
+                      <h3 className="font-medium text-charcoal text-base leading-snug line-clamp-2 pr-4">{product.name}</h3>
+                      <p className="text-charcoal/50 text-xs mt-1.5 font-mono">ID: {product.productId}</p>
                     </div>
                   </div>
 
-                  <div className="flex md:flex-col items-center md:items-end justify-between md:justify-center md:w-[220px] flex-shrink-0 border-t md:border-t-0 border-charcoal/5 pt-3 md:pt-0 mt-1 md:mt-0">
-                    <div className="flex items-center gap-2 md:mb-2">
+                  <div className="flex flex-col items-end justify-center w-[220px] flex-shrink-0">
+                    <div className="flex items-center gap-2 mb-2">
                       {product.hasOffer && <span className="text-[10px] uppercase text-charcoal/40 line-through">₹{product.basePrice}</span>}
                       <p className="font-semibold text-[#C4A47C] text-sm">₹{product.finalPrice}</p>
                     </div>

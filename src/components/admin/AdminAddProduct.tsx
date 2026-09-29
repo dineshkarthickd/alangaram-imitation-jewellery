@@ -183,14 +183,14 @@ const AdminAddProduct: React.FC<AdminAddProductProps> = ({ editingProduct, setEd
         </div>
       )}
 
-      <form onSubmit={handleProductSubmit} className="space-y-10 bg-white/50 p-4 sm:p-8 rounded-2xl border border-charcoal/5 shadow-sm">
+      <form onSubmit={handleProductSubmit} className="space-y-10 bg-white/50 p-8 rounded-2xl border border-charcoal/5 shadow-sm">
         
         <h2 className="text-2xl font-serif text-charcoal mb-6 border-b border-charcoal/10 pb-4">
           {editingProduct ? 'Update Existing Product' : 'Create New Product'}
         </h2>
         
         {/* ID & Basic Info */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-2 gap-6">
           <div>
             <label className="block text-sm uppercase tracking-wider text-charcoal/70 mb-2">Product ID (SKU)</label>
             <div className={`flex items-center border-b transition-colors ${formErrors.productId ? 'border-red-500' : 'border-charcoal/20 focus-within:border-[#C4A47C]'}`}>
@@ -217,7 +217,7 @@ const AdminAddProduct: React.FC<AdminAddProductProps> = ({ editingProduct, setEd
         {/* Dual Image Upload */}
         <div>
           <label className="block text-sm uppercase tracking-wider text-charcoal/70 mb-4">Product Imagery (Cloudinary)</label>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-2 gap-6">
             {/* Main Image */}
             <div>
               <label className={`flex flex-col items-center justify-center w-full h-56 border-2 border-dashed rounded-xl cursor-pointer bg-cream/30 hover:bg-cream/70 transition-colors overflow-hidden relative ${formErrors.mainImage ? 'border-red-500' : 'border-charcoal/20'}`}>
@@ -257,7 +257,7 @@ const AdminAddProduct: React.FC<AdminAddProductProps> = ({ editingProduct, setEd
 
         {/* Pricing & Offers */}
         <div className="p-6 border border-[#C4A47C]/20 rounded-xl bg-[#C4A47C]/5 space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-2 gap-6">
             <div>
               <label className="block text-sm uppercase tracking-wider text-charcoal/70 mb-2">Base Price (₹)</label>
               <input 
@@ -281,7 +281,7 @@ const AdminAddProduct: React.FC<AdminAddProductProps> = ({ editingProduct, setEd
           </div>
 
           {formData.hasOffer && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in">
+            <div className="grid grid-cols-2 gap-6 animate-fade-in">
               <div>
                 <label className="block text-sm uppercase tracking-wider text-charcoal/70 mb-2">Discount Percentage (%)</label>
                 <input 
@@ -299,7 +299,7 @@ const AdminAddProduct: React.FC<AdminAddProductProps> = ({ editingProduct, setEd
         </div>
 
         {/* Stock & Category */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-2 gap-6">
           <div>
             <label className="block text-sm uppercase tracking-wider text-charcoal/70 mb-2">Initial Stock Quantity</label>
             <input 
@@ -355,12 +355,11 @@ const AdminAddProduct: React.FC<AdminAddProductProps> = ({ editingProduct, setEd
 
         <button type="submit" disabled={loading} className="btn-luxury btn-luxury-solid w-full py-4 flex items-center justify-center gap-2">
           {loading ? (
-            <><Loader2 className="animate-spin" size={20} /> <span className="hidden sm:inline">Processing & Uploading...</span><span className="sm:hidden">Processing...</span></>
+            <><Loader2 className="animate-spin" size={20} /> <span className="inline">Processing & Uploading...</span></>
           ) : (
             <>
-              <Plus size={20} className="hidden sm:block" /> 
-              <span className="hidden sm:inline">{editingProduct ? 'Update Product' : 'Create Product & Add to Store'}</span>
-              <span className="sm:hidden">{editingProduct ? 'Update Product' : 'Create Product'}</span>
+              <Plus size={20} className="block" /> 
+              <span className="inline">{editingProduct ? 'Update Product' : 'Create Product & Add to Store'}</span>
             </>
           )}
         </button>

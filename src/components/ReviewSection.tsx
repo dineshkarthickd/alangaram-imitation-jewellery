@@ -46,16 +46,16 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId, reviews, onRev
   };
 
   return (
-    <div className="mt-8 md:mt-24 border-t border-charcoal/10 pt-8 md:pt-16 animate-fade-in">
+    <div className="mt-24 border-t border-charcoal/10 pt-16 animate-fade-in">
       <h2 className="text-2xl font-serif text-charcoal mb-10 flex items-center gap-3">
         <MessageSquare size={24} className="text-[#C4A47C]" /> 
         Customer Reviews
       </h2>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+      <div className="grid grid-cols-3 gap-12">
         
         {/* LEAVE A REVIEW FORM */}
-        <div className="lg:col-span-1 bg-[#FAF8F5] p-6 md:p-8 rounded-xl h-fit shadow-sm border border-charcoal/5">
+        <div className="col-span-1 bg-[#FAF8F5] p-8 rounded-xl h-fit shadow-sm border border-charcoal/5">
           <h3 className="font-serif text-xl text-charcoal mb-4">Write a Review</h3>
           
           {!currentUser ? (
@@ -123,7 +123,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId, reviews, onRev
         </div>
 
         {/* REVIEW LIST */}
-        <div className="lg:col-span-2">
+        <div className="col-span-2">
           {reviews.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center h-full border-2 border-dashed border-charcoal/10 rounded-xl">
               <Star size={40} className="text-charcoal/20 mb-4" />

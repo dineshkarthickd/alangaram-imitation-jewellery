@@ -34,8 +34,8 @@ const AdminManageOrders = () => {
   }, []);
 
   return (
-    <div className="animate-fade-in bg-white/40 p-4 sm:p-8 rounded-2xl border border-charcoal/5 shadow-sm backdrop-blur-sm min-h-[500px]">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+    <div className="animate-fade-in bg-white/40 p-8 rounded-2xl border border-charcoal/5 shadow-sm backdrop-blur-sm min-h-[500px]">
+      <div className="flex flex-row justify-between items-center mb-8 gap-4">
         <h2 className="font-serif text-2xl text-charcoal">Manage Orders</h2>
       </div>
 
@@ -103,7 +103,7 @@ const AdminManageOrders = () => {
               </div>
             </div>
 
-            <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="p-6 grid grid-cols-2 gap-8">
               {/* Customer Info */}
               <div>
                 <h4 className="font-serif text-charcoal mb-4 border-b border-charcoal/10 pb-2">Customer Details</h4>
@@ -149,26 +149,26 @@ const AdminManageOrders = () => {
               <div 
                 key={order.id} 
                 onClick={() => setSelectedAdminOrder(order)}
-                className="bg-white border border-charcoal/10 rounded-xl p-4 md:p-5 flex flex-col md:flex-row gap-4 md:items-center cursor-pointer hover:shadow-md transition-all group"
+                className="bg-white border border-charcoal/10 rounded-xl p-5 flex flex-row gap-4 items-center cursor-pointer hover:shadow-md transition-all group"
               >
                 <div className="flex gap-4 flex-grow items-center">
-                  <div className="w-12 h-12 md:w-14 md:h-14 bg-[#FAF8F5] rounded-full flex items-center justify-center border border-charcoal/5 flex-shrink-0">
+                  <div className="w-14 h-14 bg-[#FAF8F5] rounded-full flex items-center justify-center border border-charcoal/5 flex-shrink-0">
                     <PackageOpen className="text-charcoal/40 group-hover:text-[#C4A47C] transition-colors" size={24} />
                   </div>
                   <div className="flex flex-col justify-center min-w-0">
-                    <h3 className="font-medium text-charcoal text-sm md:text-base leading-snug">Order #{order.orderId}</h3>
-                    <p className="text-charcoal/50 text-xs mt-1 md:mt-1.5">{order.customerInfo?.name} • {order.items?.length || 0} items</p>
+                    <h3 className="font-medium text-charcoal text-base leading-snug">Order #{order.orderId}</h3>
+                    <p className="text-charcoal/50 text-xs mt-1.5">{order.customerInfo?.name} • {order.items?.length || 0} items</p>
                   </div>
                 </div>
-                <div className="flex md:flex-col items-center md:items-end justify-between md:justify-center md:w-[220px] flex-shrink-0 border-t md:border-t-0 border-charcoal/5 pt-3 md:pt-0 mt-1 md:mt-0">
-                  <p className="font-semibold text-charcoal text-sm md:mb-2">₹{order.totalAmount}</p>
+                <div className="flex flex-col items-end justify-center w-[220px] flex-shrink-0">
+                  <p className="font-semibold text-charcoal text-sm mb-2">₹{order.totalAmount}</p>
                   <div className="text-right">
                     <div className="flex items-center justify-end gap-1.5 text-xs font-medium">
                       <span className={order.status === 'Cancelled' ? 'text-red-600' : 'text-green-700'}>
                         {order.status}
                       </span>
                     </div>
-                    <p className="text-[10px] text-charcoal/50 mt-1 hidden md:block">
+                    <p className="text-[10px] text-charcoal/50 mt-1 block">
                       {order.createdAt?.toDate ? order.createdAt.toDate().toLocaleDateString() : 'N/A'}
                     </p>
                   </div>

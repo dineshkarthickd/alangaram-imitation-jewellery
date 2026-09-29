@@ -14,7 +14,7 @@ const Cart = () => {
         <div className="w-24 h-24 bg-cream rounded-full flex items-center justify-center mb-6 text-charcoal/30">
           <ShoppingBag size={40} strokeWidth={1} />
         </div>
-        <h1 className="font-serif text-3xl md:text-4xl text-charcoal mb-4">Your Cart is Empty</h1>
+        <h1 className="font-serif text-4xl text-charcoal mb-4">Your Cart is Empty</h1>
         <p className="text-charcoal/60 mb-8 max-w-md text-center">Looks like you haven't added any elegant pieces to your collection yet.</p>
         <Link to="/products" className="btn-luxury btn-luxury-solid px-10 py-4">
           Explore Collections
@@ -24,17 +24,17 @@ const Cart = () => {
   }
 
   return (
-    <div className="pt-32 pb-24 px-6 md:px-12 max-w-7xl mx-auto min-h-screen">
-      <h1 className="text-3xl md:text-4xl font-serif text-charcoal mb-10 border-b border-charcoal/10 pb-6">Shopping Cart</h1>
+    <div className="pt-32 pb-24 px-12 max-w-7xl mx-auto min-h-screen">
+      <h1 className="text-4xl font-serif text-charcoal mb-10 border-b border-charcoal/10 pb-6">Shopping Cart</h1>
       
-      <div className="flex flex-col lg:flex-row gap-12 lg:gap-16">
+      <div className="flex flex-row gap-16">
         {/* Cart Items List */}
         <div className="flex-1">
           <div className="space-y-8">
             {cartItems.map(item => (
               <div key={item.id} className="flex gap-6 py-6 border-b border-charcoal/10 group">
                 {/* Item Image */}
-                <Link to={`/product/${item.id}`} className="w-24 md:w-32 aspect-[4/5] bg-cream rounded-lg overflow-hidden flex-shrink-0">
+                <Link to={`/product/${item.id}`} className="w-32 aspect-[4/5] bg-cream rounded-lg overflow-hidden flex-shrink-0">
                   <img src={item.image} alt={item.name} className="w-full h-full object-cover mix-blend-multiply transition-transform duration-500 group-hover:scale-105" />
                 </Link>
                 
@@ -42,7 +42,7 @@ const Cart = () => {
                 <div className="flex flex-col flex-grow justify-between">
                   <div className="flex justify-between items-start">
                     <div>
-                      <Link to={`/product/${item.id}`} className="font-serif text-lg md:text-xl text-charcoal hover:text-black transition-colors block mb-1">
+                      <Link to={`/product/${item.id}`} className="font-serif text-xl text-charcoal hover:text-black transition-colors block mb-1">
                         {item.name}
                       </Link>
                       <p className="text-[#C4A47C] font-medium">{item.price}</p>
@@ -81,7 +81,7 @@ const Cart = () => {
         </div>
         
         {/* Order Summary Side */}
-        <div className="w-full lg:w-[380px] flex-shrink-0">
+        <div className="w-[380px] flex-shrink-0">
           <div className="bg-cream/50 border border-charcoal/10 rounded-2xl p-8 sticky top-32">
             <h2 className="font-serif text-2xl text-charcoal mb-6">Order Summary</h2>
             

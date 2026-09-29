@@ -71,11 +71,11 @@ const Home = () => {
         {/* Dark gradient from left for all screens so text is readable over the bright window */}
         <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-black/60 via-black/20 to-transparent" />
 
-        <div className="relative z-10 flex flex-col items-start text-left w-full mt-12 px-8 md:mt-24 md:px-20 lg:px-32 max-w-[850px]">
-          <h1 className="text-3xl sm:text-4xl md:text-4xl lg:text-5xl font-serif text-[#FDFBF7] leading-[1.25] md:leading-[1.2] mb-6 md:mb-8 drop-shadow-md pr-4">
+        <div className="relative z-10 flex flex-col items-start text-left w-full mt-24 px-20 lg:px-32 max-w-[850px]">
+          <h1 className="text-4xl lg:text-5xl font-serif text-[#FDFBF7] leading-[1.2] mb-8 drop-shadow-md pr-4">
             The <span className="italic font-light">subtle</span> art of adornment. Timeless pieces, made to be cherished.
           </h1>
-          <Link to="/products" className="btn-luxury btn-luxury-dark bg-[#FAF8F5]/80 backdrop-blur-md px-10 py-4 w-full md:w-auto group">
+          <Link to="/products" className="btn-luxury btn-luxury-dark bg-[#FAF8F5]/80 backdrop-blur-md px-10 py-4 w-auto group">
             Discover the Collection
             <ArrowUpRight size={16} className="transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:translate-x-1 group-hover:-translate-y-1" />
           </Link>
@@ -84,7 +84,7 @@ const Home = () => {
 
       {/* PROMO MARQUEE */}
       <div className={`w-full py-3.5 overflow-hidden flex whitespace-nowrap transition-colors duration-500 ${getBannerDesignClasses(bannerDesign)}`}>
-        <div className="animate-marquee flex gap-10 md:gap-16 text-[12px] md:text-[13px] tracking-[0.25em] font-medium uppercase items-center opacity-90">
+        <div className="animate-marquee flex gap-16 text-[13px] tracking-[0.25em] font-medium uppercase items-center opacity-90">
           {[...Array(10)].map((_, i) => (
             <React.Fragment key={i}>
               <span>{bannerText}</span>
@@ -98,7 +98,7 @@ const Home = () => {
       <section className="pt-12 pb-8 px-8 max-w-7xl mx-auto">
         <div className="text-center mb-8">
           <p className="text-sm tracking-widest text-charcoal/60 uppercase mb-2">Featured Pieces</p>
-          <h2 className="text-3xl sm:text-4xl font-serif text-charcoal">Adorn yourself with quiet beauty.</h2>
+          <h2 className="text-4xl font-serif text-charcoal">Adorn yourself with quiet beauty.</h2>
         </div>
 
         <div className="w-full max-w-5xl mx-auto overflow-hidden pb-2 min-h-[400px]">
@@ -126,9 +126,9 @@ const Home = () => {
               {featuredProducts.map((item) => {
                 const hasStock = item.stock > 0;
                 return (
-                <SwiperSlide key={item.id} className="!w-[220px] md:!w-[280px]">
+                <SwiperSlide key={item.id} className="!w-[280px]">
                   <Link to={`/product/${item.id}`} className="group cursor-pointer block pb-8">
-                    <div className="relative aspect-[3/4] overflow-hidden bg-[#FAF8F5] rounded-xl shadow-[0_10px_20px_rgba(0,0,0,0.1)] md:shadow-[0_15px_30px_rgba(0,0,0,0.1)]">
+                    <div className="relative aspect-[3/4] overflow-hidden bg-[#FAF8F5] rounded-xl shadow-[0_15px_30px_rgba(0,0,0,0.1)]">
                       {/* Main Image */}
                       <img 
                         src={item.images[0]} 
@@ -177,8 +177,8 @@ const Home = () => {
 
       {/* EDITORIAL SECTION */}
       <section className="py-12 px-8 relative bg-white/40 backdrop-blur-md border-t border-white/60 shadow-[0_-10px_40px_rgba(0,0,0,0.02)]">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-16">
-          <div className="w-full md:w-1/2 aspect-[4/3] rounded-xl overflow-hidden shadow-[0_15px_40px_rgba(0,0,0,0.08)] group">
+        <div className="max-w-6xl mx-auto flex flex-row items-center gap-16">
+          <div className="w-1/2 aspect-[4/3] rounded-xl overflow-hidden shadow-[0_15px_40px_rgba(0,0,0,0.08)] group">
             <img 
               src="/Mock-Images/Stories behind the shine.png" 
               alt="Stories behind the shine" 
@@ -186,7 +186,7 @@ const Home = () => {
               loading="lazy"
             />
           </div>
-          <div className="w-full md:w-1/2">
+          <div className="w-1/2">
             <h2 className="text-4xl font-serif text-charcoal mb-6">Stories behind the shine</h2>
             <p className="text-charcoal/70 leading-relaxed font-light mb-8">
               Craftsmanship from raw materials and matters the professional of all entity and crowning his quality to and animate thresher to smooth our own craftsmanship.

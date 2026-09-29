@@ -146,7 +146,7 @@ const MyOrders = () => {
   // === DETAIL VIEW ===
   if (selectedItem) {
     return (
-      <div key="detail-view" className="pt-32 md:pt-35 pb-24 px-4 md:px-12 max-w-[1000px] mx-auto animate-page-fade min-h-[70vh]">
+      <div key="detail-view" className="pt-35 pb-24 px-12 max-w-[1000px] mx-auto animate-page-fade min-h-[70vh]">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <button onClick={() => setSelectedItem(null)} className="flex items-center gap-3 text-charcoal font-medium hover:opacity-70 transition-opacity text-lg">
@@ -154,9 +154,9 @@ const MyOrders = () => {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12 items-start">
+        <div className="grid grid-cols-5 gap-12 items-start">
           {/* LEFT SIDE: Order Details (Span 3) */}
-          <div className="lg:col-span-3 flex flex-col">
+          <div className="col-span-3 flex flex-col">
             {/* Product Info */}
             <div className="flex gap-4 mb-8">
           <div className="w-20 h-20 bg-cream rounded-md overflow-hidden flex-shrink-0 border border-charcoal/10">
@@ -241,9 +241,9 @@ const MyOrders = () => {
         </div>
 
         {/* RIGHT SIDE: Review Form (Span 2) */}
-        <div className="lg:col-span-2 lg:sticky lg:top-32">
+        <div className="col-span-2 sticky top-32">
           {/* Rate Experience */}
-          <div className="bg-[#FAF8F5] p-6 md:p-8 rounded-xl shadow-sm border border-charcoal/5 mb-8">
+          <div className="bg-[#FAF8F5] p-8 rounded-xl shadow-sm border border-charcoal/5 mb-8">
             <h3 className="font-serif text-xl text-charcoal mb-6">Write a Review</h3>
             
             {reviewSubmitted ? (
@@ -314,7 +314,7 @@ const MyOrders = () => {
         {recommendedProducts.length > 0 && (
           <div className="mt-24 mb-8">
             <h3 className="text-2xl font-serif text-charcoal mb-8 text-center">You May Also Like</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+            <div className="grid grid-cols-4 gap-8">
               {recommendedProducts.map(product => {
                 const hasStock = product.stock > 0;
                 return (
@@ -350,7 +350,7 @@ const MyOrders = () => {
                       </div>
 
                       {hasStock && (
-                        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 md:translate-y-4 md:opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 w-[85%]">
+                        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 w-[85%]">
                           <button 
                             onClick={(e) => {
                               e.preventDefault();
@@ -370,7 +370,7 @@ const MyOrders = () => {
                     </div>
                     
                     <div className="flex flex-col items-center text-center">
-                      <h3 className="font-serif text-sm md:text-base text-charcoal mb-1 line-clamp-1">{product.name}</h3>
+                      <h3 className="font-serif text-base text-charcoal mb-1 line-clamp-1">{product.name}</h3>
                       <div className="flex items-center gap-2">
                         {product.hasOffer && (
                           <span className="text-charcoal/40 text-[11px] line-through">₹ {product.basePrice}</span>
@@ -390,14 +390,14 @@ const MyOrders = () => {
 
   // === LIST VIEW ===
   return (
-    <div key="list-view" className="pt-32 md:pt-35 pb-24 px-4 md:px-12 max-w-[900px] mx-auto animate-page-fade min-h-[70vh]">
+    <div key="list-view" className="pt-35 pb-24 px-12 max-w-[900px] mx-auto animate-page-fade min-h-[70vh]">
       <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-charcoal/40 mb-8">
         <button onClick={() => navigate('/')} className="hover:text-charcoal transition-colors">Home</button>
         <ChevronRight size={12} />
         <span className="text-charcoal font-medium">My Orders</span>
       </div>
 
-      <h1 className="font-serif text-3xl md:text-4xl text-charcoal mb-8">My Orders</h1>
+      <h1 className="font-serif text-4xl text-charcoal mb-8">My Orders</h1>
 
       {allOrderItems.length === 0 ? (
         <div className="text-center py-16 bg-white border border-charcoal/10 rounded-2xl">
@@ -414,22 +414,22 @@ const MyOrders = () => {
             <div 
               key={item.uniqueKey} 
               onClick={() => handleOpenDetails(item)}
-              className="bg-white border border-charcoal/10 rounded-xl p-4 md:p-5 flex flex-col md:flex-row gap-4 md:items-center cursor-pointer hover:shadow-md transition-all group"
+              className="bg-white border border-charcoal/10 rounded-xl p-5 flex flex-row gap-4 items-center cursor-pointer hover:shadow-md transition-all group"
             >
               {/* Product Image & Title (Left Side) */}
               <div className="flex gap-4 flex-grow">
-                <div className="w-16 h-16 md:w-20 md:h-20 bg-cream rounded-md overflow-hidden flex-shrink-0 border border-charcoal/5">
+                <div className="w-20 h-20 bg-cream rounded-md overflow-hidden flex-shrink-0 border border-charcoal/5">
                   <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 </div>
                 <div className="flex flex-col justify-center min-w-0">
-                  <h3 className="font-medium text-charcoal text-sm md:text-base leading-snug line-clamp-2 pr-4">{item.name}</h3>
-                  <p className="text-charcoal/50 text-xs mt-1 md:mt-1.5">Qty: {item.quantity}</p>
+                  <h3 className="font-medium text-charcoal text-base leading-snug line-clamp-2 pr-4">{item.name}</h3>
+                  <p className="text-charcoal/50 text-xs mt-1.5">Qty: {item.quantity}</p>
                 </div>
               </div>
 
               {/* Price & Status (Right Side) */}
-              <div className="flex md:flex-col items-center md:items-end justify-between md:justify-center md:w-[220px] flex-shrink-0 border-t md:border-t-0 border-charcoal/5 pt-3 md:pt-0 mt-1 md:mt-0">
-                <p className="font-semibold text-charcoal text-sm md:mb-2">{item.price}</p>
+              <div className="flex flex-col items-end justify-center w-[220px] flex-shrink-0 border-charcoal/5">
+                <p className="font-semibold text-charcoal text-sm mb-2">{item.price}</p>
                 <div className="text-right">
                   <div className="flex items-center justify-end gap-1.5 text-xs font-medium">
                     {getStatusIcon(item.orderStatus)}
@@ -437,7 +437,7 @@ const MyOrders = () => {
                       {item.orderStatus === 'Order Confirmed' ? `Confirmed on ${item.orderDateStr}` : `${item.orderStatus} on ${item.orderDateStr}`}
                     </span>
                   </div>
-                  <p className="text-[10px] text-charcoal/50 mt-1 hidden md:block">
+                  <p className="text-[10px] text-charcoal/50 mt-1 block">
                     {item.orderStatus === 'Delivered Successfully' ? 'Your item has been delivered' : 'Click to view order details'}
                   </p>
                 </div>
@@ -451,7 +451,7 @@ const MyOrders = () => {
       {recommendedProducts.length > 0 && (
         <div className="mt-24 mb-8">
           <h3 className="text-2xl font-serif text-charcoal mb-8 text-center">You May Also Like</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+          <div className="grid grid-cols-4 gap-8">
             {recommendedProducts.map(product => {
               const hasStock = product.stock > 0;
               return (
@@ -487,7 +487,7 @@ const MyOrders = () => {
                     </div>
 
                     {hasStock && (
-                      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 md:translate-y-4 md:opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 w-[85%]">
+                      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 w-[85%]">
                         <button 
                           onClick={(e) => {
                             e.preventDefault();
@@ -507,7 +507,7 @@ const MyOrders = () => {
                   </div>
                   
                   <div className="flex flex-col items-center text-center">
-                    <h3 className="font-serif text-sm md:text-base text-charcoal mb-1 line-clamp-1">{product.name}</h3>
+                    <h3 className="font-serif text-base text-charcoal mb-1 line-clamp-1">{product.name}</h3>
                     <div className="flex items-center gap-2">
                       {product.hasOffer && (
                         <span className="text-charcoal/40 text-[11px] line-through">₹ {product.basePrice}</span>
