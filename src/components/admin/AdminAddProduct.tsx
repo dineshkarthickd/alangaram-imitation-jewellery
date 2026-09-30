@@ -6,9 +6,10 @@ import { Upload, Plus, Loader2, CheckCircle2, AlertCircle, ChevronDown } from 'l
 interface AdminAddProductProps {
   editingProduct: any | null;
   setEditingProduct: (product: any | null) => void;
+  onCancelEdit?: () => void;
 }
 
-const AdminAddProduct: React.FC<AdminAddProductProps> = ({ editingProduct, setEditingProduct }) => {
+const AdminAddProduct: React.FC<AdminAddProductProps> = ({ editingProduct, setEditingProduct, onCancelEdit }) => {
   const [globalError, setGlobalError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -353,8 +354,27 @@ const AdminAddProduct: React.FC<AdminAddProductProps> = ({ editingProduct, setEd
           {formErrors.description && <p className="text-red-500 text-[10px] md:text-xs mt-1.5 animate-fade-in font-medium">{formErrors.description}</p>}
         </div>
 
-        <div className="w-full flex justify-center mt-3 md:mt-4">
-          <button type="submit" disabled={loading} className="btn-luxury btn-luxury-solid w-[85%] md:w-full py-2.5 md:py-4 flex items-center justify-center gap-1.5 md:gap-2 text-[9px] md:text-sm min-w-0">
+        <div className="w-full flex flex-col md:flex-row justify-center gap-3 md:gap-4 mt-3 md:mt-4">
+          {editingProduct && (
+            <button 
+              type="button" 
+              onClick={() => {
+                // Reset form
+                setEditingProduct(null);
+                setFormData({ productId: '', name: '', price: '', hasOffer: false, offerPercentage: '', category: '', stock: '', description: '' });
+                setMainImage(null);
+                setModelImage(null);
+                setMainPreview(null);
+                setModelPreview(null);
+                if (onCancelEdit) onCancelEdit();
+              }}
+              disabled={loading} 
+              className="flex-1 py-2.5 md:py-4 flex items-center justify-center text-[9px] md:text-sm text-charcoal/60 hover:text-charcoal bg-white/50 border border-charcoal/20 hover:border-charcoal hover:bg-cream transition-colors rounded-sm tracking-widest uppercase font-medium min-w-0"
+            >
+              Cancel
+            </button>
+          )}
+          <button type="submit" disabled={loading} className={`btn-luxury btn-luxury-solid ${editingProduct ? 'flex-[2]' : 'w-[85%] md:w-full'} py-2.5 md:py-4 flex items-center justify-center gap-1.5 md:gap-2 text-[9px] md:text-sm min-w-0`}>
             {loading ? (
               <><Loader2 className="animate-spin md:w-[20px] md:h-[20px] w-3 h-3" /> <span className="inline">Processing & Uploading...</span></>
             ) : (

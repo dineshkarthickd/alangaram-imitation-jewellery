@@ -1,13 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import { collection, query, orderBy, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../config/firebase';
-import { Loader2, ArrowLeft, PackageOpen } from 'lucide-react';
+import { Loader2, ArrowLeft, PackageOpen, ChevronDown } from 'lucide-react';
 
 const AdminManageOrders = () => {
   const [adminOrders, setAdminOrders] = useState<any[]>([]);
   const [selectedAdminOrder, setSelectedAdminOrder] = useState<any>(null);
   const [fetchingProducts, setFetchingProducts] = useState(false);
   const [globalError, setGlobalError] = useState<string | null>(null);
+  const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
   const ordersFetched = useRef(false);
 
   useEffect(() => {
@@ -79,25 +80,49 @@ const AdminManageOrders = () => {
               </div>
               <div className="flex flex-col gap-1 w-full md:w-auto min-w-0">
                 <label className="text-[10px] uppercase tracking-widest text-charcoal/50">Status</label>
-                <select
-                  value={selectedAdminOrder.status}
-                  onChange={async (e) => {
-                    const newStatus = e.target.value;
-                    try {
-                      await updateDoc(doc(db, 'orders', selectedAdminOrder.id), { status: newStatus });
-                      setAdminOrders(prev => prev.map(o => o.id === selectedAdminOrder.id ? { ...o, status: newStatus } : o));
-                      setSelectedAdminOrder({ ...selectedAdminOrder, status: newStatus });
-                    } catch (err) {
-                      alert('Failed to update status');
+                <div 
+                  className="relative z-50 min-w-[160px]"
+                  tabIndex={0}
+                  onBlur={(e) => {
+                    if (!e.currentTarget.contains(e.relatedTarget)) {
+                      setIsStatusDropdownOpen(false);
                     }
                   }}
-                  className="text-[10px] md:text-sm bg-white border border-charcoal/20 rounded px-2 py-1 md:py-2 outline-none focus:border-[#C4A47C] w-full"
                 >
-                  <option value="Order Confirmed">Order Confirmed</option>
-                  <option value="Shipping">Shipping</option>
-                  <option value="Ready to Deliver">Ready to Deliver</option>
-                  <option value="Delivered Successfully">Delivered Successfully</option>
-                </select>
+                  <div 
+                    onClick={() => setIsStatusDropdownOpen(!isStatusDropdownOpen)}
+                    className={`text-[10px] md:text-sm bg-white border ${isStatusDropdownOpen ? 'border-[#C4A47C]' : 'border-charcoal/20'} rounded px-3 py-1.5 md:py-2.5 outline-none cursor-pointer flex justify-between items-center transition-colors w-full`}
+                  >
+                    <span className="text-charcoal font-medium">
+                      {selectedAdminOrder.status}
+                    </span>
+                    <ChevronDown size={14} className={`text-charcoal/40 transition-transform ${isStatusDropdownOpen ? 'rotate-180' : ''}`} />
+                  </div>
+                  
+                  {isStatusDropdownOpen && (
+                    <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-charcoal/10 rounded-md shadow-lg overflow-hidden z-[100] animate-fade-in origin-top">
+                      {["Order Confirmed", "Shipping", "Ready to Deliver", "Delivered Successfully"].map(status => (
+                        <div 
+                          key={status} 
+                          onClick={async () => {
+                            const newStatus = status;
+                            try {
+                              await updateDoc(doc(db, 'orders', selectedAdminOrder.id), { status: newStatus });
+                              setAdminOrders(prev => prev.map(o => o.id === selectedAdminOrder.id ? { ...o, status: newStatus } : o));
+                              setSelectedAdminOrder({ ...selectedAdminOrder, status: newStatus });
+                            } catch (err) {
+                              alert('Failed to update status');
+                            }
+                            setIsStatusDropdownOpen(false);
+                          }}
+                          className={`px-3 md:px-4 py-2 text-[10px] md:text-sm cursor-pointer transition-colors ${selectedAdminOrder.status === status ? 'bg-cream font-medium text-[#C4A47C]' : 'text-charcoal/80 hover:bg-cream/50'}`}
+                        >
+                          {status}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
