@@ -46,6 +46,7 @@ const Checkout = () => {
   const [timeLeft, setTimeLeft] = useState(60);
   const [orderDocId, setOrderDocId] = useState('');
   const [finalAmount, setFinalAmount] = useState(0);
+  const [isStateDropdownOpen, setIsStateDropdownOpen] = useState(false);
 
   // Prefill email if logged in
   useEffect(() => {
@@ -370,12 +371,42 @@ const Checkout = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               <div>
                 <label className="block text-[10px] md:text-xs uppercase tracking-widest text-charcoal/60 mb-1.5 md:mb-2">State *</label>
-                <div className="relative z-50">
-                  <select name="state" value={formData.state} onChange={handleChange} className={`w-full bg-white/50 border ${formErrors.state ? 'border-red-500' : 'border-charcoal/10'} px-3 md:px-4 py-2 md:py-3 rounded-md outline-none focus:border-[#C4A47C] transition-colors appearance-none relative z-50 text-[12px] md:text-base`}>
-                    <option value="">Select State</option>
-                    {INDIAN_STATES.map(s => <option key={s} value={s}>{s}</option>)}
-                  </select>
-                  <ChevronDown size={14} className="md:w-[16px] md:h-[16px] absolute right-3 md:right-4 top-1/2 -translate-y-1/2 text-charcoal/40 pointer-events-none z-50" />
+                <div 
+                  className="relative z-50"
+                  tabIndex={0}
+                  onBlur={(e) => {
+                    if (!e.currentTarget.contains(e.relatedTarget)) {
+                      setIsStateDropdownOpen(false);
+                    }
+                  }}
+                >
+                  <div 
+                    onClick={() => setIsStateDropdownOpen(!isStateDropdownOpen)}
+                    className={`w-full bg-white/50 border ${formErrors.state ? 'border-red-500' : 'border-charcoal/10'} px-3 md:px-4 py-2 md:py-3 rounded-md outline-none cursor-pointer flex justify-between items-center transition-colors text-[12px] md:text-base ${isStateDropdownOpen ? 'border-[#C4A47C]' : ''}`}
+                  >
+                    <span className={formData.state ? 'text-charcoal' : 'text-charcoal/50'}>
+                      {formData.state || "Select State"}
+                    </span>
+                    <ChevronDown size={14} className={`md:w-[16px] md:h-[16px] text-charcoal/40 transition-transform ${isStateDropdownOpen ? 'rotate-180' : ''}`} />
+                  </div>
+                  
+                  {isStateDropdownOpen && (
+                    <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-charcoal/10 rounded-md shadow-lg max-h-60 overflow-y-auto custom-scrollbar z-[100] animate-fade-in origin-top">
+                      {INDIAN_STATES.map(s => (
+                        <div 
+                          key={s} 
+                          onClick={() => {
+                            setFormData({...formData, state: s});
+                            if (formErrors.state) setFormErrors(prev => ({...prev, state: ''}));
+                            setIsStateDropdownOpen(false);
+                          }}
+                          className={`px-3 md:px-4 py-2 text-[12px] md:text-base cursor-pointer transition-colors ${formData.state === s ? 'bg-cream font-medium text-[#C4A47C]' : 'text-charcoal/80 hover:bg-cream/50'}`}
+                        >
+                          {s}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 {formErrors.state && <p className="text-red-500 text-[10px] md:text-[11px] mt-1.5 font-medium">{formErrors.state}</p>}
               </div>
