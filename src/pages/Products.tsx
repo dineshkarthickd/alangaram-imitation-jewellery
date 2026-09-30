@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useWishlist } from '../context/WishlistContext';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { db } from '../config/firebase';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Heart } from 'lucide-react';
 
 const Products = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -11,6 +12,7 @@ const Products = () => {
   
   const activeCategory = categoryParam;
   const { addToCart } = useCart();
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -109,6 +111,31 @@ const Products = () => {
                 )}
                 
                 <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                
+                {/* Wishlist Button */}
+                <button 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (isInWishlist(product.id)) {
+                      removeFromWishlist(product.id);
+                    } else {
+                      addToWishlist({
+                        id: product.id,
+                        name: product.name,
+                        price: `₹ ${product.finalPrice}`,
+                        image: product.images[0],
+                        basePrice: `₹ ${product.basePrice}`,
+                        hasOffer: product.hasOffer,
+                        offerPercentage: product.offerPercentage,
+                        stock: product.stock
+                      });
+                    }
+                  }}
+                  className="absolute top-3 left-3 bg-white/80 backdrop-blur-md p-1.5 md:p-2 rounded-full text-charcoal/60 hover:text-red-500 hover:bg-white transition-all shadow-sm z-20"
+                  aria-label="Toggle wishlist"
+                >
+                  <Heart size={16} className={isInWishlist(product.id) ? "fill-red-500 text-red-500" : ""} />
+                </button>
                 
                 {/* Badges container */}
                 <div className="absolute top-4 right-4 flex flex-col gap-2 items-end z-10 pointer-events-none">
