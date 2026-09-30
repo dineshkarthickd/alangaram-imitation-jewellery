@@ -1,8 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
+import { useAuth } from './AuthContext';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { db } from '../config/firebase';
 
 export interface CartItem {
-  id: number;
+  id: string | number;
   name: string;
   price: string;
   image: string;
@@ -12,8 +15,8 @@ export interface CartItem {
 interface CartContextType {
   cartItems: CartItem[];
   addToCart: (item: Omit<CartItem, 'quantity'>) => void;
-  removeFromCart: (id: number) => void;
-  updateQuantity: (id: number, quantity: number) => void;
+  removeFromCart: (id: string | number) => void;
+  updateQuantity: (id: string | number, quantity: number) => void;
   clearCart: () => void;
   cartCount: number;
   cartTotal: number;
@@ -22,14 +25,60 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { currentUser } = useAuth();
+  const [isCloudSynced, setIsCloudSynced] = useState(false);
+
   const [cartItems, setCartItems] = useState<CartItem[]>(() => {
     const saved = localStorage.getItem('alangaram_cart');
     return saved ? JSON.parse(saved) : [];
   });
 
+  // 1. Initial Sync when user logs in
+  useEffect(() => {
+    const syncWithCloud = async () => {
+      if (currentUser) {
+        try {
+          const userRef = doc(db, 'users', currentUser.uid);
+          const snap = await getDoc(userRef);
+          const cloudData = snap.exists() ? snap.data().cart || [] : [];
+          
+          // Merge local and cloud data, preferring unique items by ID. 
+          // If both have it, keep local quantity or sum? Just keep local.
+          const localData = JSON.parse(localStorage.getItem('alangaram_cart') || '[]');
+          const merged = [...cloudData];
+          
+          localData.forEach((localItem: CartItem) => {
+            const existing = merged.find(c => c.id === localItem.id);
+            if (!existing) {
+              merged.push(localItem);
+            } else {
+              // Optionally merge quantities, but let's just use local overrides
+              existing.quantity = Math.max(existing.quantity, localItem.quantity);
+            }
+          });
+
+          setCartItems(merged);
+          await setDoc(userRef, { cart: merged }, { merge: true });
+          setIsCloudSynced(true);
+        } catch (error) {
+          console.error("Error syncing cart with cloud:", error);
+        }
+      } else {
+        setIsCloudSynced(false);
+      }
+    };
+    syncWithCloud();
+  }, [currentUser]);
+
+  // 2. Save changes to both LocalStorage and Cloud
   useEffect(() => {
     localStorage.setItem('alangaram_cart', JSON.stringify(cartItems));
-  }, [cartItems]);
+    if (currentUser && isCloudSynced) {
+      setDoc(doc(db, 'users', currentUser.uid), { cart: cartItems }, { merge: true }).catch(err => {
+        console.error("Failed to save cart to cloud:", err);
+      });
+    }
+  }, [cartItems, currentUser, isCloudSynced]);
 
   const addToCart = (product: Omit<CartItem, 'quantity'>) => {
     // Fire smooth luxury popper animation from BOTH sides using a single burst for buttery 60fps performance
@@ -65,11 +114,11 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
   };
 
-  const removeFromCart = (id: number) => {
+  const removeFromCart = (id: string | number) => {
     setCartItems(prev => prev.filter(item => item.id !== id));
   };
 
-  const updateQuantity = (id: number, quantity: number) => {
+  const updateQuantity = (id: string | number, quantity: number) => {
     if (quantity < 1) return;
     setCartItems(prev => prev.map(item => item.id === id ? { ...item, quantity } : item));
   };

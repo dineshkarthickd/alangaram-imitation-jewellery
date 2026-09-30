@@ -12,8 +12,10 @@ import Cart from './pages/Cart';
 import AdminDashboard from './pages/AdminDashboard';
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
+import { WishlistProvider } from './context/WishlistContext';
 import Checkout from './pages/Checkout';
 import MyOrders from './pages/MyOrders';
+import Wishlist from './pages/Wishlist';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -37,7 +39,7 @@ function App() {
   useEffect(() => {
     const isMobile = window.innerWidth <= 768 || window.matchMedia("(pointer: coarse)").matches;
     if (isMobile) return; // Let native buttery smooth scroll handle mobile devices
-    
+
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -56,46 +58,49 @@ function App() {
 
   return (
     <AuthProvider>
-      <CartProvider>
-        <Router>
-      <Preloader />
-      <ScrollToTop />
-      <div className="min-h-screen w-full min-w-0 overflow-x-hidden font-sans flex flex-col relative bg-gradient-to-br from-[#FCF1E6] via-[#FDFBF7] to-[#DFEEE8]">
-        {/* Fixed Background Botanical Watermarks */}
-        <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-          {/* Top Right Branch */}
-          <svg className="absolute -top-32 -right-32 w-[600px] h-[600px] text-[#A69075] opacity-[0.05] transform rotate-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 22S12 12 12 2M12 12C12 12 18 6 22 6C22 6 20 16 12 16M12 18C12 18 6 12 2 12C2 12 4 22 12 22M12 6C12 6 8 2 3 2C3 2 1 9 12 9"/>
-          </svg>
-          {/* Bottom Left Branch */}
-          <svg className="absolute -bottom-48 -left-40 w-[800px] h-[800px] text-[#A69075] opacity-[0.05] transform -rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 22S12 12 12 2M12 12C12 12 18 6 22 6C22 6 20 16 12 16M12 18C12 18 6 12 2 12C2 12 4 22 12 22M12 6C12 6 8 2 3 2C3 2 1 9 12 9"/>
-          </svg>
-        </div>
+      <WishlistProvider>
+        <CartProvider>
+          <Router>
+            <Preloader />
+            <ScrollToTop />
+            <div className="min-h-screen w-full min-w-0 overflow-x-hidden font-sans flex flex-col relative bg-gradient-to-br from-[#FCF1E6] via-[#FDFBF7] to-[#DFEEE8]">
+              {/* Fixed Background Botanical Watermarks */}
+              <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+                {/* Top Right Branch */}
+                <svg className="absolute -top-32 -right-32 w-[600px] h-[600px] text-[#A69075] opacity-[0.05] transform rotate-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 22S12 12 12 2M12 12C12 12 18 6 22 6C22 6 20 16 12 16M12 18C12 18 6 12 2 12C2 12 4 22 12 22M12 6C12 6 8 2 3 2C3 2 1 9 12 9" />
+                </svg>
+                {/* Bottom Left Branch */}
+                <svg className="absolute -bottom-48 -left-40 w-[800px] h-[800px] text-[#A69075] opacity-[0.05] transform -rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 22S12 12 12 2M12 12C12 12 18 6 22 6C22 6 20 16 12 16M12 18C12 18 6 12 2 12C2 12 4 22 12 22M12 6C12 6 8 2 3 2C3 2 1 9 12 9" />
+                </svg>
+              </div>
 
-        <div className="relative z-10 w-full min-w-0 flex flex-col flex-grow">
-          <Navbar />
-          
-          <main className="flex-grow w-full min-w-0 flex flex-col">
-            <PageTransition>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/products" element={<Products />} />
-                <Route path="/product/:id" element={<ProductDetail />} />
-                <Route path="/cart" element={<Cart />} />
-                <Route path="/checkout" element={<Checkout />} />
-                <Route path="/my-orders" element={<MyOrders />} />
-                <Route path="/admin" element={<AdminDashboard />} />
-              </Routes>
-            </PageTransition>
-          </main>
+              <div className="relative z-10 w-full min-w-0 flex flex-col flex-grow">
+                <Navbar />
 
-        <Footer />
-        <WhatsAppButton />
-        </div>
-      </div>
-      </Router>
-      </CartProvider>
+                <main className="flex-grow w-full min-w-0 flex flex-col">
+                  <PageTransition>
+                    <Routes>
+                      <Route path="/" element={<Home />} />
+                      <Route path="/products" element={<Products />} />
+                      <Route path="/product/:id" element={<ProductDetail />} />
+                      <Route path="/cart" element={<Cart />} />
+                      <Route path="/checkout" element={<Checkout />} />
+                      <Route path="/my-orders" element={<MyOrders />} />
+                      <Route path="/wishlist" element={<Wishlist />} />
+                      <Route path="/admin" element={<AdminDashboard />} />
+                    </Routes>
+                  </PageTransition>
+                </main>
+
+                <Footer />
+                <WhatsAppButton />
+              </div>
+            </div>
+          </Router>
+        </CartProvider>
+      </WishlistProvider>
     </AuthProvider>
   );
 }

@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { ShoppingBag, ArrowLeft, Loader2, Star } from 'lucide-react';
+import { ShoppingBag, ArrowLeft, Loader2, Star, Heart } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { useWishlist } from '../context/WishlistContext';
 import ImageMagnifier from '../components/ImageMagnifier';
 import ReviewSection from '../components/ReviewSection';
 import { doc, getDoc, collection, query, where, limit, getDocs, orderBy } from 'firebase/firestore';
@@ -15,6 +16,7 @@ const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { addToCart } = useCart();
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   
   const [product, setProduct] = useState<any>(null);
   const [relatedProducts, setRelatedProducts] = useState<any[]>([]);
@@ -200,25 +202,50 @@ const ProductDetail = () => {
             {product.description}
           </p>
 
-          <button 
-            disabled={!hasStock}
-            onClick={() => {
-              if (!hasStock) return;
-              addToCart({
-                id: product.id,
-                name: product.name,
-                price: `₹ ${product.finalPrice}`,
-                image: product.images[0]
-              });
-            }} 
-            className={`btn-luxury btn-luxury-solid w-full py-2.5 md:py-4 flex items-center justify-center gap-2 md:gap-3 mb-4 md:mb-8 text-[10px] md:text-sm ${!hasStock ? 'opacity-50 cursor-not-allowed bg-charcoal/50 border-none hover:bg-charcoal/50 hover:text-white' : ''}`}
-          >
-            {hasStock ? (
-              <><ShoppingBag size={14} className="md:w-[18px] md:h-[18px]" /> Add to Cart</>
-            ) : (
-              'OUT OF STOCK'
-            )}
-          </button>
+          <div className="flex gap-2 md:gap-4 mb-4 md:mb-8">
+            <button 
+              disabled={!hasStock}
+              onClick={() => {
+                if (!hasStock) return;
+                addToCart({
+                  id: product.id,
+                  name: product.name,
+                  price: `₹ ${product.finalPrice}`,
+                  image: product.images[0]
+                });
+              }} 
+              className={`flex-1 btn-luxury btn-luxury-solid py-2.5 md:py-4 flex items-center justify-center gap-2 md:gap-3 text-[10px] md:text-sm min-w-0 ${!hasStock ? 'opacity-50 cursor-not-allowed bg-charcoal/50 border-none hover:bg-charcoal/50 hover:text-white' : ''}`}
+            >
+              {hasStock ? (
+                <><ShoppingBag size={14} className="md:w-[18px] md:h-[18px]" /> Add to Cart</>
+              ) : (
+                'OUT OF STOCK'
+              )}
+            </button>
+            <button 
+              onClick={(e) => {
+                e.preventDefault();
+                if (isInWishlist(product.id)) {
+                  removeFromWishlist(product.id);
+                } else {
+                  addToWishlist({
+                    id: product.id,
+                    name: product.name,
+                    price: `₹ ${product.finalPrice}`,
+                    image: product.images[0],
+                    basePrice: `₹ ${product.basePrice}`,
+                    hasOffer: product.hasOffer,
+                    offerPercentage: product.offerPercentage,
+                    stock: product.stock
+                  });
+                }
+              }}
+              className="flex items-center justify-center border border-charcoal/30 text-charcoal/80 hover:border-charcoal hover:text-red-500 hover:bg-cream transition-colors rounded-sm px-4 md:px-6"
+              aria-label="Toggle wishlist"
+            >
+              <Heart size={20} className={`md:w-[24px] md:h-[24px] ${isInWishlist(product.id) ? "fill-red-500 text-red-500" : ""}`} />
+            </button>
+          </div>
           
           {hasStock && product.stock < 5 && (
             <p className="text-orange-600/80 text-[10px] md:text-sm font-medium mb-4 md:mb-8 flex items-center gap-1.5 md:gap-2">

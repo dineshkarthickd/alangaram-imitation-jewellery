@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
-import { User, ShoppingBag, Menu, X } from 'lucide-react';
+import { User, ShoppingBag, Menu, X, Heart } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
+import { useWishlist } from '../context/WishlistContext';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { cartCount } = useCart();
+  const { wishlistCount } = useWishlist();
   const { currentUser, signInWithGoogle, signOut, isAdmin } = useAuth();
   const navigate = useNavigate();
   
@@ -114,11 +116,11 @@ const Navbar = () => {
               <div className="relative group flex items-center justify-center">
                 {currentUser ? (
                   <>
-                    <button onClick={handleLogout} className="block hover:opacity-70 transition-opacity">
+                    <button onClick={handleLogout} className="block hover:opacity-70 transition-opacity flex-shrink-0">
                       {currentUser.photoURL ? (
-                        <img src={currentUser.photoURL} alt="Profile" referrerPolicy="no-referrer" className="w-[18px] h-[18px] md:w-[22px] md:h-[22px] rounded-full object-cover border border-charcoal/20" />
+                        <img src={currentUser.photoURL} alt="Profile" referrerPolicy="no-referrer" className="w-[18px] h-[18px] md:w-[22px] md:h-[22px] min-w-[18px] md:min-w-[22px] rounded-full object-cover border border-charcoal/20 flex-shrink-0" />
                       ) : (
-                        <div className="w-[18px] h-[18px] md:w-[22px] md:h-[22px] rounded-full bg-charcoal text-white flex items-center justify-center text-[8px] md:text-[10px] font-sans font-bold">
+                        <div className="w-[18px] h-[18px] md:w-[22px] md:h-[22px] min-w-[18px] md:min-w-[22px] rounded-full bg-charcoal text-white flex items-center justify-center text-[8px] md:text-[10px] font-sans font-bold flex-shrink-0">
                           {currentUser.displayName?.charAt(0) || 'U'}
                         </div>
                       )}
@@ -149,10 +151,18 @@ const Navbar = () => {
                   </>
                 )}
               </div>
-              <Link to="/cart" className="relative hover:opacity-70 transition-opacity flex items-center">
-                <ShoppingBag strokeWidth={1.5} className="w-[16px] h-[16px] md:w-[19px] md:h-[19px]" />
+              <Link to="/wishlist" className="relative hover:opacity-70 transition-opacity flex items-center flex-shrink-0">
+                <Heart strokeWidth={1.5} className="w-[16px] h-[16px] md:w-[19px] md:h-[19px] flex-shrink-0" />
+                {wishlistCount > 0 && (
+                  <span className="absolute -top-1 -right-1.5 bg-charcoal text-white text-[7px] md:text-[9px] font-bold w-[12px] h-[12px] md:w-[16px] md:h-[16px] rounded-full flex items-center justify-center pointer-events-none flex-shrink-0">
+                    {wishlistCount}
+                  </span>
+                )}
+              </Link>
+              <Link to="/cart" className="relative hover:opacity-70 transition-opacity flex items-center flex-shrink-0">
+                <ShoppingBag strokeWidth={1.5} className="w-[16px] h-[16px] md:w-[19px] md:h-[19px] flex-shrink-0" />
                 {cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1.5 bg-charcoal text-white text-[7px] md:text-[9px] font-bold w-[12px] h-[12px] md:w-[16px] md:h-[16px] rounded-full flex items-center justify-center pointer-events-none">
+                  <span className="absolute -top-1 -right-1.5 bg-charcoal text-white text-[7px] md:text-[9px] font-bold w-[12px] h-[12px] md:w-[16px] md:h-[16px] rounded-full flex items-center justify-center pointer-events-none flex-shrink-0">
                     {cartCount}
                   </span>
                 )}

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowUpRight, Loader2 } from 'lucide-react';
+import { ArrowUpRight, Loader2, Heart } from 'lucide-react';
 import heroImg from '../assets/hero.png';
 import { Link } from 'react-router-dom';
+import { useWishlist } from '../context/WishlistContext';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { EffectCoverflow, Pagination, Autoplay } from 'swiper/modules';
 import { doc, getDoc, collection, getDocs, query, orderBy } from 'firebase/firestore';
@@ -13,6 +14,7 @@ import 'swiper/css/pagination';
 const Home = () => {
   const [bannerText, setBannerText] = useState('20% OFFER GRAB YOUR OFFERS SOON !!');
   const [bannerDesign, setBannerDesign] = useState<1 | 2 | 3 | 4>(1);
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
 
   useEffect(() => {
     const fetchBanner = async () => {
@@ -154,6 +156,31 @@ const Home = () => {
                       )}
                       <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
                       
+                      {/* Wishlist Button */}
+                      <button 
+                        onClick={(e) => {
+                          e.preventDefault();
+                          if (isInWishlist(item.id)) {
+                            removeFromWishlist(item.id);
+                          } else {
+                            addToWishlist({
+                              id: item.id,
+                              name: item.name,
+                              price: `₹ ${item.finalPrice}`,
+                              image: item.images[0],
+                              basePrice: `₹ ${item.basePrice}`,
+                              hasOffer: item.hasOffer,
+                              offerPercentage: item.offerPercentage,
+                              stock: item.stock
+                            });
+                          }
+                        }}
+                        className="absolute top-3 left-3 bg-white/80 backdrop-blur-md p-1.5 md:p-2 rounded-full text-charcoal/60 hover:text-red-500 hover:bg-white transition-all shadow-sm z-20"
+                        aria-label="Toggle wishlist"
+                      >
+                        <Heart size={16} className={isInWishlist(item.id) ? "fill-red-500 text-red-500" : ""} />
+                      </button>
+
                       <div className="absolute top-4 right-4 flex flex-col gap-2 items-end z-10 pointer-events-none">
                         {!hasStock && (
                           <div className="bg-red-900/90 text-white text-[10px] font-bold tracking-[0.2em] px-2.5 py-1 uppercase rounded-sm shadow-sm backdrop-blur-sm">
