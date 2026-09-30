@@ -68,7 +68,11 @@ const AdminDashboard = () => {
           {activeTab === 'upload' && (
             <AdminAddProduct 
               editingProduct={editingProduct} 
-              setEditingProduct={setEditingProduct} 
+              setEditingProduct={setEditingProduct}
+              onCancelEdit={() => {
+                setEditingProduct(null);
+                setActiveTab('manage');
+              }}
             />
           )}
           {activeTab === 'manage' && (

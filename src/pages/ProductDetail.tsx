@@ -240,10 +240,10 @@ const ProductDetail = () => {
                   });
                 }
               }}
-              className="flex items-center justify-center border border-charcoal/30 text-charcoal/80 hover:border-charcoal hover:text-red-500 hover:bg-cream transition-colors rounded-sm px-4 md:px-6"
+              className="flex items-center justify-center text-charcoal/60 hover:text-red-500 transition-colors px-2 md:px-4"
               aria-label="Toggle wishlist"
             >
-              <Heart size={20} className={`md:w-[24px] md:h-[24px] ${isInWishlist(product.id) ? "fill-red-500 text-red-500" : ""}`} />
+              <Heart size={20} className={`md:w-[24px] md:h-[24px] transition-colors ${isInWishlist(product.id) ? "fill-red-500 text-red-500" : ""}`} />
             </button>
           </div>
           
