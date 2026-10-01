@@ -113,7 +113,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       events.forEach(e => window.removeEventListener(e, updateActivity));
       clearInterval(interval);
     };
-  }, [currentUser]);
+  }, [currentUser, INACTIVITY_LIMIT_MS]);
 
   // Auth state listener
   useEffect(() => {
