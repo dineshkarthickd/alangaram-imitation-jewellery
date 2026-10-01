@@ -1,25 +1,31 @@
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
-export default defineConfig({
-  plugins: [
-    react(),
-    tailwindcss(),
-    {
-      name: 'razorpay-local-api',
-      configureServer(server) {
-        server.middlewares.use('/api/razorpay', async (req, res) => {
-          if (req.method === 'POST') {
-            let body = '';
-            req.on('data', chunk => {
-              body += chunk.toString();
-            });
-            req.on('end', async () => {
-              try {
-                const parsedBody = JSON.parse(body);
-                const key_id = 'rzp_test_TiX7zTCljpZoiL';
-                const key_secret = '1QlU8BwTlpTfJaN06f1dyaq4';
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '');
+  return {
+    plugins: [
+      react(),
+      tailwindcss(),
+      {
+        name: 'razorpay-local-api',
+        configureServer(server) {
+          server.middlewares.use('/api/razorpay', async (req, res) => {
+            if (req.method === 'POST') {
+              let body = '';
+              req.on('data', chunk => {
+                body += chunk.toString();
+              });
+              req.on('end', async () => {
+                try {
+                  const parsedBody = JSON.parse(body);
+                  const key_id = env.RAZORPAY_KEY_ID;
+                  const key_secret = env.RAZORPAY_KEY_SECRET;
+                  
+                  if (!key_id || !key_secret) {
+                    throw new Error("Razorpay keys missing in local .env");
+                  }
                 
                 const response = await fetch('https://api.razorpay.com/v1/orders', {
                   method: 'POST',
@@ -56,5 +62,6 @@ export default defineConfig({
       'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
       'Cross-Origin-Embedder-Policy': 'unsafe-none',
     }
+  }
   }
 })
