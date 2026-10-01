@@ -1,6 +1,6 @@
 const WhatsAppButton = () => {
   // Your provided phone number
-  const phoneNumber = "917010857596";
+  const phoneNumber = "916374292001";
   // WhatsApp API Link
   const whatsappUrl = `https://wa.me/${phoneNumber}`;
 

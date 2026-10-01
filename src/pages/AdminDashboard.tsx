@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ImageIcon, LayoutList, MessageSquare, Package, Settings2 } from 'lucide-react';
+import { ImageIcon, LayoutList, MessageSquare, Package, Settings2, FileText } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { Navigate } from 'react-router-dom';
 import AdminAddProduct from '../components/admin/AdminAddProduct';
@@ -7,10 +7,11 @@ import AdminManageInventory from '../components/admin/AdminManageInventory';
 import AdminManageOrders from '../components/admin/AdminManageOrders';
 import AdminManageReviews from '../components/admin/AdminManageReviews';
 import AdminStoreSettings from '../components/admin/AdminStoreSettings';
+import AdminInvoiceSettings from '../components/admin/AdminInvoiceSettings';
 
 const AdminDashboard = () => {
   const { loading: authLoading, isAdmin } = useAuth();
-  const [activeTab, setActiveTab] = useState<'upload' | 'manage' | 'banner' | 'reviews' | 'orders'>('upload');
+  const [activeTab, setActiveTab] = useState<'upload' | 'manage' | 'banner' | 'reviews' | 'orders' | 'invoice'>('upload');
   
   const [editingProduct, setEditingProduct] = useState<any | null>(null);
   const [lowStockCount, setLowStockCount] = useState<number>(0);
@@ -61,6 +62,12 @@ const AdminDashboard = () => {
           >
             <Settings2 size={14} className="md:w-[18px] md:h-[18px]" /> Settings
           </button>
+          <button 
+            onClick={() => setActiveTab('invoice')} 
+            className={`flex flex-shrink-0 items-center gap-2 text-left px-3 md:px-5 py-2 md:py-4 rounded-lg md:rounded-xl transition-all duration-300 font-medium text-[10px] md:text-base ${activeTab === 'invoice' ? 'bg-[#C4A47C] text-white shadow-md' : 'bg-white/50 text-charcoal/70 hover:bg-white border border-charcoal/5'}`}
+          >
+            <FileText size={14} className="md:w-[18px] md:h-[18px]" /> Invoice
+          </button>
         </div>
 
         {/* Main Content Area */}
@@ -87,6 +94,7 @@ const AdminDashboard = () => {
           {activeTab === 'reviews' && <AdminManageReviews />}
           {activeTab === 'orders' && <AdminManageOrders />}
           {activeTab === 'banner' && <AdminStoreSettings />}
+          {activeTab === 'invoice' && <AdminInvoiceSettings />}
         </div>
       </div>
     </div>

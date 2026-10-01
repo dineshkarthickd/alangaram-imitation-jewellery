@@ -178,14 +178,16 @@ const MyOrders = () => {
             </div>
 
             {/* Status Box */}
-            <div className="border border-charcoal/20 rounded-lg md:rounded-xl p-3 md:p-4 flex items-center justify-between mb-6 md:mb-8 cursor-default">
-              <div className="flex items-center gap-2 md:gap-3">
-                <div className="w-5 h-5 md:w-6 md:h-6 rounded-full flex items-center justify-center bg-green-100 text-green-700">
-                  <CheckCircle2 size={12} className="md:w-[16px] md:h-[16px]" />
+            <div className={`border ${selectedItem.orderStatus === 'Cancelled' ? 'border-red-200' : 'border-charcoal/20'} rounded-lg md:rounded-xl p-3 md:p-4 mb-6 md:mb-8 cursor-default flex flex-col gap-2`}>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 md:gap-3">
+                  <div className={`w-5 h-5 md:w-6 md:h-6 rounded-full flex items-center justify-center ${selectedItem.orderStatus === 'Cancelled' ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-700'}`}>
+                    <CheckCircle2 size={12} className="md:w-[16px] md:h-[16px]" />
+                  </div>
+                  <span className={`font-semibold text-[11px] md:text-sm ${selectedItem.orderStatus === 'Cancelled' ? 'text-red-600' : 'text-green-700'}`}>
+                    {selectedItem.orderStatus}, {selectedItem.orderDateStr}
+                  </span>
                 </div>
-                <span className="font-semibold text-green-700 text-[11px] md:text-sm">
-                  {selectedItem.orderStatus}, {selectedItem.orderDateStr}
-                </span>
               </div>
             </div>
 

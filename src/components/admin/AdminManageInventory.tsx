@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { collection, query, orderBy, getDocs, doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../../config/firebase';
-import { AlertTriangle, Loader2, PackageOpen, ArrowLeft, Edit2, Trash2 } from 'lucide-react';
+import { AlertTriangle, Loader2, PackageOpen, ArrowLeft, Edit2, Trash2, Search } from 'lucide-react';
 
 interface AdminManageInventoryProps {
   onEditProduct: (product: any) => void;
@@ -12,6 +12,7 @@ const AdminManageInventory: React.FC<AdminManageInventoryProps> = ({ onEditProdu
   const [productsList, setProductsList] = useState<any[]>([]);
   const [fetchingProducts, setFetchingProducts] = useState(false);
   const [stockFilter, setStockFilter] = useState<'all' | 'active' | 'low' | 'out'>('all');
+  const [searchQuery, setSearchQuery] = useState('');
   const [globalError, setGlobalError] = useState<string | null>(null);
   
   const [selectedAdminProduct, setSelectedAdminProduct] = useState<any>(null);
@@ -70,6 +71,17 @@ const AdminManageInventory: React.FC<AdminManageInventoryProps> = ({ onEditProdu
 
   const lowStockCount = productsList.filter(p => p.stock < 3).length;
 
+  const displayedProducts = productsList.filter(p => {
+    let matchesStock = true;
+    if (stockFilter === 'out') matchesStock = p.stock === 0;
+    if (stockFilter === 'low') matchesStock = p.stock > 0 && p.stock < 3;
+    if (stockFilter === 'active') matchesStock = p.stock >= 3;
+    
+    const matchesSearch = !searchQuery || (p.productId || '').toLowerCase().includes(searchQuery.toLowerCase());
+    
+    return matchesStock && matchesSearch;
+  });
+
   return (
     <div className="animate-fade-in bg-white/50 p-4 md:p-8 rounded-2xl border border-charcoal/5 shadow-sm min-h-[500px] relative">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-8 min-w-0">
@@ -86,11 +98,25 @@ const AdminManageInventory: React.FC<AdminManageInventoryProps> = ({ onEditProdu
       </div>
 
       {/* Stock Filter Pills */}
-      <div className="flex flex-wrap gap-2 mb-6 min-w-0">
+      <div className="flex flex-wrap gap-2 mb-4 min-w-0">
         <button onClick={() => setStockFilter('all')} className={`px-4 py-2 md:py-3 rounded-full text-[10px] md:text-sm transition-all ${stockFilter === 'all' ? 'bg-[#C4A47C] text-white' : 'bg-white border border-charcoal/10 text-charcoal/70 hover:border-[#C4A47C]'}`}>All Products</button>
         <button onClick={() => setStockFilter('active')} className={`px-4 py-2 md:py-3 rounded-full text-[10px] md:text-sm transition-all ${stockFilter === 'active' ? 'bg-[#C4A47C] text-white' : 'bg-white border border-charcoal/10 text-charcoal/70 hover:border-[#C4A47C]'}`}>Active Stock</button>
         <button onClick={() => setStockFilter('low')} className={`px-4 py-2 md:py-3 rounded-full text-[10px] md:text-sm transition-all ${stockFilter === 'low' ? 'bg-orange-500 text-white' : 'bg-white border border-orange-200 text-orange-600 hover:border-orange-500'}`}>Low Stock</button>
         <button onClick={() => setStockFilter('out')} className={`px-4 py-2 md:py-3 rounded-full text-[10px] md:text-sm transition-all ${stockFilter === 'out' ? 'bg-red-500 text-white' : 'bg-white border border-red-200 text-red-600 hover:border-red-500'}`}>Out of Stock</button>
+      </div>
+
+      {/* Search Bar */}
+      <div className="mb-6 relative w-full md:w-1/2 min-w-0">
+        <div className="absolute inset-y-0 left-0 pl-3 md:pl-4 flex items-center pointer-events-none">
+          <Search size={16} className="text-charcoal/40 md:w-[18px] md:h-[18px]" />
+        </div>
+        <input
+          type="text"
+          placeholder="Search by Product ID..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full bg-white border border-charcoal/10 rounded-xl pl-10 md:pl-12 pr-4 py-2.5 md:py-3 text-[10px] md:text-sm text-charcoal outline-none focus:border-[#C4A47C] transition-colors shadow-sm"
+        />
       </div>
 
       {globalError && (
@@ -182,14 +208,15 @@ const AdminManageInventory: React.FC<AdminManageInventoryProps> = ({ onEditProdu
             </div>
           ) : (
             <div className="space-y-4">
-              {productsList.filter(p => {
-                if (stockFilter === 'out') return p.stock === 0;
-                if (stockFilter === 'low') return p.stock > 0 && p.stock < 3;
-                if (stockFilter === 'active') return p.stock >= 3;
-                return true;
-              }).map((product) => (
-                <div 
-                  key={product.id} 
+              {displayedProducts.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-48 text-charcoal/40 min-w-0">
+                  <PackageOpen size={48} className="mb-4 opacity-50" />
+                  <p>No products found{searchQuery ? ` matching ID "${searchQuery}"` : ''}.</p>
+                </div>
+              ) : (
+                displayedProducts.map((product) => (
+                  <div 
+                    key={product.id} 
                   onClick={() => setSelectedAdminProduct(product)}
                   className="bg-white border border-charcoal/10 rounded-xl p-4 md:p-5 flex flex-col md:flex-row gap-4 items-start md:items-center cursor-pointer hover:shadow-md transition-all group min-w-0"
                 >
@@ -221,9 +248,10 @@ const AdminManageInventory: React.FC<AdminManageInventoryProps> = ({ onEditProdu
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
+              ))
+            )}
+          </div>
+        )}
         </div>
       )}
 

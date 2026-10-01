@@ -15,8 +15,6 @@ const AdminStoreSettings = () => {
   const [bannerDesign, setBannerDesign] = useState<1 | 2 | 3 | 4>(1);
   const [adminEmail1, setAdminEmail1] = useState('');
   const [adminEmail2, setAdminEmail2] = useState('');
-  const [upiId, setUpiId] = useState('');
-  const [payeeName, setPayeeName] = useState('');
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -34,12 +32,6 @@ const AdminStoreSettings = () => {
           setAdminEmail2(emails[1] || '');
         } else {
           setAdminEmail1('dineshkarthick1610@gmail.com');
-        }
-
-        const paymentSnap = await getDoc(doc(db, 'settings', 'payment'));
-        if (paymentSnap.exists()) {
-          if (paymentSnap.data().upiId) setUpiId(paymentSnap.data().upiId);
-          if (paymentSnap.data().payeeName) setPayeeName(paymentSnap.data().payeeName);
         }
       } catch (error) {
         console.error('Error fetching settings:', error);
@@ -69,7 +61,6 @@ const AdminStoreSettings = () => {
     setSettingsErrors({});
 
     try {
-      await setDoc(doc(db, "settings", "payment"), { upiId: upiId.trim(), payeeName: payeeName.trim(), updatedAt: new Date() });
       await setDoc(doc(db, "settings", "banner"), { text: bannerText, design: bannerDesign, updatedAt: new Date() });
       
       const emails = [adminEmail1.trim(), adminEmail2.trim()].filter(Boolean);
@@ -111,28 +102,6 @@ const AdminStoreSettings = () => {
       )}
 
       <form onSubmit={handleSaveSettings} className="space-y-12 min-w-0">
-        {/* Payment Settings Section */}
-        <div className="min-w-0">
-          <h3 className="text-lg font-serif text-charcoal mb-4 border-b border-charcoal/10 pb-2">Payment Settings (GPay UPI)</h3>
-          <p className="text-[10px] md:text-sm text-charcoal/60 mb-6">Configure the exact UPI ID and registered Name for receiving payments.</p>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 min-w-0">
-            <div className="min-w-0">
-              <label className="block text-[10px] md:text-sm uppercase tracking-wider text-charcoal/70 mb-2">UPI ID</label>
-              <input type="text" value={upiId} onChange={(e) => setUpiId(e.target.value)}
-                className="w-full bg-transparent border-b border-charcoal/20 py-2 md:py-3 outline-none focus:border-[#C4A47C] transition-colors text-[10px] md:text-sm"
-                placeholder="yourname@okbank"
-              />
-            </div>
-            <div className="min-w-0">
-              <label className="block text-[10px] md:text-sm uppercase tracking-wider text-charcoal/70 mb-2">Payee Name</label>
-              <input type="text" value={payeeName} onChange={(e) => setPayeeName(e.target.value)}
-                className="w-full bg-transparent border-b border-charcoal/20 py-2 md:py-3 outline-none focus:border-[#C4A47C] transition-colors text-[10px] md:text-sm"
-                placeholder="Alangaram Jewellery"
-              />
-            </div>
-          </div>
-        </div>
         {/* Admin Access Section */}
         <div className="min-w-0">
           <h3 className="text-lg font-serif text-charcoal mb-4 border-b border-charcoal/10 pb-2">Admin Dashboard Access</h3>
