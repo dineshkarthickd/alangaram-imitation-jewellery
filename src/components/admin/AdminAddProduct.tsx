@@ -326,7 +326,7 @@ const AdminAddProduct: React.FC<AdminAddProductProps> = ({ editingProduct, setEd
             {/* Custom Dropdown Menu */}
             {isCategoryDropdownOpen && (
               <div className="absolute top-full left-0 w-full mt-1 bg-white border border-charcoal/10 rounded-xl shadow-xl z-50 overflow-hidden animate-fade-in">
-                {['Forming', 'Imitation'].map((cat) => (
+                {['Forming', 'Imitation', 'Combo'].map((cat) => (
                   <div 
                     key={cat}
                     className={`px-4 py-2 md:py-3 cursor-pointer transition-colors text-[10px] md:text-sm ${formData.category === cat ? 'bg-[#C4A47C]/10 text-[#C4A47C] font-medium' : 'text-charcoal hover:bg-charcoal/5'}`}

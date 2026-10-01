@@ -25,3 +25,7 @@ dist-ssr
 .vs/
 *.slnx
 *.suo
+
+# Environment variables
+.env
+.env.*

@@ -135,6 +135,27 @@ const Checkout = () => {
 
     setLoading(true);
 
+    const sendEmailConfirmation = async (oid: string, total: number) => {
+      try {
+        const res = await fetch('/api/send-order-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            orderId: oid,
+            customerName: formData.name,
+            customerEmail: formData.email,
+            shippingAddress: `${formData.address}, ${formData.district}, ${formData.state} - ${formData.pincode}`,
+            totalAmount: total,
+            items: cartItems.map(item => ({ name: item.name, quantity: item.quantity, price: item.price }))
+          })
+        });
+        const data = await res.json();
+        console.log("Email API Response:", data);
+      } catch (err) {
+        console.error("Failed to trigger email confirmation:", err);
+      }
+    };
+
     try {
       // 1. Generate Order ID (Base36 Timestamp + Random guarantees no duplicates)
       const timestampPart = Date.now().toString(36).toUpperCase();
@@ -201,6 +222,7 @@ const Checkout = () => {
                   transactionId: response.razorpay_payment_id
                 });
                 clearCart();
+                sendEmailConfirmation(orderId, cartTotal); // Send Email Receipt
                 setOrderSuccess(true);
                 fireSuccessConfetti();
               },
@@ -249,6 +271,7 @@ const Checkout = () => {
       } else {
         // 4. Show Success Popup (Test Mode)
         clearCart();
+        sendEmailConfirmation(orderId, cartTotal); // Send Email Receipt
         setOrderSuccess(true);
         fireSuccessConfetti();
       }

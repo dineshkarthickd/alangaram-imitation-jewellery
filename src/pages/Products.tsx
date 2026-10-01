@@ -50,7 +50,7 @@ const Products = () => {
       <div className="text-center mb-6 md:mb-16">
         <h1 className="text-2xl md:text-5xl font-serif text-charcoal mb-2.5 md:mb-6">Our Collections</h1>
         <p className="text-[12px] md:text-base text-charcoal/70 max-w-2xl mx-auto font-light leading-relaxed px-2 md:px-0">
-          Explore our exquisite range of handcrafted jewellery. From the enduring elegance of forming pieces to the trendy allure of our imitation collection.
+          Explore our exquisite range of handcrafted jewellery. From the enduring elegance of forming pieces to the trendy allure of imitation and exclusive combo sets.
         </p>
       </div>
 
@@ -73,6 +73,12 @@ const Products = () => {
           className={`px-3 py-1.5 md:px-8 md:py-3 rounded-full transition-all duration-300 font-medium tracking-widest text-[9px] md:text-[13px] uppercase ${activeCategory === 'imitation' ? 'bg-charcoal text-white shadow-md' : 'bg-white/40 text-charcoal/60 hover:bg-white hover:text-charcoal hover:shadow-sm'}`}
         >
           Imitation Jewellery
+        </button>
+        <button 
+          onClick={() => handleCategoryChange('combo')}
+          className={`px-3 py-1.5 md:px-8 md:py-3 rounded-full transition-all duration-300 font-medium tracking-widest text-[9px] md:text-[13px] uppercase ${activeCategory === 'combo' ? 'bg-charcoal text-white shadow-md' : 'bg-white/40 text-charcoal/60 hover:bg-white hover:text-charcoal hover:shadow-sm'}`}
+        >
+          Combo Jewellery
         </button>
       </div>
 
@@ -188,7 +194,14 @@ const Products = () => {
       )}
 
       {!loading && filteredProducts.length === 0 && (
-        <div key={`empty-${activeCategory}`} className="text-center py-20 text-charcoal/50 font-serif text-xl animate-page-fade flex flex-col items-center">
+        <div key={`empty-${activeCategory}`} className="text-center py-10 md:py-20 text-charcoal/50 font-serif text-xl animate-page-fade flex flex-col items-center">
+          <div className="mb-4 md:mb-6">
+            <img 
+              src="/Mock-Images/Loader Image.png" 
+              alt="No products" 
+              className="w-16 md:w-20 h-auto object-contain opacity-100"
+            />
+          </div>
           <p>No products found in this category.</p>
         </div>
       )}
