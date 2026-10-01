@@ -24,37 +24,37 @@ const ProductDetail = () => {
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-  const fetchProductData = async () => {
-    setLoading(true);
-    try {
-      const docRef = doc(db, 'products', id!);
-      const docSnap = await getDoc(docRef);
-      
-      if (docSnap.exists()) {
-        const data = { id: docSnap.id, ...docSnap.data() } as any;
-        setProduct(data);
-        setSelectedImage(data.images[0]);
-
-        // Fetch related products
-        const qRel = query(collection(db, 'products'), where('category', '==', data.category), limit(5));
-        const relSnap = await getDocs(qRel);
-        setRelatedProducts(relSnap.docs.map(d => ({ id: d.id, ...d.data() })).filter(p => p.id !== data.id).slice(0, 4));
-          
-        // Fetch reviews
-        const qRev = query(collection(db, 'products', id!, 'reviews'), orderBy('createdAt', 'desc'));
-        const revSnap = await getDocs(qRev);
-        setReviews(revSnap.docs.map(d => ({ id: d.id, ...d.data() })));
-      } else {
-        setProduct(null);
-      }
-    } catch (error) {
-      console.error("Error fetching product:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchProductData = async () => {
+      setLoading(true);
+      try {
+        const docRef = doc(db, 'products', id!);
+        const docSnap = await getDoc(docRef);
+        
+        if (docSnap.exists()) {
+          const data = { id: docSnap.id, ...docSnap.data() } as any;
+          setProduct(data);
+          setSelectedImage(data.images[0]);
+
+          // Fetch related products
+          const qRel = query(collection(db, 'products'), where('category', '==', data.category), limit(5));
+          const relSnap = await getDocs(qRel);
+          setRelatedProducts(relSnap.docs.map(d => ({ id: d.id, ...d.data() })).filter(p => p.id !== data.id).slice(0, 4));
+            
+          // Fetch reviews
+          const qRev = query(collection(db, 'products', id!, 'reviews'), orderBy('createdAt', 'desc'));
+          const revSnap = await getDocs(qRev);
+          setReviews(revSnap.docs.map(d => ({ id: d.id, ...d.data() })));
+        } else {
+          setProduct(null);
+        }
+      } catch (error) {
+        console.error("Error fetching product:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     window.scrollTo(0, 0);
     if (id) fetchProductData();
   }, [id]);

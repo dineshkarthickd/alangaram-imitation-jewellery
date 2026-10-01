@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
-import { collection, addDoc, doc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { ShoppingBag, AlertCircle, CheckCircle2, ChevronRight, ChevronDown, Loader2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
@@ -23,7 +23,6 @@ const Checkout = () => {
 
   const [loading, setLoading] = useState(false);
   const [fetchingSettings, setFetchingSettings] = useState(true);
-  const [upiSettings, setUpiSettings] = useState({ upiId: 'dineshkarthick1610-4@okaxis', payeeName: 'Dinesh Karthick' });
   
   const [formData, setFormData] = useState({
     name: '',
@@ -77,21 +76,8 @@ const Checkout = () => {
     }
   }, [verificationStep, timeLeft, orderDocId]);
 
-  // Fetch UPI Settings
   useEffect(() => {
-    const fetchSettings = async () => {
-      try {
-        const snap = await getDoc(doc(db, 'settings', 'payment'));
-        if (snap.exists() && snap.data().upiId) {
-          setUpiSettings({ upiId: snap.data().upiId, payeeName: snap.data().payeeName });
-        }
-      } catch (e) {
-        console.error('Error fetching payment settings:', e);
-      } finally {
-        setFetchingSettings(false);
-      }
-    };
-    fetchSettings();
+    setFetchingSettings(false);
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -169,22 +155,95 @@ const Checkout = () => {
       setFinalAmount(cartTotal);
       setPlacedOrderId(orderId);
 
-      // 3. Trigger GPay (if not in test mode)
+      // 3. Trigger Razorpay Checkout (if not in test mode)
       if (!testMode) {
-        // Deep link for UPI (GPay, PhonePe, Paytm, etc.)
-        const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-        const upiUrl = `upi://pay?pa=${upiSettings.upiId}&pn=${encodeURIComponent(upiSettings.payeeName)}&am=${cartTotal}&cu=INR&tr=${orderId}`;
-        
-        if (isMobile) {
-          window.location.href = upiUrl;
-        } else {
-          setDesktopQRUrl(upiUrl);
+        try {
+          // Load Razorpay Script dynamically
+          const res = await new Promise((resolve) => {
+            const script = document.createElement('script');
+            script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+            script.onload = () => resolve(true);
+            script.onerror = () => resolve(false);
+            document.body.appendChild(script);
+          });
+
+          if (!res) {
+            throw new Error("Razorpay SDK failed to load. Are you online?");
+          }
+
+          // Create order session on backend
+          const response = await fetch('/api/razorpay', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              amount: cartTotal,
+              receipt: orderId
+            })
+          });
+
+          const data = await response.json();
+          
+          if (data.id) {
+            const options = {
+              key: 'rzp_test_TiX7zTCljpZoiL', // Safe to expose public Key ID
+              amount: data.amount,
+              currency: data.currency,
+              name: "Alangaram Jewellery",
+              description: "Test Transaction",
+              image: "https://alangaramimitationjewellery.vercel.app/Mock-Images/Loader%20Image.png",
+              order_id: data.id,
+              handler: async function (response: any) {
+                // Payment success
+                await updateDoc(doc(db, 'orders', docRef.id), { 
+                  status: 'Order Confirmed',
+                  transactionId: response.razorpay_payment_id
+                });
+                clearCart();
+                setOrderSuccess(true);
+                fireSuccessConfetti();
+              },
+              prefill: {
+                name: formData.name,
+                email: formData.email,
+                contact: formData.phone
+              },
+              theme: {
+                color: "#C4A47C"
+              },
+              config: {
+                display: {
+                  blocks: {
+                    upi_only: {
+                      name: "Pay via UPI (Zero Fees)",
+                      instruments: [
+                        {
+                          method: "upi"
+                        }
+                      ]
+                    }
+                  },
+                  sequence: ["block.upi_only"],
+                  preferences: {
+                    show_default_blocks: false
+                  }
+                }
+              }
+            };
+            
+            // @ts-ignore
+            const rzp1 = new window.Razorpay(options);
+            rzp1.on('payment.failed', async function (_err: any) {
+              setOrderError("Payment failed. Please try again.");
+              await updateDoc(doc(db, 'orders', docRef.id), { status: 'Payment Failed' });
+            });
+            rzp1.open();
+          } else {
+            throw new Error(data.message || "Failed to initialize Razorpay");
+          }
+        } catch (paymentError: any) {
+          console.error("Payment Gateway Error:", paymentError);
+          setOrderError("Could not connect to payment gateway. Please try again.");
         }
-        
-        // Transition to verification step for BOTH mobile and desktop
-        setVerificationStep(true);
-        setTimeLeft(60);
-        
       } else {
         // 4. Show Success Popup (Test Mode)
         clearCart();

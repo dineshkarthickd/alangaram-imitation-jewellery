@@ -110,7 +110,7 @@ const AdminManageOrders = () => {
                               await updateDoc(doc(db, 'orders', selectedAdminOrder.id), { status: newStatus });
                               setAdminOrders(prev => prev.map(o => o.id === selectedAdminOrder.id ? { ...o, status: newStatus } : o));
                               setSelectedAdminOrder({ ...selectedAdminOrder, status: newStatus });
-                            } catch (err) {
+                            } catch {
                               alert('Failed to update status');
                             }
                             setIsStatusDropdownOpen(false);

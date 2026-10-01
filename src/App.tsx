@@ -16,6 +16,11 @@ import { WishlistProvider } from './context/WishlistContext';
 import Checkout from './pages/Checkout';
 import MyOrders from './pages/MyOrders';
 import Wishlist from './pages/Wishlist';
+import Contact from './pages/Contact';
+import Terms from './pages/Terms';
+import Privacy from './pages/Privacy';
+import Refunds from './pages/Refunds';
+import Shipping from './pages/Shipping';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -90,6 +95,11 @@ function App() {
                       <Route path="/my-orders" element={<MyOrders />} />
                       <Route path="/wishlist" element={<Wishlist />} />
                       <Route path="/admin" element={<AdminDashboard />} />
+                      <Route path="/contact" element={<Contact />} />
+                      <Route path="/terms" element={<Terms />} />
+                      <Route path="/privacy" element={<Privacy />} />
+                      <Route path="/refunds" element={<Refunds />} />
+                      <Route path="/shipping" element={<Shipping />} />
                     </Routes>
                   </PageTransition>
                 </main>

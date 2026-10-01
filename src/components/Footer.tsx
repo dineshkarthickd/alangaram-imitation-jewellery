@@ -39,17 +39,29 @@ const Footer = () => {
         </div>
 
         {/* CENTER: QUICK LINKS */}
-        <div className="hidden md:block col-span-3">
+        <div className="hidden md:block col-span-2">
           <h4 className="font-serif text-[1.35rem] text-charcoal mb-5">Quick Links</h4>
-          <div className="flex flex-col space-y-4 text-charcoal/70">
-            <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:text-charcoal transition-colors text-[15px] font-medium tracking-wide w-fit">Home</Link>
-            <Link to="/products" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:text-charcoal transition-colors text-[15px] font-medium tracking-wide w-fit">Collections</Link>
-            <Link to="/cart" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:text-charcoal transition-colors text-[15px] font-medium tracking-wide w-fit">Shopping Cart</Link>
+          <div className="flex flex-col space-y-3 text-charcoal/70">
+            <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:text-charcoal transition-colors text-[13px] font-medium tracking-wide w-fit">Home</Link>
+            <Link to="/products" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:text-charcoal transition-colors text-[13px] font-medium tracking-wide w-fit">Collections</Link>
+            <Link to="/cart" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:text-charcoal transition-colors text-[13px] font-medium tracking-wide w-fit">Shopping Cart</Link>
+            <Link to="/contact" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:text-charcoal transition-colors text-[13px] font-medium tracking-wide w-fit">Contact Us</Link>
+          </div>
+        </div>
+
+        {/* CENTER: LEGAL */}
+        <div className="hidden md:block col-span-3">
+          <h4 className="font-serif text-[1.35rem] text-charcoal mb-5">Legal Policies</h4>
+          <div className="flex flex-col space-y-3 text-charcoal/70">
+            <Link to="/terms" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:text-charcoal transition-colors text-[13px] font-medium tracking-wide w-fit">Terms & Conditions</Link>
+            <Link to="/privacy" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:text-charcoal transition-colors text-[13px] font-medium tracking-wide w-fit">Privacy Policy</Link>
+            <Link to="/refunds" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:text-charcoal transition-colors text-[13px] font-medium tracking-wide w-fit">Refund Policy</Link>
+            <Link to="/shipping" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:text-charcoal transition-colors text-[13px] font-medium tracking-wide w-fit">Shipping Policy</Link>
           </div>
         </div>
 
         {/* RIGHT: BRAND STORY */}
-        <div className="hidden md:block col-span-5 text-left">
+        <div className="hidden md:block col-span-3 text-left">
           <h4 className="font-serif text-[1.35rem] text-charcoal mb-4">Our Story</h4>
           <p className="text-[14px] text-charcoal/80 leading-relaxed font-light">
             Crafting timeless imitation jewellery that blends deep-rooted tradition with modern elegance. Every piece is curated to add a touch of grace to your everyday moments. Made to be cherished.
