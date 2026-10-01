@@ -4,7 +4,7 @@ import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { db } from '../config/firebase';
-import { Loader2, Heart } from 'lucide-react';
+import { Loader2, Heart, ChevronDown } from 'lucide-react';
 
 const Products = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -16,6 +16,9 @@ const Products = () => {
   
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const [subCategoryFilter, setSubCategoryFilter] = useState('All Types');
+  const [isSubCategoryDropdownOpen, setIsSubCategoryDropdownOpen] = useState(false);
 
   // Fetch real products from Firebase
   useEffect(() => {
@@ -37,11 +40,14 @@ const Products = () => {
 
   const handleCategoryChange = (cat: string) => {
     setSearchParams(cat === 'all' ? {} : { category: cat });
+    setSubCategoryFilter('All Types'); // Reset subcategory when main category changes
   };
 
-  const filteredProducts = activeCategory === 'all' 
-    ? products 
-    : products.filter(p => p.category.toLowerCase() === activeCategory.toLowerCase());
+  const filteredProducts = products.filter(p => {
+    const matchesCategory = activeCategory === 'all' || (p.category && p.category.toLowerCase() === activeCategory.toLowerCase());
+    const matchesSub = subCategoryFilter === 'All Types' || (p.subcategories && p.subcategories.includes(subCategoryFilter));
+    return matchesCategory && matchesSub;
+  });
 
   return (
     <div className="pt-24 md:pt-32 pb-16 md:pb-24 px-4 md:px-12 lg:px-20 max-w-[1400px] mx-auto min-h-screen">
@@ -55,31 +61,71 @@ const Products = () => {
       </div>
 
       {/* FILTERS */}
-      <div className="flex flex-wrap justify-center gap-2 md:gap-6 mb-8 md:mb-16 px-1 md:px-0">
-        <button 
-          onClick={() => handleCategoryChange('all')}
-          className={`px-3 py-1.5 md:px-8 md:py-3 rounded-full transition-all duration-300 font-medium tracking-widest text-[9px] md:text-[13px] uppercase ${activeCategory === 'all' ? 'bg-charcoal text-white shadow-md' : 'bg-white/40 text-charcoal/60 hover:bg-white hover:text-charcoal hover:shadow-sm'}`}
+      <div className="flex flex-col items-center gap-6 mb-8 md:mb-16">
+        <div className="flex flex-wrap justify-center gap-2 md:gap-6 px-1 md:px-0">
+          <button 
+            onClick={() => handleCategoryChange('all')}
+            className={`px-3 py-1.5 md:px-8 md:py-3 rounded-full transition-all duration-300 font-medium tracking-widest text-[9px] md:text-[13px] uppercase ${activeCategory === 'all' ? 'bg-charcoal text-white shadow-md' : 'bg-white/40 text-charcoal/60 hover:bg-white hover:text-charcoal hover:shadow-sm'}`}
+          >
+            All Pieces
+          </button>
+          <button 
+            onClick={() => handleCategoryChange('forming')}
+            className={`px-3 py-1.5 md:px-8 md:py-3 rounded-full transition-all duration-300 font-medium tracking-widest text-[9px] md:text-[13px] uppercase ${activeCategory === 'forming' ? 'bg-charcoal text-white shadow-md' : 'bg-white/40 text-charcoal/60 hover:bg-white hover:text-charcoal hover:shadow-sm'}`}
+          >
+            Forming Jewellery
+          </button>
+          <button 
+            onClick={() => handleCategoryChange('imitation')}
+            className={`px-3 py-1.5 md:px-8 md:py-3 rounded-full transition-all duration-300 font-medium tracking-widest text-[9px] md:text-[13px] uppercase ${activeCategory === 'imitation' ? 'bg-charcoal text-white shadow-md' : 'bg-white/40 text-charcoal/60 hover:bg-white hover:text-charcoal hover:shadow-sm'}`}
+          >
+            Imitation Jewellery
+          </button>
+          <button 
+            onClick={() => handleCategoryChange('combo')}
+            className={`px-3 py-1.5 md:px-8 md:py-3 rounded-full transition-all duration-300 font-medium tracking-widest text-[9px] md:text-[13px] uppercase ${activeCategory === 'combo' ? 'bg-charcoal text-white shadow-md' : 'bg-white/40 text-charcoal/60 hover:bg-white hover:text-charcoal hover:shadow-sm'}`}
+          >
+            Combo Jewellery
+          </button>
+        </div>
+
+        {/* Custom Subcategory Dropdown */}
+        <div 
+          className="relative z-40 w-[200px]"
+          tabIndex={0}
+          onBlur={(e) => {
+            if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+              setIsSubCategoryDropdownOpen(false);
+            }
+          }}
         >
-          All Pieces
-        </button>
-        <button 
-          onClick={() => handleCategoryChange('forming')}
-          className={`px-3 py-1.5 md:px-8 md:py-3 rounded-full transition-all duration-300 font-medium tracking-widest text-[9px] md:text-[13px] uppercase ${activeCategory === 'forming' ? 'bg-charcoal text-white shadow-md' : 'bg-white/40 text-charcoal/60 hover:bg-white hover:text-charcoal hover:shadow-sm'}`}
-        >
-          Forming Jewellery
-        </button>
-        <button 
-          onClick={() => handleCategoryChange('imitation')}
-          className={`px-3 py-1.5 md:px-8 md:py-3 rounded-full transition-all duration-300 font-medium tracking-widest text-[9px] md:text-[13px] uppercase ${activeCategory === 'imitation' ? 'bg-charcoal text-white shadow-md' : 'bg-white/40 text-charcoal/60 hover:bg-white hover:text-charcoal hover:shadow-sm'}`}
-        >
-          Imitation Jewellery
-        </button>
-        <button 
-          onClick={() => handleCategoryChange('combo')}
-          className={`px-3 py-1.5 md:px-8 md:py-3 rounded-full transition-all duration-300 font-medium tracking-widest text-[9px] md:text-[13px] uppercase ${activeCategory === 'combo' ? 'bg-charcoal text-white shadow-md' : 'bg-white/40 text-charcoal/60 hover:bg-white hover:text-charcoal hover:shadow-sm'}`}
-        >
-          Combo Jewellery
-        </button>
+          <div 
+            onClick={() => setIsSubCategoryDropdownOpen(!isSubCategoryDropdownOpen)}
+            className={`text-[10px] md:text-sm bg-white/60 backdrop-blur-md border ${isSubCategoryDropdownOpen ? 'border-[#C4A47C]' : 'border-charcoal/20'} rounded-full px-4 py-2 md:py-2.5 outline-none cursor-pointer flex justify-between items-center transition-all hover:border-charcoal/40 shadow-sm`}
+          >
+            <span className="text-charcoal font-medium">
+              {subCategoryFilter === 'All Types' ? 'Filter by Type' : subCategoryFilter}
+            </span>
+            <ChevronDown size={16} className={`text-charcoal/50 transition-transform ${isSubCategoryDropdownOpen ? 'rotate-180' : ''}`} />
+          </div>
+          
+          {isSubCategoryDropdownOpen && (
+            <div className="absolute top-full left-0 right-0 mt-2 bg-white/95 backdrop-blur-xl border border-charcoal/10 rounded-xl shadow-xl overflow-hidden animate-fade-in origin-top">
+              {['All Types', 'Chain', 'Necklace', 'Earrings', 'Bangle', 'Kolusu (payal)'].map(type => (
+                <div 
+                  key={type} 
+                  onClick={() => {
+                    setSubCategoryFilter(type);
+                    setIsSubCategoryDropdownOpen(false);
+                  }}
+                  className={`px-4 py-2.5 md:py-3 text-[10px] md:text-sm cursor-pointer transition-colors ${subCategoryFilter === type ? 'bg-[#C4A47C]/10 font-medium text-[#C4A47C]' : 'text-charcoal/80 hover:bg-cream'}`}
+                >
+                  {type === 'All Types' ? 'All Types' : type}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* LOADING STATE */}
