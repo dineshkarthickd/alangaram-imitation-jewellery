@@ -26,6 +26,7 @@ const AdminAddProduct: React.FC<AdminAddProductProps> = ({ editingProduct, setEd
     hasOffer: false,
     offerPercentage: '',
     category: '',
+    subcategories: [] as string[],
     stock: '',
     description: ''
   });
@@ -40,6 +41,7 @@ const AdminAddProduct: React.FC<AdminAddProductProps> = ({ editingProduct, setEd
         hasOffer: editingProduct.hasOffer,
         offerPercentage: String(editingProduct.offerPercentage),
         category: editingProduct.category,
+        subcategories: editingProduct.subcategories || [],
         stock: String(editingProduct.stock),
         description: editingProduct.description
       });
@@ -52,7 +54,7 @@ const AdminAddProduct: React.FC<AdminAddProductProps> = ({ editingProduct, setEd
       setMainImage(null);
       setModelImage(null);
     } else {
-      setFormData({ productId: '', name: '', price: '', hasOffer: false, offerPercentage: '', category: '', stock: '', description: '' });
+      setFormData({ productId: '', name: '', price: '', hasOffer: false, offerPercentage: '', category: '', subcategories: [], stock: '', description: '' });
       setMainPreview(null);
       setModelPreview(null);
       setMainImage(null);
@@ -133,6 +135,7 @@ const AdminAddProduct: React.FC<AdminAddProductProps> = ({ editingProduct, setEd
         hasOffer: formData.hasOffer,
         offerPercentage: formData.hasOffer ? Number(formData.offerPercentage) : 0,
         category: formData.category,
+        subcategories: formData.subcategories,
         description: formData.description,
         stock: Number(formData.stock),
         images: [mainUrl, modelUrl].filter(Boolean)
@@ -150,7 +153,7 @@ const AdminAddProduct: React.FC<AdminAddProductProps> = ({ editingProduct, setEd
       
       // Reset form
       setEditingProduct(null);
-      setFormData({ productId: '', name: '', price: '', hasOffer: false, offerPercentage: '', category: '', stock: '', description: '' });
+      setFormData({ productId: '', name: '', price: '', hasOffer: false, offerPercentage: '', category: '', subcategories: [], stock: '', description: '' });
       setMainImage(null);
       setModelImage(null);
       setMainPreview(null);
@@ -344,6 +347,38 @@ const AdminAddProduct: React.FC<AdminAddProductProps> = ({ editingProduct, setEd
           </div>
         </div>
 
+        {/* Subcategories (Product Types) */}
+        <div className="min-w-0">
+          <label className="block text-[10px] md:text-sm uppercase tracking-wider text-charcoal/70 mb-3">Product Type (Select one or more)</label>
+          <div className="flex flex-wrap gap-3">
+            {['Chain', 'Necklace', 'Earrings', 'Bangle', 'Kolusu (payal)'].map((type) => {
+              const isSelected = formData.subcategories.includes(type);
+              return (
+                <label 
+                  key={type} 
+                  className={`flex items-center gap-2 px-4 py-2 rounded-full cursor-pointer transition-colors border text-[10px] md:text-sm ${isSelected ? 'bg-[#C4A47C] border-[#C4A47C] text-white' : 'bg-white border-charcoal/20 text-charcoal/70 hover:border-[#C4A47C]'}`}
+                >
+                  <input 
+                    type="checkbox"
+                    className="hidden"
+                    checked={isSelected}
+                    onChange={(e) => {
+                      let newSub = [...formData.subcategories];
+                      if (e.target.checked) {
+                        newSub.push(type);
+                      } else {
+                        newSub = newSub.filter(t => t !== type);
+                      }
+                      setFormData({...formData, subcategories: newSub});
+                    }}
+                  />
+                  {type}
+                </label>
+              );
+            })}
+          </div>
+        </div>
+
         <div className="min-w-0">
           <label className="block text-[10px] md:text-sm uppercase tracking-wider text-charcoal/70 mb-2">Description</label>
           <textarea 
@@ -361,7 +396,7 @@ const AdminAddProduct: React.FC<AdminAddProductProps> = ({ editingProduct, setEd
               onClick={() => {
                 // Reset form
                 setEditingProduct(null);
-                setFormData({ productId: '', name: '', price: '', hasOffer: false, offerPercentage: '', category: '', stock: '', description: '' });
+                setFormData({ productId: '', name: '', price: '', hasOffer: false, offerPercentage: '', category: '', subcategories: [], stock: '', description: '' });
                 setMainImage(null);
                 setModelImage(null);
                 setMainPreview(null);

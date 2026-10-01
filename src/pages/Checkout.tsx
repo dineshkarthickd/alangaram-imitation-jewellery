@@ -16,6 +16,13 @@ const INDIAN_STATES = [
   "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal"
 ];
 
+const STATE_OPTIONS = [...INDIAN_STATES, "Overseas (Outside India)"];
+
+const SOUTH_INDIAN_STATES = [
+  "Andaman and Nicobar Islands", "Andhra Pradesh", "Karnataka", 
+  "Kerala", "Lakshadweep", "Puducherry", "Tamil Nadu", "Telangana"
+];
+
 const Checkout = () => {
   const { cartItems, cartTotal, clearCart } = useCart();
   const { currentUser, signInWithGoogle } = useAuth();
@@ -46,6 +53,11 @@ const Checkout = () => {
   const [orderDocId, setOrderDocId] = useState('');
   const [finalAmount, setFinalAmount] = useState(0);
   const [isStateDropdownOpen, setIsStateDropdownOpen] = useState(false);
+
+  // Derived Shipping Costs
+  const isOverseas = formData.state === "Overseas (Outside India)";
+  const shippingCost = isOverseas ? 0 : (formData.state && SOUTH_INDIAN_STATES.includes(formData.state) ? 100 : (formData.state ? 150 : 0));
+  const finalAmountWithShipping = cartTotal + shippingCost;
 
   // Prefill email if logged in
   useEffect(() => {
@@ -168,14 +180,14 @@ const Checkout = () => {
         userId: currentUser.uid,
         customerInfo: formData,
         items: cartItems,
-        totalAmount: cartTotal,
+        totalAmount: finalAmountWithShipping,
         status: testMode ? 'Order Confirmed' : 'Pending Payment',
         paymentMode: testMode ? 'TEST' : 'GPAY',
         createdAt: serverTimestamp()
       });
       
       setOrderDocId(docRef.id);
-      setFinalAmount(cartTotal);
+      setFinalAmount(finalAmountWithShipping);
       setPlacedOrderId(orderId);
 
       // 3. Trigger Razorpay Checkout (if not in test mode)
@@ -199,7 +211,7 @@ const Checkout = () => {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              amount: cartTotal,
+              amount: finalAmountWithShipping,
               receipt: orderId
             })
           });
@@ -271,7 +283,7 @@ const Checkout = () => {
       } else {
         // 4. Show Success Popup (Test Mode)
         clearCart();
-        sendEmailConfirmation(orderId, cartTotal); // Send Email Receipt
+        sendEmailConfirmation(orderId, finalAmountWithShipping); // Send Email Receipt
         setOrderSuccess(true);
         fireSuccessConfetti();
       }
@@ -476,7 +488,7 @@ const Checkout = () => {
                   
                   {isStateDropdownOpen && (
                     <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-charcoal/10 rounded-md shadow-lg max-h-60 overflow-y-auto custom-scrollbar z-[100] animate-fade-in origin-top">
-                      {INDIAN_STATES.map(s => (
+                      {STATE_OPTIONS.map(s => (
                         <div 
                           key={s} 
                           onClick={() => {
@@ -535,11 +547,17 @@ const Checkout = () => {
             </div>
             <div className="flex justify-between text-charcoal/60 text-[11px] md:text-sm">
               <span>Shipping</span>
-              <span className="text-green-600 font-medium">FREE</span>
+              {isOverseas ? (
+                <span className="text-charcoal/80 font-medium">WhatsApp Required</span>
+              ) : (
+                <span className={shippingCost === 0 ? "text-green-600 font-medium" : "text-charcoal/80 font-medium"}>
+                  {formData.state ? (shippingCost === 0 ? "FREE" : `₹ ${shippingCost}`) : "Select State"}
+                </span>
+              )}
             </div>
             <div className="flex justify-between text-lg md:text-xl font-serif text-charcoal pt-3 md:pt-4 border-t border-charcoal/5">
               <span>Total</span>
-              <span>₹ {cartTotal}</span>
+              <span>₹ {finalAmountWithShipping}</span>
             </div>
           </div>
 
@@ -561,25 +579,42 @@ const Checkout = () => {
             </div>
           )}
 
-          {/* TEST MODE TOGGLE */}
-          <div className="flex items-center justify-between mb-4 md:mb-6 bg-yellow-50 p-2 md:p-3 rounded border border-yellow-200">
-            <span className="text-[9px] md:text-xs font-medium text-yellow-800 uppercase tracking-wider">Developer Test Mode</span>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" className="sr-only peer" checked={testMode} onChange={() => setTestMode(!testMode)} />
-              <div className="w-7 h-4 md:w-9 md:h-5 bg-yellow-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 md:after:h-4 md:after:w-4 after:transition-all peer-checked:bg-yellow-500"></div>
-            </label>
-          </div>
+          {isOverseas ? (
+            <div className="flex flex-col gap-4">
+              <p className="text-[11px] md:text-sm text-charcoal/80 text-center bg-[#C4A47C]/10 p-3 rounded-lg border border-[#C4A47C]/20 leading-relaxed">
+                International orders require manual shipping calculation. Please contact us on WhatsApp to complete your order.
+              </p>
+              <a 
+                href={`https://wa.me/916374292001?text=Hi Alangaram! I am interested in placing an international order. My cart total is ₹${cartTotal}.`}
+                target="_blank" rel="noopener noreferrer"
+                className="btn-luxury w-full py-3 md:py-4 flex items-center justify-center gap-2 md:gap-3 text-[13px] md:text-lg bg-[#25D366] border-[#25D366] text-white hover:bg-[#128C7E] hover:text-white rounded-md"
+              >
+                Contact on WhatsApp
+              </a>
+            </div>
+          ) : (
+            <>
+              {/* TEST MODE TOGGLE */}
+              <div className="flex items-center justify-between mb-4 md:mb-6 bg-yellow-50 p-2 md:p-3 rounded border border-yellow-200">
+                <span className="text-[9px] md:text-xs font-medium text-yellow-800 uppercase tracking-wider">Developer Test Mode</span>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" className="sr-only peer" checked={testMode} onChange={() => setTestMode(!testMode)} />
+                  <div className="w-7 h-4 md:w-9 md:h-5 bg-yellow-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 md:after:h-4 md:after:w-4 after:transition-all peer-checked:bg-yellow-500"></div>
+                </label>
+              </div>
 
-          <button 
-            type="submit"
-            form="checkout-form"
-            disabled={loading || fetchingSettings}
-            className="btn-luxury btn-luxury-solid w-full py-3 md:py-4 flex items-center justify-center gap-2 md:gap-3 text-[13px] md:text-lg"
-          >
-            {loading ? <Loader2 size={16} className="md:w-[20px] md:h-[20px] animate-spin" /> : <><ShoppingBag size={16} className="md:w-[20px] md:h-[20px]" /> Pay ₹ {cartTotal}</>}
-          </button>
-          
-          <p className="text-center text-[9px] md:text-[10px] text-charcoal/40 mt-3 md:mt-4 uppercase tracking-widest">100% Secure Checkout</p>
+              <button 
+                type="submit"
+                form="checkout-form"
+                disabled={loading || fetchingSettings}
+                className="btn-luxury btn-luxury-solid w-full py-3 md:py-4 flex items-center justify-center gap-2 md:gap-3 text-[13px] md:text-lg"
+              >
+                {loading ? <Loader2 size={16} className="md:w-[20px] md:h-[20px] animate-spin" /> : <><ShoppingBag size={16} className="md:w-[20px] md:h-[20px]" /> Pay ₹ {finalAmountWithShipping}</>}
+              </button>
+              
+              <p className="text-center text-[9px] md:text-[10px] text-charcoal/40 mt-3 md:mt-4 uppercase tracking-widest">100% Secure Checkout</p>
+            </>
+          )}
         </div>
 
       </div>
