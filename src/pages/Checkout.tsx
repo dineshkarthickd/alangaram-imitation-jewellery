@@ -187,7 +187,7 @@ const Checkout = () => {
           
           if (data.id) {
             const options = {
-              key: 'rzp_test_TiX7zTCljpZoiL', // Safe to expose public Key ID
+              key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_live_Tib59i7TiaKN9t', // Use Live Key ID
               amount: data.amount,
               currency: data.currency,
               name: "Alangaram Jewellery",

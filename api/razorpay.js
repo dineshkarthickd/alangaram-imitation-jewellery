@@ -4,8 +4,13 @@ export default async function handler(req, res) {
   }
 
   const { amount, receipt } = req.body;
-  const key_id = process.env.RAZORPAY_KEY_ID || 'rzp_test_TiX7zTCljpZoiL';
-  const key_secret = process.env.RAZORPAY_KEY_SECRET || '1QlU8BwTlpTfJaN06f1dyaq4';
+  const key_id = process.env.RAZORPAY_KEY_ID;
+  const key_secret = process.env.RAZORPAY_KEY_SECRET;
+
+  if (!key_id || !key_secret) {
+    console.error("Razorpay API keys are missing in Environment Variables");
+    return res.status(500).json({ error: 'Payment gateway configuration error' });
+  }
 
   try {
     const response = await fetch('https://api.razorpay.com/v1/orders', {
