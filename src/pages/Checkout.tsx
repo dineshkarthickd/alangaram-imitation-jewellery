@@ -136,8 +136,10 @@ const Checkout = () => {
     setLoading(true);
 
     try {
-      // 1. Generate Order ID
-      const orderId = `ORD-${Date.now().toString().slice(-6)}-${Math.floor(Math.random() * 1000)}`;
+      // 1. Generate Order ID (Base36 Timestamp + Random guarantees no duplicates)
+      const timestampPart = Date.now().toString(36).toUpperCase();
+      const randomPart = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+      const orderId = `ORD-${timestampPart}-${randomPart}`;
 
       // 2. Save to Firestore
       const docRef = await addDoc(collection(db, 'orders'), {

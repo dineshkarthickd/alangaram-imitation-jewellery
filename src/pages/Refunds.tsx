@@ -25,7 +25,7 @@ const Refunds = () => {
         <div className="flex flex-col gap-3">
           <div className="text-lg md:text-xl font-serif text-charcoal">3. How to Report Damage</div>
           <div className="text-[13px] md:text-base text-charcoal/70 leading-relaxed font-light">
-            Please connect with us directly through WhatsApp at <strong>+91 7010857596</strong> with your order details and the proof of damage. Our team will review your case directly on WhatsApp and assist you with a resolution.
+            Please connect with us directly through WhatsApp at <strong>+91 63742 92001</strong> with your order details and the proof of damage. Our team will review your case directly on WhatsApp and assist you with a resolution.
           </div>
         </div>
       </div>

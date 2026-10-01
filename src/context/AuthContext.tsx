@@ -36,7 +36,6 @@ const resolveAdminStatus = async (user: User): Promise<boolean> => {
     }
     const defaultAdmins = [
       'dineshkarthick1610@gmail.com',
-      'alangarmimitationjewellery@gmail.com',
       'alangaramimitationjewellery@gmail.com'
     ];
     return defaultAdmins.includes(user.email!);

@@ -24,7 +24,7 @@ const Contact = () => {
             </svg>
           </div>
           <div className="text-lg font-serif text-charcoal mb-2">Phone / WhatsApp</div>
-          <div className="text-[13px] md:text-sm text-charcoal/70 font-light">+91 7010857596</div>
+          <div className="text-[13px] md:text-sm text-charcoal/70 font-light">+91 63742 92001</div>
         </div>
       </div>
     </div>
