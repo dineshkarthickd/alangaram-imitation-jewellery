@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { collection, query, orderBy, getDocs, doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../../config/firebase';
-import { AlertTriangle, Loader2, PackageOpen, ArrowLeft, Edit2, Trash2, Search } from 'lucide-react';
+import { AlertTriangle, Loader2, PackageOpen, ArrowLeft, Edit2, Trash2, Search, ChevronDown } from 'lucide-react';
 
 interface AdminManageInventoryProps {
   onEditProduct: (product: any) => void;
@@ -13,6 +13,8 @@ const AdminManageInventory: React.FC<AdminManageInventoryProps> = ({ onEditProdu
   const [fetchingProducts, setFetchingProducts] = useState(false);
   const [stockFilter, setStockFilter] = useState<'all' | 'active' | 'low' | 'out'>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState<'all' | 'Forming' | 'Imitation' | 'Combo'>('all');
+  const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
   const [globalError, setGlobalError] = useState<string | null>(null);
   
   const [selectedAdminProduct, setSelectedAdminProduct] = useState<any>(null);
@@ -77,9 +79,14 @@ const AdminManageInventory: React.FC<AdminManageInventoryProps> = ({ onEditProdu
     if (stockFilter === 'low') matchesStock = p.stock > 0 && p.stock < 3;
     if (stockFilter === 'active') matchesStock = p.stock >= 3;
     
+    let matchesCategory = true;
+    if (categoryFilter !== 'all') {
+      matchesCategory = p.category?.toLowerCase() === categoryFilter.toLowerCase();
+    }
+    
     const matchesSearch = !searchQuery || (p.productId || '').toLowerCase().includes(searchQuery.toLowerCase());
     
-    return matchesStock && matchesSearch;
+    return matchesStock && matchesSearch && matchesCategory;
   });
 
   return (
@@ -98,11 +105,52 @@ const AdminManageInventory: React.FC<AdminManageInventoryProps> = ({ onEditProdu
       </div>
 
       {/* Stock Filter Pills */}
-      <div className="flex flex-wrap gap-2 mb-4 min-w-0">
-        <button onClick={() => setStockFilter('all')} className={`px-4 py-2 md:py-3 rounded-full text-[10px] md:text-sm transition-all ${stockFilter === 'all' ? 'bg-[#C4A47C] text-white' : 'bg-white border border-charcoal/10 text-charcoal/70 hover:border-[#C4A47C]'}`}>All Products</button>
+      <div className="flex flex-wrap gap-2 mb-3 min-w-0">
+        <button onClick={() => setStockFilter('all')} className={`px-4 py-2 md:py-3 rounded-full text-[10px] md:text-sm transition-all ${stockFilter === 'all' ? 'bg-[#C4A47C] text-white' : 'bg-white border border-charcoal/10 text-charcoal/70 hover:border-[#C4A47C]'}`}>All Stock</button>
         <button onClick={() => setStockFilter('active')} className={`px-4 py-2 md:py-3 rounded-full text-[10px] md:text-sm transition-all ${stockFilter === 'active' ? 'bg-[#C4A47C] text-white' : 'bg-white border border-charcoal/10 text-charcoal/70 hover:border-[#C4A47C]'}`}>Active Stock</button>
         <button onClick={() => setStockFilter('low')} className={`px-4 py-2 md:py-3 rounded-full text-[10px] md:text-sm transition-all ${stockFilter === 'low' ? 'bg-orange-500 text-white' : 'bg-white border border-orange-200 text-orange-600 hover:border-orange-500'}`}>Low Stock</button>
         <button onClick={() => setStockFilter('out')} className={`px-4 py-2 md:py-3 rounded-full text-[10px] md:text-sm transition-all ${stockFilter === 'out' ? 'bg-red-500 text-white' : 'bg-white border border-red-200 text-red-600 hover:border-red-500'}`}>Out of Stock</button>
+      </div>
+
+      {/* Category Dropdown Filter */}
+      <div className="flex items-center gap-2 mb-4">
+        <span className="text-[10px] md:text-xs text-charcoal/60 uppercase tracking-widest font-medium">Category:</span>
+        <div 
+          className="relative z-40 min-w-[160px]"
+          tabIndex={0}
+          onBlur={(e) => {
+            if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+              setIsCategoryDropdownOpen(false);
+            }
+          }}
+        >
+          <div 
+            onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}
+            className={`text-[10px] md:text-sm bg-white border ${isCategoryDropdownOpen ? 'border-[#C4A47C]' : 'border-charcoal/20'} rounded px-3 py-1.5 md:py-2 outline-none cursor-pointer flex justify-between items-center transition-colors w-full`}
+          >
+            <span className="text-charcoal font-medium">
+              {categoryFilter === 'all' ? 'All Categories' : categoryFilter}
+            </span>
+            <ChevronDown size={14} className={`text-charcoal/40 transition-transform ${isCategoryDropdownOpen ? 'rotate-180' : ''}`} />
+          </div>
+          
+          {isCategoryDropdownOpen && (
+            <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-charcoal/10 rounded-md shadow-lg overflow-hidden animate-fade-in origin-top">
+              {['all', 'Forming', 'Imitation', 'Combo'].map(cat => (
+                <div 
+                  key={cat} 
+                  onClick={() => {
+                    setCategoryFilter(cat as any);
+                    setIsCategoryDropdownOpen(false);
+                  }}
+                  className={`px-3 md:px-4 py-2 text-[10px] md:text-sm cursor-pointer transition-colors ${categoryFilter === cat ? 'bg-cream font-medium text-[#C4A47C]' : 'text-charcoal/80 hover:bg-cream/50'}`}
+                >
+                  {cat === 'all' ? 'All Categories' : cat}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Search Bar */}

@@ -80,6 +80,9 @@ const Navbar = () => {
                   <Link to="/products?category=imitation" className="px-6 py-2.5 hover:bg-cream transition-colors text-sm text-charcoal/80 hover:text-charcoal">
                     Imitation Jewellery
                   </Link>
+                  <Link to="/products?category=combo" className="px-6 py-2.5 hover:bg-cream transition-colors text-sm text-charcoal/80 hover:text-charcoal">
+                    Combo Jewellery
+                  </Link>
                 </div>
               </div>
             </div>
@@ -219,6 +222,9 @@ const Navbar = () => {
               </Link>
               <Link to="/products?category=imitation" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-charcoal flex items-center gap-3 transition-colors">
                 <div className="w-1 h-1 rounded-full bg-gold"></div> Imitation Jewellery
+              </Link>
+              <Link to="/products?category=combo" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-charcoal flex items-center gap-3 transition-colors">
+                <div className="w-1 h-1 rounded-full bg-gold"></div> Combo Jewellery
               </Link>
             </div>
           </div>
