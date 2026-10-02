@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowUpRight, Loader2, Heart } from 'lucide-react';
-import heroImg from '../assets/hero.png';
 import { Link } from 'react-router-dom';
 import { useWishlist } from '../context/WishlistContext';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -64,10 +63,16 @@ const Home = () => {
   return (
     <div className="w-full max-w-[100vw] min-w-0 flex flex-col overflow-x-hidden">
       {/* HERO SECTION */}
-      <header className="relative w-full h-[75vh] lg:h-[80vh] overflow-hidden flex items-center justify-start">
+      <header className="relative w-full h-[75vh] lg:h-[90vh] overflow-hidden flex items-center justify-start">
+        {/* Desktop Image */}
         <div 
-          className="absolute inset-0 w-full h-full bg-cover bg-center"
-          style={{ backgroundImage: `url(${heroImg})` }}
+          className="hidden md:block absolute inset-0 w-full h-full bg-cover bg-[center_15%]"
+          style={{ backgroundImage: `url('/Mock-Images/Desktop.jpg')` }}
+        />
+        {/* Mobile Image */}
+        <div 
+          className="block md:hidden absolute inset-0 w-full h-full bg-cover bg-top"
+          style={{ backgroundImage: `url('/Mock-Images/Mobile.jpg')` }}
         />
         
         {/* Dark gradient from left for all screens so text is readable over the bright window */}
