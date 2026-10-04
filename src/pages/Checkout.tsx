@@ -56,7 +56,7 @@ const Checkout = () => {
 
   // Derived Shipping Costs
   const isOverseas = formData.state === "Overseas (Outside India)";
-  const shippingCost = isOverseas ? 0 : (formData.state && SOUTH_INDIAN_STATES.includes(formData.state) ? 100 : (formData.state ? 150 : 0));
+  const shippingCost = isOverseas ? 0 : (formData.state && SOUTH_INDIAN_STATES.includes(formData.state) ? 60 : (formData.state ? 100 : 0));
   const finalAmountWithShipping = cartTotal + shippingCost;
 
   // Prefill email if logged in

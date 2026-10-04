@@ -112,17 +112,18 @@ const AdminManageInventory: React.FC<AdminManageInventoryProps> = ({ onEditProdu
         <button onClick={() => setStockFilter('out')} className={`px-4 py-2 md:py-3 rounded-full text-[10px] md:text-sm transition-all ${stockFilter === 'out' ? 'bg-red-500 text-white' : 'bg-white border border-red-200 text-red-600 hover:border-red-500'}`}>Out of Stock</button>
       </div>
 
-      {/* Category Dropdown Filter */}
-      <div className="flex items-center gap-2 mb-4">
-        <span className="text-[10px] md:text-xs text-charcoal/60 uppercase tracking-widest font-medium">Category:</span>
-        <div 
-          className="relative z-40 min-w-[160px]"
-          tabIndex={0}
-          onBlur={(e) => {
-            if (!e.currentTarget.contains(e.relatedTarget as Node)) {
-              setIsCategoryDropdownOpen(false);
-            }
-          }}
+      {/* Category Dropdown & Total Count */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 min-w-0">
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] md:text-xs text-charcoal/60 uppercase tracking-widest font-medium">Category:</span>
+          <div 
+            className="relative z-40 min-w-[160px]"
+            tabIndex={0}
+            onBlur={(e) => {
+              if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+                setIsCategoryDropdownOpen(false);
+              }
+            }}
         >
           <div 
             onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}
@@ -150,6 +151,10 @@ const AdminManageInventory: React.FC<AdminManageInventoryProps> = ({ onEditProdu
               ))}
             </div>
           )}
+        </div>
+        </div>
+        <div className="text-[11px] md:text-sm font-medium text-charcoal/70 bg-white px-4 py-2 rounded-lg border border-charcoal/10 shadow-sm whitespace-nowrap self-start md:self-auto">
+          Total Products: <span className="text-[#C4A47C] font-bold text-[12px] md:text-base">{displayedProducts.length}</span>
         </div>
       </div>
 

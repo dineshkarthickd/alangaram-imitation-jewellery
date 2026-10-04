@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
@@ -19,6 +19,7 @@ const Products = () => {
 
   const [subCategoryFilter, setSubCategoryFilter] = useState('All Types');
   const [isSubCategoryDropdownOpen, setIsSubCategoryDropdownOpen] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(16);
 
   // Fetch real products from Firebase
   useEffect(() => {
@@ -41,6 +42,7 @@ const Products = () => {
   const handleCategoryChange = (cat: string) => {
     setSearchParams(cat === 'all' ? {} : { category: cat });
     setSubCategoryFilter('All Types'); // Reset subcategory when main category changes
+    setVisibleCount(16); // Reset pagination
   };
 
   const filteredProducts = products.filter(p => {
@@ -48,6 +50,27 @@ const Products = () => {
     const matchesSub = subCategoryFilter === 'All Types' || (p.subcategories && p.subcategories.includes(subCategoryFilter));
     return matchesCategory && matchesSub;
   });
+
+  const visibleProducts = filteredProducts.slice(0, visibleCount);
+
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && visibleCount < filteredProducts.length) {
+          setVisibleCount((prev) => prev + 16);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (loadMoreRef.current) {
+      observer.observe(loadMoreRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [visibleCount, filteredProducts.length]);
 
   return (
     <div className="pt-24 md:pt-32 pb-16 md:pb-24 px-4 md:px-12 lg:px-20 max-w-[1400px] mx-auto min-h-screen">
@@ -116,6 +139,7 @@ const Products = () => {
                   key={type} 
                   onClick={() => {
                     setSubCategoryFilter(type);
+                    setVisibleCount(16);
                     setIsSubCategoryDropdownOpen(false);
                   }}
                   className={`px-4 py-2.5 md:py-3 text-[10px] md:text-sm cursor-pointer transition-colors ${subCategoryFilter === type ? 'bg-[#C4A47C]/10 font-medium text-[#C4A47C]' : 'text-charcoal/80 hover:bg-cream'}`}
@@ -139,7 +163,7 @@ const Products = () => {
       {/* PRODUCT GRID */}
       {!loading && (
         <div key={activeCategory} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-10 md:gap-x-8 md:gap-y-16 animate-page-fade">
-          {filteredProducts.map(product => {
+          {visibleProducts.map(product => {
             const hasStock = product.stock > 0;
             
             return (
@@ -236,6 +260,15 @@ const Products = () => {
             </Link>
             );
           })}
+        </div>
+      )}
+
+      {/* INFINITE SCROLL OBSERVER */}
+      {!loading && (
+        <div ref={loadMoreRef} className="h-10 w-full mt-8 flex justify-center items-center">
+          {visibleCount < filteredProducts.length && (
+            <Loader2 className="animate-spin text-[#C4A47C] w-6 h-6 opacity-50" />
+          )}
         </div>
       )}
 
