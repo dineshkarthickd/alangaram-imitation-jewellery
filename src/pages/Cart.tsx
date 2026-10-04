@@ -96,7 +96,7 @@ const Cart = () => {
               </div>
               <div className="flex justify-between text-charcoal/70">
                 <span>Estimated Shipping</span>
-                <span className="text-[#C4A47C] uppercase tracking-wider text-[10px] md:text-[11px] font-bold">Free</span>
+                <span className="text-charcoal/60 uppercase tracking-wider text-[10px] md:text-[11px] font-bold">Calculated at Checkout</span>
               </div>
             </div>
             

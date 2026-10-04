@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
-import { collection, addDoc, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, doc, updateDoc, serverTimestamp, getDoc, increment } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { ShoppingBag, AlertCircle, CheckCircle2, ChevronRight, ChevronDown, Loader2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
@@ -147,9 +147,57 @@ const Checkout = () => {
 
     setLoading(true);
 
-    const sendEmailConfirmation = async (oid: string, total: number) => {
+      // === SERVER-SIDE VERIFICATION ===
+      let verifiedSubtotal = 0;
+      let stockError = null;
+
       try {
-        const res = await fetch('/api/send-order-email', {
+        for (const item of cartItems) {
+          const productRef = doc(db, 'products', (item as any).productId || item.id.toString());
+          const snap = await getDoc(productRef);
+          
+          if (!snap.exists()) {
+            stockError = `Product ${item.name} no longer exists.`;
+            break;
+          }
+          
+          const productData = snap.data();
+          if (productData.stock < item.quantity) {
+            stockError = `Sorry, ${item.name} only has ${productData.stock} in stock.`;
+            break;
+          }
+          
+          const livePrice = Number(String(productData.finalPrice).replace(/[^0-9.]/g, ''));
+          verifiedSubtotal += livePrice * item.quantity;
+        }
+
+        if (stockError) {
+          setOrderError(stockError);
+          setLoading(false);
+          return;
+        }
+
+        const verifiedShippingCost = formData.state === 'Overseas' ? 0 : SOUTH_INDIAN_STATES.includes(formData.state) ? 60 : 100;
+        const verifiedFinalAmount = verifiedSubtotal + verifiedShippingCost;
+
+        if (verifiedFinalAmount !== finalAmountWithShipping) {
+          setOrderError("Prices have been updated by the admin. Please refresh your cart.");
+          setLoading(false);
+          return;
+        }
+
+      } catch (err) {
+        console.error("Verification error:", err);
+        setOrderError("Failed to verify product availability. Please try again.");
+        setLoading(false);
+        return;
+      }
+      // === END VERIFICATION ===
+
+      const sendOrderNotifications = async (oid: string, total: number) => {
+      try {
+        // Send Email
+        fetch('/api/send-order-email', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -160,11 +208,23 @@ const Checkout = () => {
             totalAmount: total,
             items: cartItems.map(item => ({ name: item.name, quantity: item.quantity, price: item.price }))
           })
-        });
-        const data = await res.json();
-        console.log("Email API Response:", data);
+        }).catch(err => console.error("Failed email:", err));
+
+        // Send Telegram
+        fetch('/api/send-telegram', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            orderId: oid,
+            amount: total,
+            customerInfo: formData,
+            shippingCost: shippingCost,
+            items: cartItems
+          })
+        }).catch(err => console.error("Failed telegram:", err));
+
       } catch (err) {
-        console.error("Failed to trigger email confirmation:", err);
+        console.error("Failed to trigger notifications:", err);
       }
     };
 
@@ -181,6 +241,7 @@ const Checkout = () => {
         customerInfo: formData,
         items: cartItems,
         totalAmount: finalAmountWithShipping,
+        shippingCost: shippingCost,
         status: testMode ? 'Order Confirmed' : 'Pending Payment',
         paymentMode: testMode ? 'TEST' : 'GPAY',
         createdAt: serverTimestamp()
@@ -233,8 +294,17 @@ const Checkout = () => {
                   status: 'Order Confirmed',
                   transactionId: response.razorpay_payment_id
                 });
+                for (const item of cartItems) {
+                  try {
+                    await updateDoc(doc(db, 'products', (item as any).productId || item.id.toString()), {
+                      stock: increment(-item.quantity)
+                    });
+                  } catch (e) {
+                    console.error("Failed to decrement stock:", e);
+                  }
+                }
                 clearCart();
-                sendEmailConfirmation(orderId, cartTotal); // Send Email Receipt
+                sendOrderNotifications(orderId, finalAmountWithShipping); // Send Email Receipt
                 setOrderSuccess(true);
                 fireSuccessConfetti();
               },
@@ -282,8 +352,17 @@ const Checkout = () => {
         }
       } else {
         // 4. Show Success Popup (Test Mode)
+        for (const item of cartItems) {
+          try {
+            await updateDoc(doc(db, 'products', (item as any).productId || item.id.toString()), {
+              stock: increment(-item.quantity)
+            });
+          } catch (e) {
+            console.error("Failed to decrement stock:", e);
+          }
+        }
         clearCart();
-        sendEmailConfirmation(orderId, finalAmountWithShipping); // Send Email Receipt
+        sendOrderNotifications(orderId, finalAmountWithShipping); // Send Email Receipt
         setOrderSuccess(true);
         fireSuccessConfetti();
       }

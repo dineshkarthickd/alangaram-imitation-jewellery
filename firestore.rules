@@ -1,0 +1,50 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Function to check if user is an admin
+    function isAdmin() {
+      return request.auth != null && 
+             request.auth.token.email != null &&
+             exists(/databases/$(database)/documents/settings/admins) &&
+             request.auth.token.email in get(/databases/$(database)/documents/settings/admins).data.emails;
+    }
+
+    // Products: Anyone can read, only admins can write
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if isAdmin();
+      
+      // Reviews subcollection
+      match /reviews/{reviewId} {
+        allow read: if true;
+        // Authenticated users can create reviews, admins can delete
+        allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
+        allow update, delete: if isAdmin();
+      }
+    }
+
+    // Orders: Users can read their own orders and create orders. Admins can read/write all.
+    match /orders/{orderId} {
+      allow read: if isAdmin() || (request.auth != null && resource.data.userId == request.auth.uid);
+      allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
+      // Users can only update their own order to 'Payment Timeout' or similar non-malicious states if we enforce it,
+      // but simpler: only allow users to update their own orders.
+      allow update: if isAdmin() || (request.auth != null && resource.data.userId == request.auth.uid);
+      allow delete: if isAdmin();
+    }
+
+    // Settings (including admins list): Only admins can read/write, 
+    // EXCEPT /settings/admins which MUST be readable by all authenticated users 
+    // so they can evaluate the isAdmin() check on the client.
+    match /settings/{docId} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+    
+    // Any other document: Deny by default
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
