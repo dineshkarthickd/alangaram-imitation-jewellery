@@ -153,7 +153,7 @@ const Checkout = () => {
 
       try {
         for (const item of cartItems) {
-          const productRef = doc(db, 'products', item.productId || item.id);
+          const productRef = doc(db, 'products', (item as any).productId || item.id.toString());
           const snap = await getDoc(productRef);
           
           if (!snap.exists()) {
@@ -296,7 +296,7 @@ const Checkout = () => {
                 });
                 for (const item of cartItems) {
                   try {
-                    await updateDoc(doc(db, 'products', item.productId || item.id), {
+                    await updateDoc(doc(db, 'products', (item as any).productId || item.id.toString()), {
                       stock: increment(-item.quantity)
                     });
                   } catch (e) {
@@ -354,7 +354,7 @@ const Checkout = () => {
         // 4. Show Success Popup (Test Mode)
         for (const item of cartItems) {
           try {
-            await updateDoc(doc(db, 'products', item.productId || item.id), {
+            await updateDoc(doc(db, 'products', (item as any).productId || item.id.toString()), {
               stock: increment(-item.quantity)
             });
           } catch (e) {
