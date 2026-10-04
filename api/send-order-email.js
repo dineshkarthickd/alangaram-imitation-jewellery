@@ -1,69 +1,70 @@
-const { Resend } = require('resend');
-const resend = new Resend(process.env.RESEND_API_KEY);
+const nodemailer = require('nodemailer');
 
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
   if (req.method !== 'POST') {
-    res.statusCode = 405;
-    return res.end();
+    return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
+  const { orderId, customerName, customerEmail, shippingAddress, totalAmount, items } = req.body;
+
   try {
-    const orderData = req.body;
-    
-    // Create HTML Template for the email
-    const htmlTemplate = `
-      <div style="font-family: 'Georgia', serif; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #e0d5c1; border-radius: 8px; overflow: hidden;">
-        <div style="background-color: #fcfbf9; padding: 30px; text-align: center; border-bottom: 1px solid #e0d5c1;">
-          <h1 style="color: #c4a47c; margin: 0; font-size: 24px; letter-spacing: 2px; text-transform: uppercase;">Alangaram</h1>
-          <p style="margin: 5px 0 0 0; color: #666; font-size: 12px; letter-spacing: 2px;">IMITATION JEWELLERY</p>
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+      }
+    });
+
+    const itemsHtml = items.map(item => 
+      `<li style="margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+        <p style="margin: 0; font-weight: bold;">${item.name}</p>
+        <p style="margin: 0; color: #666;">Quantity: ${item.quantity}</p>
+        <p style="margin: 0; color: #666;">Price: ₹${item.price}</p>
+      </li>`
+    ).join('');
+
+    const htmlContent = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
+        <div style="text-align: center; margin-bottom: 20px;">
+          <h1 style="color: #C4A47C; margin: 0;">Alangaram Imitation Jewellery</h1>
+          <p style="color: #666; margin-top: 5px;">Order Confirmation</p>
         </div>
         
-        <div style="padding: 30px; background-color: #ffffff;">
-          <h2 style="font-size: 22px; color: #333; margin-top: 0; font-weight: normal;">Order Confirmed!</h2>
-          <p style="font-size: 15px; color: #555; line-height: 1.6;">Dear ${orderData.customerName},</p>
-          <p style="font-size: 15px; color: #555; line-height: 1.6;">Thank you for shopping with Alangaram. Your beautiful jewellery order has been successfully placed and is being processed.</p>
-          
-          <div style="background-color: #fcfbf9; border: 1px solid #e0d5c1; border-radius: 6px; padding: 20px; margin: 25px 0;">
-            <p style="margin: 0 0 10px 0; font-size: 14px; color: #666;"><strong>Order ID:</strong> ${orderData.orderId}</p>
-            <p style="margin: 0 0 10px 0; font-size: 14px; color: #666;"><strong>Amount Paid:</strong> ₹${orderData.totalAmount}</p>
-            <p style="margin: 0; font-size: 14px; color: #666;"><strong>Shipping Address:</strong><br/>
-              <span style="font-family: sans-serif; line-height: 1.5;">${orderData.shippingAddress}</span>
-            </p>
-          </div>
-          
-          <h3 style="font-size: 16px; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-top: 30px; font-weight: normal;">Order Summary</h3>
-          <ul style="list-style-type: none; padding: 0; margin: 0; font-family: sans-serif;">
-            ${orderData.items.map(item => `
-              <li style="padding: 12px 0; border-bottom: 1px solid #eee; font-size: 14px; display: flex; justify-content: space-between;">
-                <span style="color: #555;">${item.quantity}x ${item.name}</span>
-                <span style="font-weight: bold; color: #333;">₹${item.price * item.quantity}</span>
-              </li>
-            `).join('')}
-          </ul>
-          
-          <p style="font-size: 14px; color: #555; line-height: 1.6; margin-top: 30px;">
-            If you have any questions about your order, please reply directly to this email or contact our support team via WhatsApp at <strong>+91 63742 92001</strong>.
-          </p>
+        <p>Dear ${customerName},</p>
+        <p>Thank you for your purchase! We have successfully received your order.</p>
+        
+        <div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; margin: 20px 0;">
+          <h3 style="margin-top: 0; color: #333;">Order Details</h3>
+          <p style="margin: 5px 0;"><strong>Order ID:</strong> ${orderId}</p>
+          <p style="margin: 5px 0;"><strong>Total Amount:</strong> ₹${totalAmount}</p>
+          <p style="margin: 5px 0;"><strong>Shipping Address:</strong><br>${shippingAddress}</p>
         </div>
         
-        <div style="background-color: #2b2b2b; color: #fff; text-align: center; padding: 20px; font-size: 12px; font-family: sans-serif; letter-spacing: 0.5px;">
-          <p style="margin: 0; color: #aaa;">© ${new Date().getFullYear()} Alangaram Imitation Jewellery.<br/>All rights reserved.</p>
-        </div>
+        <h3 style="color: #333;">Items Ordered</h3>
+        <ul style="list-style-type: none; padding: 0;">
+          ${itemsHtml}
+        </ul>
+        
+        <p style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; color: #666; font-size: 12px; text-align: center;">
+          If you have any questions about your order, please contact us at alangaramimitationjewellery@gmail.com
+        </p>
       </div>
     `;
 
-    // Resend currently requires sending from onboarding@resend.dev unless a custom domain is verified
-    const data = await resend.emails.send({
-      from: 'Alangaram Jewellery <onboarding@resend.dev>',
-      to: orderData.customerEmail,
-      subject: `Order Confirmation - ${orderData.orderId}`,
-      html: htmlTemplate,
-    });
+    const mailOptions = {
+      from: '"Alangaram Jewellery" <' + process.env.EMAIL_USER + '>',
+      to: customerEmail,
+      subject: `Order Confirmation - ${orderId}`,
+      html: htmlContent
+    };
 
-    res.statusCode = 200;
-    res.end(JSON.stringify(data));
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Email sent: ' + info.response);
+
+    return res.status(200).json({ success: true, message: 'Email sent successfully' });
   } catch (error) {
-    res.statusCode = 500;
-    res.end(JSON.stringify({ error: error.message }));
+    console.error('Email sending error:', error);
+    return res.status(500).json({ error: 'Failed to send email receipt' });
   }
-};
+}

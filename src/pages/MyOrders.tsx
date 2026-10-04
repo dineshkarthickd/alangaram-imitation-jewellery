@@ -225,14 +225,31 @@ const MyOrders = () => {
                     <span>Selling Price (x{selectedItem.quantity})</span>
                     <span>{selectedItem.price}</span>
                   </div>
-                  <div className="flex justify-between mb-3 md:mb-4 border-b border-charcoal/10 pb-3 md:pb-4">
-                    <span>Shipping Fee</span>
-                    <span className="text-green-600 font-medium">FREE</span>
-                  </div>
-                  <div className="flex justify-between font-bold text-charcoal text-[13px] md:text-base">
-                    <span>Total Amount</span>
-                    <span>{selectedItem.price}</span>
-                  </div>
+                  
+                  {selectedItem.originalOrder?.shippingCost > 0 ? (
+                    <>
+                      <div className="flex justify-between mb-3 md:mb-4 border-b border-charcoal/10 pb-3 md:pb-4">
+                        <span>Order Shipping Fee</span>
+                        <span className="font-medium text-charcoal">₹ {selectedItem.originalOrder.shippingCost}</span>
+                      </div>
+                      <div className="flex justify-between font-bold text-charcoal text-[13px] md:text-base">
+                        <span>Order Grand Total</span>
+                        <span>₹ {selectedItem.originalOrder.totalAmount}</span>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex justify-between mb-3 md:mb-4 border-b border-charcoal/10 pb-3 md:pb-4">
+                        <span>Shipping Fee</span>
+                        <span className="text-green-600 font-medium">FREE</span>
+                      </div>
+                      <div className="flex justify-between font-bold text-charcoal text-[13px] md:text-base">
+                        <span>Total Amount</span>
+                        <span>{selectedItem.price}</span>
+                      </div>
+                    </>
+                  )}
+                  
                   <p className="text-[10px] md:text-xs text-charcoal/50 mt-2 md:mt-3">
                     Paid by {selectedItem.originalOrder?.paymentMode === 'TEST' ? 'Test Mode' : 'UPI Transfer'}
                   </p>
@@ -435,7 +452,13 @@ const MyOrders = () => {
 
               {/* Price & Status (Right Side) */}
               <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-center w-full md:w-[220px] flex-shrink-0 border-t md:border-t-0 border-charcoal/10 pt-3 md:pt-0 mt-2 md:mt-0 min-w-0">
-                <p className="font-semibold text-charcoal text-[13px] md:text-sm md:mb-2">{item.price}</p>
+                <div className="flex flex-col items-start md:items-end mb-0 md:mb-2">
+                  {item.originalOrder?.shippingCost > 0 ? (
+                    <p className="font-semibold text-charcoal text-[13px] md:text-sm">Total: ₹ {item.originalOrder.totalAmount}</p>
+                  ) : (
+                    <p className="font-semibold text-charcoal text-[13px] md:text-sm">{item.price}</p>
+                  )}
+                </div>
                 <div className="text-right flex flex-col items-end min-w-0">
                   <div className="flex items-center justify-end gap-1 md:gap-1.5 text-[10px] md:text-xs font-medium">
                     {getStatusIcon(item.orderStatus)}

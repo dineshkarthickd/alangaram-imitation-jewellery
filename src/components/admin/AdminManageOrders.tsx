@@ -189,7 +189,7 @@ const AdminManageOrders = () => {
             realSku = productSnap.data().productId;
           }
         } catch (e) {
-          console.error('Failed to fetch product ID for', item.id);
+          console.error('Failed to fetch product ID for', item.id, e);
         }
         return { ...item, realSku };
       }));
@@ -207,6 +207,16 @@ const AdminManageOrders = () => {
           `Rs. ${(priceNum * qtyNum).toLocaleString('en-IN')}`
         ];
       });
+
+      if (order.shippingCost > 0) {
+        tableData.push([
+          tableData.length + 1,
+          'Shipping Fee',
+          `Rs. ${order.shippingCost.toLocaleString('en-IN')}`,
+          1,
+          `Rs. ${order.shippingCost.toLocaleString('en-IN')}`
+        ]);
+      }
 
       // @ts-ignore
       autoTable(docPdf, {
