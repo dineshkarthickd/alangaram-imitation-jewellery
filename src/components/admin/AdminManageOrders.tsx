@@ -190,7 +190,7 @@ const AdminManageOrders = () => {
             realSku = productSnap.data().productId;
           }
         } catch {
-          console.error('Failed to fetch product ID for', item.id, e);
+          console.error('Failed to fetch product ID for', item.id);
         }
         return { ...item, realSku };
       }));
@@ -275,7 +275,7 @@ const AdminManageOrders = () => {
       }
 
     } catch {
-      console.error("Error generating invoice", e);
+      console.error("Error generating invoice");
       alert("Failed to generate PDF. Check console.");
     }
   };
