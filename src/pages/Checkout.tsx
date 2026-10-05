@@ -289,25 +289,35 @@ const Checkout = () => {
               image: "https://alangaramimitationjewellery.vercel.app/Mock-Images/Loader%20Image.png",
               order_id: data.id,
               handler: async function (response: any) {
-                // Payment success
-                await updateDoc(doc(db, 'orders', docRef.id), { 
-                  status: 'Order Confirmed',
-                  transactionId: response.razorpay_payment_id
-                });
-                for (const item of cartItems) {
+                  // SECURE: Send signature to backend for verification instead of trusting the client
                   try {
-                    await updateDoc(doc(db, 'products', (item as any).productId || item.id.toString()), {
-                      stock: increment(-item.quantity)
+                    const verifyRes = await fetch('/api/verify-payment', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        razorpay_order_id: response.razorpay_order_id,
+                        razorpay_payment_id: response.razorpay_payment_id,
+                        razorpay_signature: response.razorpay_signature,
+                        firebase_order_id: docRef.id
+                      })
                     });
+                    
+                    const verifyData = await verifyRes.json();
+                    
+                    if (verifyRes.ok && verifyData.success) {
+                      clearCart();
+                      sendOrderNotifications(orderId, finalAmountWithShipping); // Send Email Receipt
+                      setOrderSuccess(true);
+                      fireSuccessConfetti();
+                    } else {
+                      alert("Payment verification failed! Please contact support.");
+                      console.error("Verification failed:", verifyData);
+                    }
                   } catch (e) {
-                    console.error("Failed to decrement stock:", e);
+                    console.error("Failed to verify payment:", e);
+                    alert("Network error during payment verification.");
                   }
-                }
-                clearCart();
-                sendOrderNotifications(orderId, finalAmountWithShipping); // Send Email Receipt
-                setOrderSuccess(true);
-                fireSuccessConfetti();
-              },
+                },
               prefill: {
                 name: formData.name,
                 email: formData.email,

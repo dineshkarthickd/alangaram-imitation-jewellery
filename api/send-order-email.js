@@ -38,6 +38,8 @@ export default async function handler(req, res) {
           <h3 style="margin-top: 0; color: #333;">Order Details</h3>
           <p style="margin: 5px 0;"><strong>Order ID:</strong> ${orderId}</p>
           <p style="margin: 5px 0;"><strong>Total Amount:</strong> ₹${totalAmount}</p>
+          <p style="margin: 5px 0;"><strong>Estimated Delivery:</strong> 10 - 15 Business Days</p>
+          <p style="margin: 5px 0;"><strong>Estimated Delivery:</strong> 10 - 15 Business Days</p>
           <p style="margin: 5px 0;"><strong>Shipping Address:</strong><br>${shippingAddress}</p>
         </div>
         

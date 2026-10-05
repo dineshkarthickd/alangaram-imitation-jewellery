@@ -55,6 +55,28 @@ export default defineConfig(({ mode }) => {
           }
         });
 
+        // LOCAL TEST PROXY FOR VERIFY PAYMENT
+        server.middlewares.use('/api/verify-payment', async (req, res) => {
+          if (req.method === 'POST') {
+            let body = '';
+            req.on('data', chunk => body += chunk.toString());
+            req.on('end', async () => {
+              try {
+                // In local dev, we just simulate a success because we can't easily spin up firebase-admin
+                // without the service account key. 
+                // We will return success so the frontend continues to work in dev mode.
+                console.log("[VERIFY PAYMENT PROXY] Simulating signature verification success!");
+                res.setHeader('Content-Type', 'application/json');
+                res.statusCode = 200;
+                res.end(JSON.stringify({ success: true, message: 'Payment verified locally.' }));
+              } catch (e) {
+                res.statusCode = 500;
+                res.end(JSON.stringify({ error: String(e) }));
+              }
+            });
+          }
+        });
+
         // LOCAL TEST PROXY FOR EMAIL (NODEMAILER)
         server.middlewares.use('/api/send-order-email', async (req, res) => {
           if (req.method === 'POST') {

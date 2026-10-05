@@ -81,12 +81,18 @@ const Navbar = () => {
                     Imitation Jewellery
                   </Link>
                   <Link to="/products?category=combo" className="px-6 py-2.5 hover:bg-cream transition-colors text-sm text-charcoal/80 hover:text-charcoal">
-                    Combo Jewellery
-                  </Link>
+                      Combo Jewellery
+                    </Link>
+                  </div>
                 </div>
               </div>
+              
+              {currentUser && (
+                <Link to="/my-orders" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:opacity-70 transition-opacity whitespace-nowrap">
+                  My Orders
+                </Link>
+              )}
             </div>
-          </div>
 
           {/* CENTER: THE ROYAL LOGO */}
           <div className="flex-[2] md:flex-1 flex justify-center">
