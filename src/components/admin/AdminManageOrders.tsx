@@ -14,6 +14,7 @@ const AdminManageOrders = () => {
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>('All Orders');
   const [searchQuery, setSearchQuery] = useState('');
+  const [successPopup, setSuccessPopup] = useState<string | null>(null);
   const ordersFetched = useRef(false);
 
   useEffect(() => {
@@ -188,7 +189,7 @@ const AdminManageOrders = () => {
           if (productSnap.exists() && productSnap.data().productId) {
             realSku = productSnap.data().productId;
           }
-        } catch (e) {
+        } catch {
           console.error('Failed to fetch product ID for', item.id, e);
         }
         return { ...item, realSku };
@@ -273,7 +274,7 @@ const AdminManageOrders = () => {
         setSelectedAdminOrder({ ...order, invoiceDownloaded: true });
       }
 
-    } catch (e) {
+    } catch {
       console.error("Error generating invoice", e);
       alert("Failed to generate PDF. Check console.");
     }
@@ -436,7 +437,7 @@ const AdminManageOrders = () => {
                               setAdminOrders(prev => prev.map(o => o.id === selectedAdminOrder.id ? updatedOrder : o));
                               setSelectedAdminOrder(updatedOrder);
                             } catch {
-                              alert('Failed to update status');
+                              setGlobalError('Failed to update status');
                             }
                             setIsStatusDropdownOpen(false);
                           }}
@@ -483,6 +484,41 @@ const AdminManageOrders = () => {
                 </div>
               </div>
             </div>
+
+            {/* Order Tracking Injection */}
+            <div className="px-4 md:px-6 pb-6 min-w-0">
+              <div className="bg-[#fcfbf9] p-4 md:p-6 rounded-lg border border-[#e0d5c1]/50 mt-2">
+                <p className="font-medium text-[#C4A47C] mb-3 text-sm md:text-base">Order Tracking</p>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <input 
+                    type="text" 
+                    id="trackingInput"
+                    placeholder="Enter Courier Tracking ID or Link" 
+                    defaultValue={selectedAdminOrder.trackingId || ''}
+                    className="flex-1 px-4 py-2 border border-[#e0d5c1] rounded focus:outline-none focus:border-[#C4A47C] text-sm"
+                  />
+                  <button 
+                    onClick={async () => {
+                      const val = (document.getElementById('trackingInput') as HTMLInputElement).value;
+                      try {
+                        const { doc, updateDoc } = await import('firebase/firestore');
+                        await updateDoc(doc(db, 'orders', selectedAdminOrder.id), { trackingId: val });
+                        const updatedOrder = { ...selectedAdminOrder, trackingId: val };
+                        setAdminOrders(prev => prev.map(o => o.id === selectedAdminOrder.id ? updatedOrder : o));
+                        setSelectedAdminOrder(updatedOrder);
+                        setSuccessPopup('Tracking ID saved successfully!');
+                      } catch {
+                        setGlobalError('Failed to save tracking ID');
+                      }
+                    }}
+                    className="bg-[#C4A47C] text-white px-6 py-2 rounded text-sm hover:bg-[#b0926a] transition-colors whitespace-nowrap"
+                  >
+                    Save Tracking
+                  </button>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       ) : (
@@ -524,6 +560,27 @@ const AdminManageOrders = () => {
               </div>
             ))
           )}
+        </div>
+      )}
+    
+      {/* SUCCESS POPUP MODAL */}
+      {successPopup && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 animate-fade-in">
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl animate-scale-in text-center">
+            <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4 text-green-600">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <h3 className="text-xl font-serif text-charcoal mb-2">Success</h3>
+            <p className="text-[10px] md:text-sm text-charcoal/60 mb-6 leading-relaxed">
+              {successPopup}
+            </p>
+            <button 
+              onClick={() => setSuccessPopup(null)}
+              className="w-full py-2 md:py-3 text-[10px] md:text-sm font-medium text-white bg-[#C4A47C] hover:bg-[#A98C68] rounded-xl transition-colors"
+            >
+              OK
+            </button>
+          </div>
         </div>
       )}
     </div>

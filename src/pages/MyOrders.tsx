@@ -3,7 +3,7 @@ import { collection, query, where, getDocs, addDoc, limit } from 'firebase/fires
 import { db } from '../config/firebase';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import { Package, ChevronRight, Loader2, Clock, CheckCircle2, Truck, XCircle, ArrowLeft, Copy, Star, ChevronDown } from 'lucide-react';
+import { Package, ChevronRight, Loader2, Clock, CheckCircle2, Truck, XCircle, ArrowLeft, Copy, Star, ChevronDown, Check, X } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 
 const MyOrders = () => {
@@ -176,20 +176,70 @@ const MyOrders = () => {
                 {copied && <span className="absolute -top-6 left-1/2 -translate-x-1/2 bg-charcoal text-white text-[9px] md:text-[10px] px-1.5 py-0.5 md:px-2 md:py-1 rounded">Copied!</span>}
               </button>
             </div>
-
-            {/* Status Box */}
-            <div className={`border ${selectedItem.orderStatus === 'Cancelled' ? 'border-red-200' : 'border-charcoal/20'} rounded-lg md:rounded-xl p-3 md:p-4 mb-6 md:mb-8 cursor-default flex flex-col gap-2`}>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 md:gap-3">
-                  <div className={`w-5 h-5 md:w-6 md:h-6 rounded-full flex items-center justify-center ${selectedItem.orderStatus === 'Cancelled' ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-700'}`}>
-                    <CheckCircle2 size={12} className="md:w-[16px] md:h-[16px]" />
+              {/* Status Timeline */}
+              <div className="border border-charcoal/10 rounded-lg md:rounded-xl p-4 md:p-6 mb-6 md:mb-8 bg-white shadow-sm w-full min-w-0">
+                {selectedItem.orderStatus === 'Cancelled' ? (
+                  <div className="flex items-center gap-3 text-red-600">
+                    <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
+                      <X size={16} />
+                    </div>
+                    <div>
+                      <p className="font-bold text-sm md:text-base">Order Cancelled</p>
+                      <p className="text-xs md:text-sm text-red-600/70">{selectedItem.orderDateStr}</p>
+                    </div>
                   </div>
-                  <span className={`font-semibold text-[11px] md:text-sm ${selectedItem.orderStatus === 'Cancelled' ? 'text-red-600' : 'text-green-700'}`}>
-                    {selectedItem.orderStatus}, {selectedItem.orderDateStr}
-                  </span>
-                </div>
+                ) : (
+                  <div className="w-full">
+                    {/* Timeline */}
+                    <div className="w-full py-4 mb-2">
+                      <div className="flex items-start justify-between relative">
+                        {/* Connector Lines */}
+                        <div className="absolute left-[12.5%] right-[12.5%] top-[11px] md:top-[15px] h-[2px] bg-gray-200 z-0">
+                          <div
+                            className="h-full bg-green-600 transition-all duration-500 ease-in-out"
+                            style={{ width: `${Math.max(0, (['Order Confirmed', 'Shipping', 'Ready to Deliver', 'Delivered Successfully'].indexOf(selectedItem.orderStatus) / 3)) * 100}%` }}
+                          />
+                        </div>
+                        
+                        {/* Steps */}
+                        {['Confirmed', 'Shipping', 'Out for Delivery', 'Delivered'].map((step, index) => {
+                          const statusOrder = ['Order Confirmed', 'Shipping', 'Ready to Deliver', 'Delivered Successfully'];
+                          const currentStatusIndex = statusOrder.indexOf(selectedItem.orderStatus);
+                          const isCompleted = currentStatusIndex >= index;
+                          const isCurrent = currentStatusIndex === index;
+                          
+                          return (
+                            <div key={step} className="relative z-10 flex flex-col items-center w-1/4">
+                              <div className={`w-6 h-6 md:w-8 md:h-8 rounded-full flex items-center justify-center border-2 mb-2 transition-colors duration-500 ${isCompleted ? 'border-green-600 bg-green-600 text-white' : 'border-gray-300 bg-white text-gray-300'}`}>
+                                {isCompleted ? <Check size={14} strokeWidth={3} className="md:w-[16px] md:h-[16px]" /> : <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-gray-300" />}
+                              </div>
+                              <p className={`text-center text-[10px] md:text-[11px] leading-tight px-1 md:px-2 ${isCurrent ? 'font-bold text-charcoal' : (isCompleted ? 'font-medium text-charcoal' : 'font-medium text-charcoal/40')}`}>
+                                {step}
+                              </p>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                    
+                    {/* Details below timeline */}
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mt-6 pt-4 border-t border-gray-100">
+                      <div>
+                        <p className="text-xs md:text-sm text-charcoal/60">Expected Delivery</p>
+                        <p className="font-semibold text-sm md:text-base text-charcoal">10-15 Business Days</p>
+                      </div>
+                      
+                      {selectedItem.originalOrder?.trackingId && (
+                        <div className="bg-[#fcfbf9] border border-[#e0d5c1] px-4 py-2 rounded-md">
+                          <p className="text-xs md:text-sm text-charcoal/60 mb-1">Tracking Details</p>
+                          <p className="font-semibold text-sm md:text-base text-[#C4A47C]">{selectedItem.originalOrder.trackingId}</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
-            </div>
+
 
             {/* Delivery Details */}
             <div className="border border-charcoal/10 rounded-lg md:rounded-xl mb-4 overflow-hidden w-full min-w-0">
@@ -460,15 +510,20 @@ const MyOrders = () => {
                   )}
                 </div>
                 <div className="text-right flex flex-col items-end min-w-0">
+                    {item.originalOrder?.trackingId && (
+                      <div className="bg-[#fcfbf9] border border-[#e0d5c1] px-2 py-1 rounded mb-1 text-[10px] md:text-xs">
+                        <span className="text-[#C4A47C] font-semibold">Tracking:</span> {item.originalOrder.trackingId}
+                      </div>
+                    )}
                   <div className="flex items-center justify-end gap-1 md:gap-1.5 text-[10px] md:text-xs font-medium">
                     {getStatusIcon(item.orderStatus)}
                     <span className={item.orderStatus === 'Cancelled' ? 'text-red-600' : 'text-green-700'}>
                       {item.orderStatus === 'Order Confirmed' ? `Confirmed on ${item.orderDateStr}` : `${item.orderStatus} on ${item.orderDateStr}`}
                     </span>
                   </div>
-                  <p className="text-[9px] md:text-[10px] text-charcoal/50 mt-0.5 md:mt-1 hidden md:block">
-                    {item.orderStatus === 'Delivered Successfully' ? 'Your item has been delivered' : 'Click to view order details'}
-                  </p>
+                  <p className="text-[9px] md:text-[10px] text-[#C4A47C] font-semibold mt-1">
+                      Expected Delivery: 10-15 Days
+                    </p>
                 </div>
               </div>
             </div>
