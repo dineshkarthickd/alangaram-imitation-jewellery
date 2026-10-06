@@ -13,7 +13,7 @@ const AdminManageInventory: React.FC<AdminManageInventoryProps> = ({ onEditProdu
   const [fetchingProducts, setFetchingProducts] = useState(false);
   const [stockFilter, setStockFilter] = useState<'all' | 'active' | 'low' | 'out'>('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState<'all' | 'Forming' | 'Imitation' | 'Combo'>('all');
+  const [categoryFilter, setCategoryFilter] = useState<'all' | 'Forming' | 'Imitation' | 'Gold Plating' | 'Combo'>('all');
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
   const [globalError, setGlobalError] = useState<string | null>(null);
   
@@ -137,7 +137,7 @@ const AdminManageInventory: React.FC<AdminManageInventoryProps> = ({ onEditProdu
           
           {isCategoryDropdownOpen && (
             <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-charcoal/10 rounded-md shadow-lg overflow-hidden animate-fade-in origin-top">
-              {['all', 'Forming', 'Imitation', 'Combo'].map(cat => (
+              {['all', 'Forming', 'Imitation', 'Gold Plating', 'Combo'].map(cat => (
                 <div 
                   key={cat} 
                   onClick={() => {

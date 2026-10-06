@@ -80,7 +80,10 @@ const Navbar = () => {
                   <Link to="/products?category=imitation" className="px-6 py-2.5 hover:bg-cream transition-colors text-sm text-charcoal/80 hover:text-charcoal">
                     Imitation Jewellery
                   </Link>
-                  <Link to="/products?category=combo" className="px-6 py-2.5 hover:bg-cream transition-colors text-sm text-charcoal/80 hover:text-charcoal">
+                                    <Link to="/products?category=Gold Plating" className="px-6 py-2.5 hover:bg-cream transition-colors text-sm text-charcoal/80 hover:text-charcoal">
+                    Gold Plating Jewellery
+                  </Link>
+<Link to="/products?category=combo" className="px-6 py-2.5 hover:bg-cream transition-colors text-sm text-charcoal/80 hover:text-charcoal">
                       Combo Jewellery
                     </Link>
                   </div>
@@ -229,7 +232,10 @@ const Navbar = () => {
               <Link to="/products?category=imitation" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-charcoal flex items-center gap-3 transition-colors">
                 <div className="w-1 h-1 rounded-full bg-gold"></div> Imitation Jewellery
               </Link>
-              <Link to="/products?category=combo" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-charcoal flex items-center gap-3 transition-colors">
+                              <Link to="/products?category=Gold Plating" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-charcoal flex items-center gap-3 transition-colors">
+                  <div className="w-1 h-1 rounded-full bg-gold"></div> Gold Plating Jewellery
+                </Link>
+<Link to="/products?category=combo" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-charcoal flex items-center gap-3 transition-colors">
                 <div className="w-1 h-1 rounded-full bg-gold"></div> Combo Jewellery
               </Link>
             </div>
