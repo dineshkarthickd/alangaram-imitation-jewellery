@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
-import { collection, addDoc, doc, updateDoc, serverTimestamp, getDoc, increment } from 'firebase/firestore';
+import { collection, addDoc, doc, updateDoc, serverTimestamp, getDoc } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { ShoppingBag, AlertCircle, CheckCircle2, ChevronRight, ChevronDown, Loader2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
@@ -41,7 +41,6 @@ const Checkout = () => {
     district: ''
   });
 
-  const [testMode, setTestMode] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [placedOrderId, setPlacedOrderId] = useState('');
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
@@ -242,8 +241,8 @@ const Checkout = () => {
         items: cartItems,
         totalAmount: finalAmountWithShipping,
         shippingCost: shippingCost,
-        status: testMode ? 'Order Confirmed' : 'Pending Payment',
-        paymentMode: testMode ? 'TEST' : 'GPAY',
+        status: 'Pending Payment',
+        paymentMode: 'RAZORPAY',
         createdAt: serverTimestamp()
       });
       
@@ -251,8 +250,7 @@ const Checkout = () => {
       setFinalAmount(finalAmountWithShipping);
       setPlacedOrderId(orderId);
 
-      // 3. Trigger Razorpay Checkout (if not in test mode)
-      if (!testMode) {
+      // 3. Trigger Razorpay Checkout
         try {
           // Load Razorpay Script dynamically
           const res = await new Promise((resolve) => {
@@ -281,7 +279,7 @@ const Checkout = () => {
           
           if (data.id) {
             const options = {
-              key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_live_Tib59i7TiaKN9t', // Use Live Key ID
+              key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_live_TkgykU1lQaulKq', // Use Live Key ID
               amount: data.amount,
               currency: data.currency,
               name: "Alangaram Jewellery",
@@ -360,22 +358,7 @@ const Checkout = () => {
           console.error("Payment Gateway Error:", paymentError);
           setOrderError("Could not connect to payment gateway. Please try again.");
         }
-      } else {
-        // 4. Show Success Popup (Test Mode)
-        for (const item of cartItems) {
-          try {
-            await updateDoc(doc(db, 'products', (item as any).productId || item.id.toString()), {
-              stock: increment(-item.quantity)
-            });
-          } catch (e) {
-            console.error("Failed to decrement stock:", e);
-          }
-        }
-        clearCart();
-        sendOrderNotifications(orderId, finalAmountWithShipping); // Send Email Receipt
-        setOrderSuccess(true);
-        fireSuccessConfetti();
-      }
+      
 
     } catch (error: any) {
       console.error("Order error:", error);
@@ -683,14 +666,7 @@ const Checkout = () => {
             </div>
           ) : (
             <>
-              {/* TEST MODE TOGGLE */}
-              <div className="flex items-center justify-between mb-4 md:mb-6 bg-yellow-50 p-2 md:p-3 rounded border border-yellow-200">
-                <span className="text-[9px] md:text-xs font-medium text-yellow-800 uppercase tracking-wider">Developer Test Mode</span>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" className="sr-only peer" checked={testMode} onChange={() => setTestMode(!testMode)} />
-                  <div className="w-7 h-4 md:w-9 md:h-5 bg-yellow-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 md:after:h-4 md:after:w-4 after:transition-all peer-checked:bg-yellow-500"></div>
-                </label>
-              </div>
+              
 
               <button 
                 type="submit"

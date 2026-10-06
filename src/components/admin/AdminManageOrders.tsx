@@ -28,10 +28,10 @@ const AdminManageOrders = () => {
         const snap = await getDocs(q);
         const loaded = snap.docs
           .map(doc => ({ id: doc.id, ...doc.data() }))
-          .filter((order: any) => 
-            order.status !== 'Payment Timeout' && 
-            order.status !== 'Pending Payment' && 
-            order.status !== 'Payment Failed'
+          .filter(() => 
+             
+             
+            true
           );
         setAdminOrders(loaded);
       } catch (error) {
