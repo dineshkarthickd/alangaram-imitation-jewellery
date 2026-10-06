@@ -79,7 +79,7 @@ const Products = () => {
       <div className="text-center mb-6 md:mb-16">
         <h1 className="text-2xl md:text-5xl font-serif text-charcoal mb-2.5 md:mb-6">Our Collections</h1>
         <p className="text-[12px] md:text-base text-charcoal/70 max-w-2xl mx-auto font-light leading-relaxed px-2 md:px-0">
-          Explore our exquisite range of handcrafted jewellery. From the enduring elegance of forming pieces to the trendy allure of imitation and exclusive combo sets.
+          Explore our exquisite range of handcrafted jewellery. From the enduring elegance of forming pieces to the trendy allure of imitation, gold plating, and exclusive combo sets.
         </p>
       </div>
 
@@ -104,7 +104,13 @@ const Products = () => {
           >
             Imitation Jewellery
           </button>
-          <button 
+                      <button 
+              onClick={() => handleCategoryChange('Gold Plating')}
+              className={`px-3 py-1.5 md:px-8 md:py-3 rounded-full transition-all duration-300 font-medium tracking-widest text-[9px] md:text-[13px] uppercase ${activeCategory === 'Gold Plating' ? 'bg-charcoal text-white shadow-md' : 'bg-white/40 text-charcoal/60 hover:bg-white hover:text-charcoal hover:shadow-sm'}`}
+            >
+              Gold Plating Jewellery
+            </button>
+<button 
             onClick={() => handleCategoryChange('combo')}
             className={`px-3 py-1.5 md:px-8 md:py-3 rounded-full transition-all duration-300 font-medium tracking-widest text-[9px] md:text-[13px] uppercase ${activeCategory === 'combo' ? 'bg-charcoal text-white shadow-md' : 'bg-white/40 text-charcoal/60 hover:bg-white hover:text-charcoal hover:shadow-sm'}`}
           >
