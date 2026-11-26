@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 import { useAuth } from '../../context/AuthContext';
-import { Loader2, CheckCircle2 } from 'lucide-react';
+import { Loader2, CheckCircle2, Send, Bot, AlertCircle } from 'lucide-react';
 
 const AdminStoreSettings = () => {
   const { currentUser } = useAuth();
@@ -15,6 +15,12 @@ const AdminStoreSettings = () => {
   const [bannerDesign, setBannerDesign] = useState<1 | 2 | 3 | 4>(1);
   const [adminEmail1, setAdminEmail1] = useState('');
   const [adminEmail2, setAdminEmail2] = useState('');
+
+  // Dynamic Telegram Notification Keys
+  const [telegramBotToken, setTelegramBotToken] = useState('9266471231:AAEFxlYJeyMItwIPJ5HikNHBxUBc8zYJLmg');
+  const [telegramChatId, setTelegramChatId] = useState('7232146507');
+  const [isTestingTelegram, setIsTestingTelegram] = useState(false);
+  const [testTelegramResult, setTestTelegramResult] = useState<{ success: boolean; message: string } | null>(null);
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -33,6 +39,13 @@ const AdminStoreSettings = () => {
         } else {
           setAdminEmail1('dineshkarthick1610@gmail.com');
         }
+
+        const telegramSnap = await getDoc(doc(db, 'settings', 'telegram'));
+        if (telegramSnap.exists()) {
+          const tData = telegramSnap.data();
+          if (tData.botToken) setTelegramBotToken(tData.botToken);
+          if (tData.chatId) setTelegramChatId(tData.chatId);
+        }
       } catch (error) {
         console.error('Error fetching settings:', error);
       }
@@ -41,6 +54,39 @@ const AdminStoreSettings = () => {
   }, []);
 
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  const handleSendTestTelegram = async () => {
+    if (!telegramBotToken.trim() || !telegramChatId.trim()) {
+      setTestTelegramResult({ success: false, message: 'Please enter both Bot Token and Chat ID to test.' });
+      return;
+    }
+
+    setIsTestingTelegram(true);
+    setTestTelegramResult(null);
+
+    try {
+      const res = await fetch('/api/send-telegram', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          testAlert: true,
+          customBotToken: telegramBotToken.trim(),
+          customChatId: telegramChatId.trim()
+        })
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setTestTelegramResult({ success: true, message: 'Test alert sent! Check your Telegram app.' });
+      } else {
+        setTestTelegramResult({ success: false, message: data.error || 'Failed to send test alert. Check token and chat ID.' });
+      }
+    } catch (err: any) {
+      setTestTelegramResult({ success: false, message: err.message || 'Network error sending test alert.' });
+    } finally {
+      setIsTestingTelegram(false);
+    }
+  };
 
   const handleSaveSettings = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,6 +115,13 @@ const AdminStoreSettings = () => {
         setAdminEmail1(emails[0]);
       }
       await setDoc(doc(db, "settings", "admins"), { emails, updatedAt: new Date() });
+
+      // Save dynamic Telegram credentials
+      await setDoc(doc(db, "settings", "telegram"), {
+        botToken: telegramBotToken.trim(),
+        chatId: telegramChatId.trim(),
+        updatedAt: new Date()
+      });
       
       setSettingsSuccess(true);
       scrollToTop();
@@ -154,6 +207,66 @@ const AdminStoreSettings = () => {
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Telegram Order Alerts Section */}
+        <div className="min-w-0 p-4 md:p-6 bg-[#C4A47C]/5 border border-[#C4A47C]/20 rounded-xl space-y-4">
+          <div className="flex items-center gap-2 border-b border-charcoal/10 pb-3">
+            <Bot className="text-[#C4A47C]" size={22} />
+            <div>
+              <h3 className="text-lg font-serif text-charcoal">Telegram Order Alerts</h3>
+              <p className="text-[10px] md:text-xs text-charcoal/60">Configure or dynamically switch the Telegram Bot and Chat receiving live customer order notifications.</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 min-w-0">
+            <div className="min-w-0">
+              <label className="block text-[10px] md:text-sm uppercase tracking-wider text-charcoal/70 mb-2">Telegram Bot Token</label>
+              <input 
+                type="text" 
+                value={telegramBotToken} 
+                onChange={(e) => setTelegramBotToken(e.target.value)}
+                className="w-full bg-white/70 border border-charcoal/20 rounded-lg px-3 py-2 md:py-2.5 outline-none focus:border-[#C4A47C] transition-colors text-[11px] md:text-sm font-mono"
+                placeholder="e.g. 9266471231:AAEFxlYJeyM..."
+              />
+              <p className="text-[9px] md:text-[11px] text-charcoal/50 mt-1">From @BotFather on Telegram</p>
+            </div>
+
+            <div className="min-w-0">
+              <label className="block text-[10px] md:text-sm uppercase tracking-wider text-charcoal/70 mb-2">Telegram Chat ID</label>
+              <input 
+                type="text" 
+                value={telegramChatId} 
+                onChange={(e) => setTelegramChatId(e.target.value)}
+                className="w-full bg-white/70 border border-charcoal/20 rounded-lg px-3 py-2 md:py-2.5 outline-none focus:border-[#C4A47C] transition-colors text-[11px] md:text-sm font-mono"
+                placeholder="e.g. 7232146507"
+              />
+              <p className="text-[9px] md:text-[11px] text-charcoal/50 mt-1">Your user or channel ID from @userinfobot</p>
+            </div>
+          </div>
+
+          {/* Test Alert Button */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-2">
+            <button
+              type="button"
+              disabled={isTestingTelegram || !telegramBotToken.trim() || !telegramChatId.trim()}
+              onClick={handleSendTestTelegram}
+              className="px-4 py-2 bg-white border border-[#C4A47C] text-[#C4A47C] hover:bg-[#C4A47C] hover:text-white rounded-lg text-xs md:text-sm font-medium transition-all shadow-sm flex items-center gap-2 disabled:opacity-50"
+            >
+              {isTestingTelegram ? (
+                <><Loader2 className="animate-spin" size={14} /> Sending Test Alert...</>
+              ) : (
+                <><Send size={14} /> Send Test Alert to Telegram</>
+              )}
+            </button>
+
+            {testTelegramResult && (
+              <div className={`text-xs md:text-sm flex items-center gap-1.5 font-medium animate-fade-in ${testTelegramResult.success ? 'text-green-600' : 'text-red-600'}`}>
+                {testTelegramResult.success ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
+                <span>{testTelegramResult.message}</span>
+              </div>
+            )}
           </div>
         </div>
 

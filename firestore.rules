@@ -31,7 +31,12 @@ service cloud.firestore {
       }
     }
 
-    // 2. Settings (Banners, Admin list): Anyone can view, ONLY Admins can edit
+    // 2. Settings:
+    // - Telegram credentials: ONLY real Admins can read or write (strict security)
+    match /settings/telegram {
+      allow read, write: if isAdmin();
+    }
+    // - General settings (Banners, Admin list): Anyone can view, ONLY Admins can edit
     match /settings/{docId} {
       allow read: if true;
       allow write: if isAdmin();

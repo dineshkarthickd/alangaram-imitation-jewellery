@@ -151,9 +151,23 @@ export default defineConfig(({ mode }) => {
             req.on('end', async () => {
               try {
                 const reqBody = JSON.parse(body);
-                const BOT_TOKEN = env.TELEGRAM_BOT_TOKEN;
-                const CHAT_ID = env.TELEGRAM_CHAT_ID;
-                if (!BOT_TOKEN || !CHAT_ID) throw new Error("Missing Telegram Env");
+                const BOT_TOKEN = reqBody.customBotToken || env.TELEGRAM_BOT_TOKEN;
+                const CHAT_ID = reqBody.customChatId || env.TELEGRAM_CHAT_ID;
+                if (!BOT_TOKEN || !CHAT_ID) throw new Error("Missing Telegram credentials. Check env or input.");
+
+                if (reqBody.testAlert) {
+                  const testMsg = `🎉 *TELEGRAM NOTIFICATION CONNECTED!* ⚡\n\nYour *Alangaram Imitation Jewellery* store is successfully linked to this chat.\n\nYou will receive real-time order alerts here whenever a customer places an order!`;
+                  const tgRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: CHAT_ID, text: testMsg, parse_mode: 'Markdown' })
+                  });
+                  const tgData: any = await tgRes.json();
+                  if (!tgRes.ok) throw new Error(tgData.description || 'Telegram API Test Error');
+                  res.setHeader('Content-Type', 'application/json');
+                  res.statusCode = 200;
+                  return res.end(JSON.stringify({ success: true, message: 'Test message sent successfully!' }));
+                }
 
                 const cInfo = reqBody.customerInfo || {};
                 const sCost = reqBody.shippingCost || 0;
