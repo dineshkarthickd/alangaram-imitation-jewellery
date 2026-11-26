@@ -176,7 +176,7 @@ const Checkout = () => {
           return;
         }
 
-        const verifiedShippingCost = formData.state === 'Overseas' ? 0 : SOUTH_INDIAN_STATES.includes(formData.state) ? 60 : 100;
+        const verifiedShippingCost = isOverseas ? 0 : (formData.state && SOUTH_INDIAN_STATES.includes(formData.state) ? 60 : 100);
         const verifiedFinalAmount = verifiedSubtotal + verifiedShippingCost;
 
         if (verifiedFinalAmount !== finalAmountWithShipping) {
@@ -303,6 +303,14 @@ const Checkout = () => {
                     const verifyData = await verifyRes.json();
                     
                     if (verifyRes.ok && verifyData.success) {
+                      try {
+                        await updateDoc(doc(db, 'orders', docRef.id), {
+                          status: 'Order Confirmed',
+                          transactionId: response.razorpay_payment_id
+                        });
+                      } catch (docErr) {
+                        console.warn("Client status update note (handled by server):", docErr);
+                      }
                       clearCart();
                       sendOrderNotifications(orderId, finalAmountWithShipping); // Send Email Receipt
                       setOrderSuccess(true);
