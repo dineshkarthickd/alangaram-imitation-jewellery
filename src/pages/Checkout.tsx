@@ -205,7 +205,7 @@ const Checkout = () => {
             customerEmail: formData.email,
             shippingAddress: `${formData.address}, ${formData.district}, ${formData.state} - ${formData.pincode}`,
             totalAmount: total,
-            items: cartItems.map(item => ({ name: item.name, quantity: item.quantity, price: item.price }))
+            items: cartItems.map(item => ({ name: item.name, quantity: item.quantity, price: item.price, size: item.size }))
           })
         }).catch(err => console.error("Failed email:", err));
 
@@ -605,6 +605,9 @@ const Checkout = () => {
                 </div>
                 <div className="flex-grow min-w-0">
                   <p className="font-medium text-charcoal text-[11px] md:text-sm leading-snug truncate">{item.name}</p>
+                  {item.size && (
+                    <p className="text-[10px] md:text-xs text-[#C4A47C] font-semibold">Size: {item.size}</p>
+                  )}
                   <p className="text-charcoal/50 text-[10px] md:text-xs mt-0.5 md:mt-1">Qty: {item.quantity}</p>
                 </div>
                 <p className="font-medium text-charcoal text-[11px] md:text-sm whitespace-nowrap">{item.price}</p>

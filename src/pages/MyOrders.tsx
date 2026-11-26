@@ -164,6 +164,9 @@ const MyOrders = () => {
               </div>
               <div className="pt-1 min-w-0">
                 <h3 className="font-medium text-charcoal text-[13px] md:text-base leading-snug truncate">{selectedItem.name}</h3>
+                {selectedItem.size && (
+                  <p className="text-[11px] md:text-xs text-[#C4A47C] font-semibold mt-0.5">Size: {selectedItem.size}</p>
+                )}
                 <p className="text-charcoal/50 text-[11px] md:text-xs mt-1 md:mt-1.5">Qty: {selectedItem.quantity}</p>
               </div>
             </div>
@@ -496,6 +499,9 @@ const MyOrders = () => {
                 </div>
                 <div className="flex flex-col justify-center min-w-0">
                   <h3 className="font-medium text-charcoal text-[13px] md:text-base leading-snug line-clamp-2 md:pr-4">{item.name}</h3>
+                  {item.size && (
+                    <p className="text-[11px] md:text-xs text-[#C4A47C] font-semibold mt-0.5">Size: {item.size}</p>
+                  )}
                   <p className="text-charcoal/50 text-[11px] md:text-xs mt-1 md:mt-1.5">Qty: {item.quantity}</p>
                 </div>
               </div>

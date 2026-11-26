@@ -23,6 +23,7 @@ const ProductDetail = () => {
   const [reviews, setReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedSize, setSelectedSize] = useState<string>('');
 
   useEffect(() => {
     const fetchProductData = async () => {
@@ -35,6 +36,11 @@ const ProductDetail = () => {
           const data = { id: docSnap.id, ...docSnap.data() } as any;
           setProduct(data);
           setSelectedImage(data.images[0]);
+          if (data.sizes && data.sizes.length > 0) {
+            setSelectedSize(data.sizes[0]);
+          } else {
+            setSelectedSize('');
+          }
 
           // Fetch related products
           const qRel = query(collection(db, 'products'), where('category', '==', data.category), limit(5));
@@ -198,9 +204,39 @@ const ProductDetail = () => {
           
           <div className="h-[1px] w-full bg-charcoal/10 mb-4 md:mb-8" />
           
-          <p className="text-charcoal/70 leading-relaxed mb-6 md:mb-10 font-light text-[11px] md:text-base whitespace-pre-wrap">
+          <p className="text-charcoal/70 leading-relaxed mb-6 md:mb-8 font-light text-[11px] md:text-base whitespace-pre-wrap">
             {product.description}
           </p>
+
+          {/* Bangle Size Selector */}
+          {product.sizes && product.sizes.length > 0 && (
+            <div className="mb-6 md:mb-8 p-3.5 md:p-4 bg-cream/60 border border-charcoal/10 rounded-xl animate-fade-in">
+              <div className="flex justify-between items-center mb-2.5">
+                <span className="text-[10px] md:text-xs uppercase tracking-widest text-charcoal/80 font-medium">
+                  Bangle Size
+                </span>
+                <span className="text-[10px] md:text-xs text-[#C4A47C] font-semibold">
+                  Selected: {selectedSize}
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {product.sizes.map((size: string) => (
+                  <button
+                    key={size}
+                    type="button"
+                    onClick={() => setSelectedSize(size)}
+                    className={`px-3.5 py-1.5 md:px-5 md:py-2 rounded-lg text-xs md:text-sm font-medium transition-all border ${
+                      selectedSize === size
+                        ? 'bg-[#C4A47C] text-white border-[#C4A47C] shadow-sm scale-105'
+                        : 'bg-white text-charcoal/70 border-charcoal/20 hover:border-[#C4A47C] hover:text-charcoal'
+                    }`}
+                  >
+                    Size {size}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="flex gap-2 md:gap-4 mb-4 md:mb-8">
             <button 
@@ -208,10 +244,12 @@ const ProductDetail = () => {
               onClick={() => {
                 if (!hasStock) return;
                 addToCart({
-                  id: product.id,
+                  id: selectedSize ? `${product.id}-${selectedSize}` : product.id,
+                  productId: product.id,
                   name: product.name,
                   price: `₹ ${product.finalPrice}`,
-                  image: product.images[0]
+                  image: product.images[0],
+                  size: selectedSize || undefined
                 });
               }} 
               className={`flex-1 btn-luxury btn-luxury-solid py-2.5 md:py-4 flex items-center justify-center gap-2 md:gap-3 text-[10px] md:text-sm min-w-0 ${!hasStock ? 'opacity-50 cursor-not-allowed bg-charcoal/50 border-none hover:bg-charcoal/50 hover:text-white' : ''}`}

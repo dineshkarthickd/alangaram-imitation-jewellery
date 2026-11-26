@@ -159,7 +159,7 @@ export default defineConfig(({ mode }) => {
                 const sCost = reqBody.shippingCost || 0;
                 const pPrice = reqBody.amount - sCost;
                 
-                const itemsList = reqBody.items.map((item: any) => `Product ID: ${item.id || item.sku || 'N/A'}\n• ${item.name} (x${item.quantity})`).join('\n\n');
+                const itemsList = reqBody.items.map((item: any) => `Product ID: ${item.id || item.sku || 'N/A'}\n• ${item.name}${item.size ? ` (Size: ${item.size})` : ''} (x${item.quantity})`).join('\n\n');
                 
                 const message = `🚨 *NEW ORDER RECEIVED!* 🚨\n\n*Order ID:* ${reqBody.orderId}\n*Customer:* ${cInfo.name || 'N/A'}\n*Mobile Number:* ${cInfo.phone || 'N/A'}\n*Email:* ${cInfo.email || 'N/A'}\n*Address:* ${cInfo.address || 'N/A'}\n*State:* ${cInfo.state || 'N/A'}\n*Pincode:* ${cInfo.pincode || 'N/A'}\n*Product Price:* ₹${pPrice}\n*Shipping Charges:* ₹${sCost}\n*Total Amount:* ₹${reqBody.amount}\n\n*Items:*\n${itemsList}\n\n⚡ _Check the Admin Dashboard for full details!_`;
 

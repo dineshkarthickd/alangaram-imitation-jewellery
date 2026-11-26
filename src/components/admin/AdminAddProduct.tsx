@@ -27,6 +27,7 @@ const AdminAddProduct: React.FC<AdminAddProductProps> = ({ editingProduct, setEd
     offerPercentage: '',
     category: '',
     subcategories: [] as string[],
+    sizes: [] as string[],
     stock: '',
     description: ''
   });
@@ -42,6 +43,7 @@ const AdminAddProduct: React.FC<AdminAddProductProps> = ({ editingProduct, setEd
         offerPercentage: String(editingProduct.offerPercentage),
         category: editingProduct.category,
         subcategories: editingProduct.subcategories || [],
+        sizes: editingProduct.sizes || [],
         stock: String(editingProduct.stock),
         description: editingProduct.description
       });
@@ -54,7 +56,7 @@ const AdminAddProduct: React.FC<AdminAddProductProps> = ({ editingProduct, setEd
       setMainImage(null);
       setModelImage(null);
     } else {
-      setFormData({ productId: '', name: '', price: '', hasOffer: false, offerPercentage: '', category: '', subcategories: [], stock: '', description: '' });
+      setFormData({ productId: '', name: '', price: '', hasOffer: false, offerPercentage: '', category: '', subcategories: [], sizes: [], stock: '', description: '' });
       setMainPreview(null);
       setModelPreview(null);
       setMainImage(null);
@@ -90,6 +92,9 @@ const AdminAddProduct: React.FC<AdminAddProductProps> = ({ editingProduct, setEd
     if (formData.hasOffer && !formData.offerPercentage) errors.offerPercentage = "Discount Percentage is required";
     if (!formData.stock) errors.stock = "Initial Stock is required";
     if (!formData.category) errors.category = "Category is required";
+    if (formData.subcategories.includes('Bangle') && formData.sizes.length === 0) {
+      errors.sizes = "Please select at least one bangle size";
+    }
     if (!formData.description) errors.description = "Description is required";
 
     if (Object.keys(errors).length > 0) {
@@ -136,6 +141,7 @@ const AdminAddProduct: React.FC<AdminAddProductProps> = ({ editingProduct, setEd
         offerPercentage: formData.hasOffer ? Number(formData.offerPercentage) : 0,
         category: formData.category,
         subcategories: formData.subcategories,
+        sizes: formData.subcategories.includes('Bangle') ? formData.sizes : [],
         description: formData.description,
         stock: Number(formData.stock),
         images: [mainUrl, modelUrl].filter(Boolean)
@@ -153,7 +159,7 @@ const AdminAddProduct: React.FC<AdminAddProductProps> = ({ editingProduct, setEd
       
       // Reset form
       setEditingProduct(null);
-      setFormData({ productId: '', name: '', price: '', hasOffer: false, offerPercentage: '', category: '', subcategories: [], stock: '', description: '' });
+      setFormData({ productId: '', name: '', price: '', hasOffer: false, offerPercentage: '', category: '', subcategories: [], sizes: [], stock: '', description: '' });
       setMainImage(null);
       setModelImage(null);
       setMainPreview(null);
@@ -379,6 +385,62 @@ const AdminAddProduct: React.FC<AdminAddProductProps> = ({ editingProduct, setEd
           </div>
         </div>
 
+        {/* Bangle Size Selector (Shown only when Bangle is selected) */}
+        {formData.subcategories.includes('Bangle') && (
+          <div className="min-w-0 animate-fade-in p-4 md:p-5 bg-[#C4A47C]/5 border border-[#C4A47C]/20 rounded-xl space-y-3">
+            <div className="flex justify-between items-center">
+              <label className="block text-[10px] md:text-sm uppercase tracking-wider text-charcoal/80 font-medium">
+                Bangle Size (Select available sizes)
+              </label>
+              <button
+                type="button"
+                onClick={() => {
+                  const allSizes = ['2/4', '2/6', '2/8', '2/10'];
+                  const allSelected = allSizes.every(s => formData.sizes.includes(s));
+                  setFormData({ ...formData, sizes: allSelected ? [] : allSizes });
+                  setFormErrors({ ...formErrors, sizes: '' });
+                }}
+                className="text-[10px] md:text-xs text-[#C4A47C] hover:underline font-medium"
+              >
+                {['2/4', '2/6', '2/8', '2/10'].every(s => formData.sizes.includes(s)) ? 'Deselect All' : 'Select All'}
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-2.5 md:gap-3">
+              {['2/4', '2/6', '2/8', '2/10'].map((size) => {
+                const isSelected = formData.sizes.includes(size);
+                return (
+                  <label 
+                    key={size} 
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg cursor-pointer transition-all border text-[11px] md:text-sm font-medium ${
+                      isSelected 
+                        ? 'bg-[#C4A47C] border-[#C4A47C] text-white shadow-sm' 
+                        : 'bg-white border-charcoal/20 text-charcoal/70 hover:border-[#C4A47C]'
+                    }`}
+                  >
+                    <input 
+                      type="checkbox"
+                      className="hidden"
+                      checked={isSelected}
+                      onChange={(e) => {
+                        let newSizes = [...formData.sizes];
+                        if (e.target.checked) {
+                          newSizes.push(size);
+                        } else {
+                          newSizes = newSizes.filter(s => s !== size);
+                        }
+                        setFormData({ ...formData, sizes: newSizes });
+                        setFormErrors({ ...formErrors, sizes: '' });
+                      }}
+                    />
+                    <span>Size {size}</span>
+                  </label>
+                );
+              })}
+            </div>
+            {formErrors.sizes && <p className="text-red-500 text-[10px] md:text-xs mt-1.5 animate-fade-in font-medium">{formErrors.sizes}</p>}
+          </div>
+        )}
+
         <div className="min-w-0">
           <label className="block text-[10px] md:text-sm uppercase tracking-wider text-charcoal/70 mb-2">Description</label>
           <textarea 
@@ -396,7 +458,7 @@ const AdminAddProduct: React.FC<AdminAddProductProps> = ({ editingProduct, setEd
               onClick={() => {
                 // Reset form
                 setEditingProduct(null);
-                setFormData({ productId: '', name: '', price: '', hasOffer: false, offerPercentage: '', category: '', subcategories: [], stock: '', description: '' });
+                setFormData({ productId: '', name: '', price: '', hasOffer: false, offerPercentage: '', category: '', subcategories: [], sizes: [], stock: '', description: '' });
                 setMainImage(null);
                 setModelImage(null);
                 setMainPreview(null);
