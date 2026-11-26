@@ -14,7 +14,7 @@ module.exports = async (req, res) => {
       throw new Error("Missing Telegram credentials in Environment variables.");
     }
 
-    const itemsList = items.map(item => `Product ID: ${item.id || item.sku || 'N/A'}\n• ${item.name} (x${item.quantity})`).join('\n\n');
+    const itemsList = items.map(item => `Product ID: ${item.id || item.sku || 'N/A'}\n• ${item.name}${item.size ? ` (Size: ${item.size})` : ''} (x${item.quantity})`).join('\n\n');
     const productPrice = amount - (shippingCost || 0);
 
     const message = `🚨 *NEW ORDER RECEIVED!* 🚨

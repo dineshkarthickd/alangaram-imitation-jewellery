@@ -46,9 +46,14 @@ const Cart = () => {
                 <div className="flex flex-col flex-grow justify-between min-w-0">
                   <div className="flex justify-between items-start gap-2">
                     <div className="min-w-0">
-                      <Link to={`/product/${item.id}`} className="font-serif text-[15px] md:text-xl text-charcoal hover:text-black transition-colors block mb-1 truncate">
+                      <Link to={`/product/${item.productId || item.id}`} className="font-serif text-[15px] md:text-xl text-charcoal hover:text-black transition-colors block mb-1 truncate">
                         {item.name}
                       </Link>
+                      {item.size && (
+                        <p className="text-[11px] md:text-xs text-charcoal/70 mb-1">
+                          Size: <span className="font-medium text-[#C4A47C]">{item.size}</span>
+                        </p>
+                      )}
                       <p className="text-[#C4A47C] font-medium text-[13px] md:text-base">{item.price}</p>
                     </div>
                     <button 

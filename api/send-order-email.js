@@ -18,7 +18,7 @@ export default async function handler(req, res) {
 
     const itemsHtml = items.map(item => 
       `<li style="margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
-        <p style="margin: 0; font-weight: bold;">${item.name}</p>
+        <p style="margin: 0; font-weight: bold;">${item.name}${item.size ? ` (Size: ${item.size})` : ''}</p>
         <p style="margin: 0; color: #666;">Quantity: ${item.quantity}</p>
         <p style="margin: 0; color: #666;">Price: ₹${item.price}</p>
       </li>`

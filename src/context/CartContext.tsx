@@ -6,10 +6,12 @@ import { db } from '../config/firebase';
 
 export interface CartItem {
   id: string | number;
+  productId?: string | number;
   name: string;
   price: string;
   image: string;
   quantity: number;
+  size?: string;
 }
 
 interface CartContextType {

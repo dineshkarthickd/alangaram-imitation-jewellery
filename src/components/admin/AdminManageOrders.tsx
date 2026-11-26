@@ -202,7 +202,7 @@ const AdminManageOrders = () => {
         
         return [
           index + 1,
-          `${item.name}\nProduct ID: ${item.realSku}`,
+          `${item.name}${item.size ? ` (Size: ${item.size})` : ''}\nProduct ID: ${item.realSku}`,
           `Rs. ${priceNum.toLocaleString('en-IN')}`,
           qtyNum,
           `Rs. ${(priceNum * qtyNum).toLocaleString('en-IN')}`
@@ -476,6 +476,9 @@ const AdminManageOrders = () => {
                       <img src={item.image} alt={item.name} className="w-12 h-12 md:w-16 md:h-16 object-cover rounded border border-charcoal/10 flex-shrink-0" />
                       <div className="min-w-0">
                         <p className="text-[10px] md:text-sm font-medium text-charcoal pr-2 truncate">{item.name}</p>
+                        {item.size && (
+                          <p className="text-[10px] md:text-xs text-[#C4A47C] font-semibold">Size: {item.size}</p>
+                        )}
                         <p className="text-[10px] md:text-xs text-charcoal/60 truncate">ID: {item.id}</p>
                         <p className="text-[10px] md:text-xs text-charcoal/80 mt-1">Qty: {item.quantity} × {item.price}</p>
                       </div>
